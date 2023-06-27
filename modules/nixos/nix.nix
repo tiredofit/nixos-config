@@ -2,7 +2,6 @@
 
 {
   nix = {
-    autoOptimiseStore = true ;
     extraOptions = ''
       experimental-features = nix-command flakes
     '';
@@ -13,11 +12,11 @@
       persistent = true;
       options = "--delete-older-than 60d";
     };
-    optimize = {
-      automatic = true;
-    }
 
     package = pkgs.nixFlakes;
+    settings = {
+      auto-optimise-store = true;
+    };
   };
 
   nixpkgs.config.allowUnfree = true ; # Allow Non Free packages

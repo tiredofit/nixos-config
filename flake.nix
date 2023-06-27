@@ -57,8 +57,8 @@
             system = system;
             config.allowUnfree = true;
           };
-          kioskUsername = "pi";
-          kioskURL = "https://www.tiredofit.ca";
+          kioskUsername = "dave";
+          kioskURL = "https://beer.tiredofit.ca";
         } // inputs;
 
         modules = [

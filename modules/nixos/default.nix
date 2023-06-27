@@ -5,6 +5,7 @@
     [
       ./cli/default.nix
       ./locale.nix
+      ./nix.nix
       ./users_groups.nix
     ];
 

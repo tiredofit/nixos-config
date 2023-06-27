@@ -10,7 +10,6 @@
       ../../modules/nixos/impermanence.nix
       ../../modules/nixos/gui/bluetooth.nix
       ../../modules/nixos/gui/x.nix
-      ../../modules/nixos/gui/x-i3.nix
       ../../modules/nixos/services/btrbak.nix
       ../../modules/nixos/services/opensnitch.nix
       ../../modules/nixos/services/openssh.nix

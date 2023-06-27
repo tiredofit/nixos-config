@@ -2,24 +2,26 @@
 
 {
   imports =
+    [
       ./hardware-configuration.nix
       ../../modules/nixos/default.nix
       ../../modules/nixos/services/openssh.nix
-      ../../modules/nixos/gui/wayland-kiosk.nix
+      ../../modules/nixos/gui/x-kiosk.nix
     ];
 
   boot = {
     loader = {
-      generic-ext-linux-compatible.enable = true;
-      grub.enable = true;
-    }
-  }
+      generic-extlinux-compatible.enable = true;
+      grub.enable = false;
+    };
+  };
 
-  networking.hostName = "beer";
-  Pick only one of the below networking options.
-  networking.networkmanager.enable = true;
-  time.timeZone = "America/Vancouver";
-  nixpkgs.config.allowUnfree = true;
+  networking = {
+    hostName = "beer";
+    networkmanager.enable = true;
+  };
+
+  nix.settings.trusted-users = [ "root" "@wheel" "dave" ];
   system.stateVersion = "23.05";
 }
 
