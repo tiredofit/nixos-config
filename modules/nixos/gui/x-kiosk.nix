@@ -4,7 +4,7 @@ let
   autostart = ''
   #!${pkgs.bash}/bin/bash
   xset s off -dpms &
-  ${pkgs.firefox}/bin/firefox --kiosk https://www.tiredofit.ca/ &
+  ${pkgs.firefox}/bin/firefox --kiosk ${kioskURL} &
   '';
 
   inherit (pkgs) writeScript;

@@ -8,6 +8,7 @@
       ../../modules/nixos/bluetooth.nix
       ../../modules/nixos/default.nix
       ../../modules/nixos/impermanence.nix
+      ../../modules/nixos/printing.nix
       ../../modules/nixos/gui/bluetooth.nix
       ../../modules/nixos/gui/x.nix
       ../../modules/nixos/services/btrbak.nix
@@ -85,8 +86,7 @@
     enable = true ;
   };
 
-  services = {
-  };
-
+  services.printing.drivers = with pkgs; [ hplip ];
+  
   system.stateVersion = "23.05";
 }
