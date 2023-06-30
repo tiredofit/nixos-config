@@ -23,7 +23,7 @@
         inherit shellAliases;
         shellInit = ''
               ## History
-              export HISTFILE=$XDG_STATE_HOME/bash/history
+              export HISTFILE=$USER/.bash_history
               ## Configure bash to append (rather than overwrite history)
               shopt -s histappend
 

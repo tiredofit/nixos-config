@@ -17,6 +17,7 @@
 
   programs = {
     dconf.enable = true;
+    seahorse.enable = true;
   };
 
   services.xserver = {
@@ -36,7 +37,7 @@
     };
 
     displayManager = {
-      startx.enable = true ;
+      startx.enable = false ;
       lightdm.enable = false ;
       gdm = {
         enable = true ;
@@ -49,8 +50,19 @@
     xkbVariant = "";
   };
 
+  security = {
+    pam = {
+      services.gdm.enableGnomeKeyring = true;
+    };
+    polkit = {
+      enable = true;
+    };
+  };
+
   services = {
     gvfs.enable = true;    # Mount, trash, and other functionalities
+    gnome.gnome-keyring.enable = true;
+
   };
 }
 
