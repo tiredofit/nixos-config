@@ -18,12 +18,12 @@
         canTouchEfiVariables = false;
       };
       grub = {
-        enable = true;
         device = "nodev";
+        efiInstallAsRemovable = true;
         efiSupport = true;
+        enable = true;
         enableCryptodisk = false;
         useOSProber = false;
-        efiInstallAsRemovable = true;
       };
     };
 

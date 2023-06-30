@@ -18,7 +18,6 @@ pwgen() {
             "2" | "4" | "6" | "8" | "10" | "12" | "14" | "16" )
                     s_password=$(diceware -n 1)
                     s_password=''${s_password^^}
-
             ;;
             "1" | "3" | "5" | "7" | "9" | "11" | "13" | "15" )
                     s_password=$(diceware -n 1 --no-caps)

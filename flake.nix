@@ -66,6 +66,21 @@
         ];
       };
 
+      butcher = nixpkgs.lib.nixosSystem rec {
+        system = "x86_64-linux";
+        specialArgs = {
+          pkgs-stable = import inputs.stable {
+            system = system;
+            config.allowUnfree = true;
+          };
+        } // inputs;
+
+        modules = [
+          ./hosts/butcher
+          nur.nixosModules.nur
+        ];
+      };
+
       soy = nixpkgs.lib.nixosSystem rec {
         system = "x86_64-linux";
         specialArgs = {
