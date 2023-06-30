@@ -66,12 +66,15 @@
       fsType = "vfat";
     };
 
-  swapDevices = [ ];
+  fileSystems."/mnt/media" =
+    { device = "/dev/disk/by-uuid/63EB-98D4";
+      fsType = "exfat";
+    };
 
-  # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
-  # (the default) this is the recommended approach. When using systemd-networkd it's
-  # still possible to use this option, but it's recommended to use it in conjunction
-  # with explicit per-interface declarations with `networking.interfaces.<interface>.useDHCP`.
+  swapDevices =
+    [ { device = "/dev/disk/by-uuid/eccff2ae-cc09-406f-8c07-5c147d494cb2"; }
+    ];
+
   networking.useDHCP = lib.mkDefault true;
   # networking.interfaces.enp6s18.useDHCP = lib.mkDefault true;
 

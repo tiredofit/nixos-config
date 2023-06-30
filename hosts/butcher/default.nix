@@ -39,7 +39,17 @@
     ];
   };
 
+  environment.persistence."/persist" = {
+    hideMounts = true ;
+    directories = [
+      "/mnt/"
+    ];
+    files = [
+    ];
+  };
+
   fileSystems."/".options = [ "subvol=root" "compress=zstd" "noatime"  ];
+  fileSystems."/boot".options = [ "defaults" "nosuid" "nodev" "noatime" "fmask=0022" "dmask=0022" "codepage=437" "iocharset=iso8859-1" "shortname=mixed" "errors=remount-ro" ] ; 
   fileSystems."/home".options = [ "subvol=home/active" "compress=zstd" "noatime"  ];
   fileSystems."/home/.snapshots".options = [ "subvol=home/snapshot" "compress=zstd" "noatime"  ];
   fileSystems."/nix".options = [ "subvol=nix" "compress=zstd" "noatime"  ];
@@ -47,6 +57,7 @@
   fileSystems."/var/local/.snapshots".options = [ "subvol=var_local/snapshot" "compress=zstd" "noatime"  ];
   fileSystems."/var/log".options = [ "subvol=var_log" "compress=zstd" "noatime"  ];
   fileSystems."/var/log".neededForBoot = true;
+  fileSystems."/mnt/media".options = [ "defaults" "noatime" "codepage=437" "iocharset=iso8859-1" "errors=remount-ro" ] ; 
 
   networking = {
     hostName = "butcher";
