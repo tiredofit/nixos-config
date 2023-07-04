@@ -87,6 +87,6 @@
   };
 
   services.printing.drivers = with pkgs; [ hplip ];
-  
+
   system.stateVersion = "23.05";
 }
