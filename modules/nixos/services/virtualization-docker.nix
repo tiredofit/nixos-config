@@ -456,4 +456,13 @@ fi
 #   "shutdown-timeout": 120
 # }
  };
+
+ environment.persistence."/persist" = {
+   hideMounts = true ;
+   directories = [
+     "/var/lib/docker"                  # Docker
+   ];
+   files = [
+   ];
+ };
 }
