@@ -17,4 +17,9 @@
 
   services.blueman.enable = true;
 
+  environment.persistence."/persist" = {
+    hideMounts = true ;
+    directories = [
+      "/var/lib/bluetooth"               # Bluetooth
+  };
 }

@@ -47,7 +47,6 @@
       "/root"                            # Root
       "/var/lib/bluetooth"               # Bluetooth
       { directory = "/var/lib/colord"; user = "colord"; group = "colord"; mode = "u=rwx,g=rx,o="; }        # Colord Profiles
-      "/var/lib/docker"                  # Docker
       "/var/lib/NetworkManager"          # NetworkManager
     ];
     files = [
