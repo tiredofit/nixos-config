@@ -5,6 +5,40 @@
       impermanence.nixosModules.impermanence
     ];
 
+  boot.initrd = {
+    systemd = {
+      enable = true;
+      services.rollback = {
+        description = "Rollback BTRFS root subvolume to a pristine state";
+        wantedBy = [
+          "initrd.target"
+        ];
+        after = [
+          "systemd-cryptsetup@pool0_0.service"
+        ];
+        before = [
+          "sysroot.mount"
+        ];
+        unitConfig.DefaultDependencies = "no";
+        serviceConfig.Type = "oneshot";
+        script = ''
+          mkdir -p /mnt
+          mount -o subvol=/ /dev/mapper/pool0_0 /mnt
+          btrfs subvolume list -o /mnt/root | cut -f9 -d' ' |
+          while read subvolume; do
+            echo "Deleting /$subvolume subvolume"
+            btrfs subvolume delete "/mnt/$subvolume"
+          done &&
+          echo "Deleting /root subvolume" &&
+          btrfs subvolume delete /mnt/root
+          echo "Restoring blank /root subvolume"
+          btrfs subvolume snapshot /mnt/root-blank /mnt/root
+          umount /mnt
+        '';
+      };
+    };
+  };
+
   boot = {
     initrd.postDeviceCommands = pkgs.lib.mkBefore ''
       mkdir -p /mnt
