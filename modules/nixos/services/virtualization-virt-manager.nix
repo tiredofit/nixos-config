@@ -21,7 +21,5 @@
     directories = [
       "/var/lib/libvirt"                 # Libvirt
     ];
-    files = [
-    ];
   };
 }
