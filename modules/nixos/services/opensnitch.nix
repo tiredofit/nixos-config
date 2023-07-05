@@ -6,8 +6,6 @@
     directories = [
       "/var/lib/opensnitch"          # Opensnitch
     ];
-    files = [
-    ];
   };
 
   services = {
