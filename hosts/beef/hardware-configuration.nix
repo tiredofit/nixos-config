@@ -20,6 +20,7 @@
     };
 
   boot.initrd.luks.devices."pool0_0".device = "/dev/disk/by-uuid/8fbd9528-3a3b-4e69-97d4-7befe33e4305";
+  boot.initrd.luks.devices."pool0_1".device = "/dev/disk/by-uuid/bf6d202c-c8ad-4415-9b7b-b70addad6d7b";
   boot.initrd.luks.devices."swap".device = "/dev/disk/by-uuid/bea444f7-fe48-4837-9db6-8c23d8b3ee26";
 
   fileSystems."/home" =
