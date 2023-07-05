@@ -39,8 +39,16 @@
 
     };
 
-    initrd.luks.devices."pool0_0".allowDiscards = true;
-    initrd.luks.devices."pool0_0".bypassWorkqueues = true;
+    initrd.luks.devices = {
+      "pool0_0" = {
+         allowDiscards = true;
+         bypassWorkqueues = true;
+      };
+      "pool0_1" = {
+         allowDiscards = true;
+         bypassWorkqueues = true;
+      };
+    };
 
     kernel.sysctl = {
       "vm.dirty_ratio" = 6;   # sync disk when buffer reach 6% of memory
