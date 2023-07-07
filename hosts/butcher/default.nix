@@ -62,5 +62,6 @@
     networkmanager.enable = true;
   };
 
+  services.qemuGuest.enable = true
   system.stateVersion = "23.05";
 }
