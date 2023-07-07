@@ -59,9 +59,27 @@
 
   networking = {
     hostName = "butcher";
-    networkmanager.enable = true;
   };
 
+  
   services.qemuGuest.enable = true
   system.stateVersion = "23.05";
+
+  systemd = {
+    network = {
+      enable = true;
+      networks = {
+        "25-lan" = {
+           matchConfig.Name = "enp6s18" ;
+           address = [
+             "192.168.137.5/24"
+           ];
+           routes = [
+             { routeConfig.Gateway =  "192.168.137.1" ; }
+           ];
+           linkConfig.RequiredForOnline = "routable" ;
+      };
+    };
+  };
+
 }
