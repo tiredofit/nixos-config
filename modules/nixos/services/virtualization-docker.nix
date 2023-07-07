@@ -1,12 +1,29 @@
 { config, pkgs, ... }:
 {
-  users.groups = {
-    docker = {};
-  };
+  environment = {
+    etc = {
+      "docker/daemon.json" = {
+        text = ''
+{
+  "experimental": true,
+  "live-restore": true,
+  "shutdown-timeout": 120
+}
+        '';
+        mode = "0600";
+      };
+    };
+    persistence."/persist" = {
+      hideMounts = true ;
+      directories = [
+        "/var/lib/docker"                  # Docker
+      ];
+    };
 
-  environment.systemPackages = with pkgs; [
-    docker-compose
-  ];
+    systemPackages = with pkgs; [
+      docker-compose
+    ];
+  };
 
   programs = {
     bash = {
@@ -435,6 +452,19 @@ fi
             '';
     };
   };
+
+  system.activationScripts.create_docker_networks = let
+    dockerBin = "${pkgs.docker}/bin/docker";
+  in ''
+     ${dockerBin} network inspect proxy > /dev/null || ${dockerBin} network create proxy --subnet 172.19.0.0/18
+     ${dockerBin} network inspect services >/dev/null || ${dockerBin} network create services --subnet 172.19.128.0/18
+     ${dockerBin} network inspect socket-proxy >/dev/null || ${dockerBin} network create socket-proxy --subnet 172.19.192.0/18
+   '';
+
+  users.groups = {
+    docker = {};
+  };
+
   virtualisation = {
      docker = {
        enable = true;
@@ -442,27 +472,5 @@ fi
        logDriver = "local";
        storageDriver = "btrfs";
      };
-
-  ## TODO: Find a way to one shot create networks:
-  #docker network create --subnet=172.19.0.0/18 proxy
-  #docker network create --subnet=172.19.128.0/18 services
-  #docker network create --subnet=172.19.192.0/18 socket-proxy
-
-  ## TODO: Write this on startup all the time
-  # /etc/docker/daemon.json
-# {
-#   "experimental": true,
-#   "live-restore": true,
-#   "shutdown-timeout": 120
-# }
- };
-
- environment.persistence."/persist" = {
-   hideMounts = true ;
-   directories = [
-     "/var/lib/docker"                  # Docker
-   ];
-   files = [
-   ];
  };
 }

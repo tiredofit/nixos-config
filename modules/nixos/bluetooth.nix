@@ -21,5 +21,6 @@
     hideMounts = true ;
     directories = [
       "/var/lib/bluetooth"               # Bluetooth
+    ];
   };
 }
