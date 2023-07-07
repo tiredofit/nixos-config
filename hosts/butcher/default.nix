@@ -77,6 +77,7 @@
              { routeConfig.Gateway =  "192.168.137.1" ; }
            ];
            linkConfig.RequiredForOnline = "routable" ;
+         };
       };
     };
   };
