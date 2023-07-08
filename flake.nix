@@ -11,9 +11,7 @@
   };
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-23.05";
-    stable.url = "github:nixos/nixpkgs/nixos-23.05";
-    unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     hyprland.url = "github:hyprwm/Hyprland/v0.26.0";
     impermanence.url = "github:nix-community/impermanence";
     nixpkgs-wayland.url = "github:nix-community/nixpkgs-wayland";
@@ -24,8 +22,6 @@
   outputs = inputs@{
     self,
     nixpkgs,
-    stable,
-    unstable,
     impermanence,
     nur,
     vscode-server,
@@ -36,7 +32,7 @@
       beef = nixpkgs.lib.nixosSystem rec {
         system = "x86_64-linux";
         specialArgs = {
-          pkgs-stable = import inputs.stable {
+          pkgs-stable = import inputs.nixpkgs {
             system = system;
             config.allowUnfree = true;
           };
@@ -53,7 +49,7 @@
       beer = nixpkgs.lib.nixosSystem rec {
         system = "aarch64-linux";
         specialArgs = {
-          pkgs-stable = import inputs.stable {
+          pkgs = import inputs.nixpkgs {
             system = system;
             config.allowUnfree = true;
           };
@@ -69,7 +65,7 @@
       butcher = nixpkgs.lib.nixosSystem rec {
         system = "x86_64-linux";
         specialArgs = {
-          pkgs-stable = import inputs.stable {
+          pkgs = import inputs.nixpkgs {
             system = system;
             config.allowUnfree = true;
           };
@@ -84,7 +80,7 @@
       soy = nixpkgs.lib.nixosSystem rec {
         system = "x86_64-linux";
         specialArgs = {
-          pkgs-stable = import inputs.stable {
+          pkgs = import inputs.nixpkgs {
             system = system;
             config.allowUnfree = true;
           };
