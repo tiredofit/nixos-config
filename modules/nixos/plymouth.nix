@@ -1,6 +1,6 @@
-{ config, ... }:
+{ config, pkgs, ... }:
 {
-  boot =
+  boot = {
     plymouth = {
       enable = true ;
       theme = "lone" ;
