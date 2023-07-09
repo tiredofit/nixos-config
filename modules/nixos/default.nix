@@ -1,4 +1,4 @@
-{ config, ...}:
+{ config, pkgs, ...}:
 
 {
   imports =
@@ -8,6 +8,13 @@
       ./nix.nix
       ./users_groups.nix
     ];
+
+  environment.systemPackages = with pkgs; [
+
+  ]
+  ++ (lib.optionals pkgs.stdenv.isLinux [
+    e2fsprogs
+  ]);
 
   security.sudo.wheelNeedsPassword = false ;
   time.timeZone = "America/Vancouver";

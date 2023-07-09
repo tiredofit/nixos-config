@@ -5,7 +5,7 @@
      description = "Dave Conroy";
      isNormalUser = true;
      home = "/home/dave" ;
-     shell = pkgs.bashInteractive ; # This is actually bash
+     shell = pkgs.bashInteractive ;
      uid = 2323;
      group = "users" ;
      extraGroups = [ "users" "networkmanager" "wheel" "docker" "adbusers" "libvirtd" ];
