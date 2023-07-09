@@ -15,11 +15,12 @@
     };
   in {
     environment.systemPackages = with pkgs; [
-      bashInteractive # bash shelldiceware
+      bashInteractive # bash shell
     ];
 
     programs = {
       bash = {
+        enableCompletion = true ;
         inherit shellAliases;
         shellInit = ''
               ## History

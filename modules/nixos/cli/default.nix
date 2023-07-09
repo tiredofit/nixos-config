@@ -8,7 +8,6 @@
   ];
 
   environment.systemPackages = with pkgs; [
-
     binutils            # standard binutils
     coreutils           # gnu core utilities
     curl                # swiss army knife

@@ -8,8 +8,9 @@
       ../../modules/nixos/bluetooth.nix
       ../../modules/nixos/default.nix
       ../../modules/nixos/impermanence.nix
+      ../../modules/nixos/plymouth.nix
       ../../modules/nixos/printing.nix
-      ../../modules/nixos/gui/bluetooth.nix
+      ../../modules/nixos/raid.nix
       ../../modules/nixos/gui/x.nix
       ../../modules/nixos/services/btrbak.nix
       ../../modules/nixos/services/opensnitch.nix
@@ -55,12 +56,6 @@
     };
 
     kernelPackages = pkgs.linuxPackages_latest;  # Latest kernel
-
-    plymouth = {
-      enable = true ;
-      theme = "breeze" ;
-    };
-
     kernelParams = [ "quiet" "amd_pstate=active" ];
 
     supportedFilesystems = [

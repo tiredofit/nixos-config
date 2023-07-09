@@ -37,8 +37,6 @@
     kernelParams = [ "resume_offset=4503599627370495" ];                        # Hibernation 'btrfs inspect-internal map-swapfile -r /mnt/swap/swapfile'
     resumeDevice = "/dev/disk/by-uuid/558e1b77-4ddc-4080-82e7-ecfb4045a79d" ;   # Hibernation 'blkid | grep '/dev/mapper/pool0_0' | awk '{print $2}' | cut -d '"' -f 2)'
 
-    plymouth.enable = true ;
-
     supportedFilesystems = [
       "btrfs"
       "fat" "vfat" "exfat" "ntfs" # Microsoft
