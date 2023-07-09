@@ -12,24 +12,18 @@ in
 {
   services.xserver = {
     enable = true;
-    layout = "us";
-    libinput.enable = true;
 
-    displayManager.lightdm = {
-      enable = true;
-      # autoLogin = {
-      #   timeout = 0;
-      # };
-    };
-
-    windowManager.openbox.enable = true;
     displayManager = {
-      defaultSession = "none+openbox";
       autoLogin = {
         user = "${kioskUsername}";
         enable = true;
       };
+      defaultSession = "none+openbox";
+      lightdm.enable = true;
     };
+    layout = "us";
+    libinput.enable = true;
+    windowManager.openbox.enable = true;
   };
 
   systemd.services."display-manager".after = [
