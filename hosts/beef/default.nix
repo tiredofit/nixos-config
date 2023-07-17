@@ -13,6 +13,7 @@
       ../../modules/nixos/raid.nix
       ../../modules/nixos/gui/x.nix
       ../../modules/nixos/services/btrbak.nix
+      ../../modules/nixos/services/service-docker_container_manager.nix
       ../../modules/nixos/services/opensnitch.nix
       ../../modules/nixos/services/openssh.nix
       ../../modules/nixos/services/tailscale.nix
@@ -91,5 +92,7 @@
 
   services.printing.drivers = with pkgs; [ hplip ];
 
+  #services.docker_container_manager_apps.enable = true;
+  services.docker_container_manager_system.enable = true;
   system.stateVersion = "23.05";
 }

@@ -10,6 +10,7 @@
       ../../modules/nixos/gui/x.nix
       ../../modules/nixos/services/btrbak.nix
       ../../modules/nixos/services/openssh.nix
+      ../../modules/nixos/services/service-docker_container_manager.nix
       ../../modules/nixos/services/virtualization-docker.nix
     ];
 

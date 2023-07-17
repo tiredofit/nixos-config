@@ -8,6 +8,7 @@
       ../../modules/nixos/default.nix
       ../../modules/nixos/impermanence.nix
       ../../modules/nixos/services/btrbak.nix
+      ../../modules/nixos/services/service-docker_container_manager.nix
       ../../modules/nixos/services/openssh.nix
       ../../modules/nixos/services/virtualization-docker.nix
     ];

@@ -48,6 +48,7 @@
       "/var/lib/NetworkManager"          # NetworkManager
     ];
     files = [
+      "/etc/machine-id"
     ];
   };
 
