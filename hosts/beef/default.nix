@@ -95,4 +95,12 @@
   #services.docker_container_manager_apps.enable = true;
   services.docker_container_manager_system.enable = true;
   system.stateVersion = "23.05";
+
+  sops.secrets.beef = {
+    sopsFile = ./secrets/secrets.yaml;
+  };
+
+  sops.secrets.common = {
+    sopsFile = ../common/secrets/secrets.yaml;
+  };
 }

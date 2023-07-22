@@ -48,6 +48,7 @@
         modules = [
           ./hosts/beef
           nur.nixosModules.nur
+#          sops-nix.nixosModules.sops
           vscode-server.nixosModules.default
         ];
       };

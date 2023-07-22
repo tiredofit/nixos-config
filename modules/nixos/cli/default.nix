@@ -18,7 +18,6 @@
     iftop               # network i/o analysis
     inetutils           # internet tools
     iotop               # i/o analysis
-    less                # pager
     links2              # console web browser
     lsof                # list open files
     mtr                 # traceroute
