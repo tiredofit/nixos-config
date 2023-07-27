@@ -1,10 +1,12 @@
 keys:
   - &host_beef age1wq5xj5mwv9xk4tp26cxc4xqjq9xd9hwqv0zeemawl2cc8sarmqesw366dh
 creation_rules:
-  - path_regex: hosts/common/secrets/[^/]+\.(yaml|json|env|ini)$
+#  - path_regex: hosts/common/secrets/[^/]+\.(yaml|json|env|ini)$
+  - path_regex: hosts/common/secrets/[.*]
     key_groups:
     - age:
       - *host_beef
+#  - path_regex: hosts/beef/secrets/[^/]+\.(yaml|json|env|ini)$
   - path_regex: hosts/beef/secrets/[^/]+\.(yaml|json|env|ini)$
     key_groups:
     - age:

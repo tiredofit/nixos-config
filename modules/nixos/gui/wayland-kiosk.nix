@@ -5,7 +5,7 @@ in
 {
   imports =
     [
-#      ./fonts.nix
+      ./fonts.nix
       ../locale.nix
     ];
 
