@@ -81,10 +81,10 @@
   };
 
   nixpkgs.config.allowUnfree = true;                                            # allow unfree packages
-  services.xserver.videoDrivers = [ "nvidia" ];                                 # nvidia 960
+  services.xserver.videoDrivers = [ "amdpu" ];                                  # nvidia 960
   hardware.opengl.enable = true;                                                # enable opengl
-  hardware.nvidia.package = config.boot.kernelPackages.nvidiaPackages.stable;   # stick with the stable track
-  hardware.nvidia.modesetting.enable = true;                                    # enable kms
+  #hardware.nvidia.package = config.boot.kernelPackages.nvidiaPackages.stable;   # stick with the stable track
+  #hardware.nvidia.modesetting.enable = true;                                    # enable kms
 
   powerManagement = {
     enable = true ;
