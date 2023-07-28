@@ -4,10 +4,10 @@
   # all fonts are linked to /nix/var/nix/profiles/system/sw/share/X11/fonts
   fonts = {
     # use fonts specified by user rather than default ones
-    enableDefaultFonts = false;
+    enableDefaultPackages = false;
     fontDir.enable = true;
 
-    fonts = with pkgs; [
+    packages = with pkgs; [
       caladea
       cantarell-fonts
       carlito
