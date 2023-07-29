@@ -20,6 +20,8 @@
       ../../modules/nixos/services/virtualization-docker.nix
       ../../modules/nixos/services/virtualization-virt-manager.nix
       ../../modules/nixos/services/vscode-server.nix
+      ../../modules/nixos/web/qbittorrrent.nix
+      ../../modules/nixos/web/deluge.nix
     ];
 
   boot = {
