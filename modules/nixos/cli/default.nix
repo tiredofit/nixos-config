@@ -9,7 +9,10 @@
 
   environment.systemPackages = with pkgs; [
     binutils            # standard binutils
+    bind
     coreutils           # gnu core utilities
+    cryptsetup
+    gptfdisk
     curl                # swiss army knife
     du-dust             # rust version of du
     git                 # git

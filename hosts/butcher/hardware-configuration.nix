@@ -8,74 +8,76 @@
     [ (modulesPath + "/profiles/qemu-guest.nix")
     ];
 
-  boot.initrd.availableKernelModules = [ "uhci_hcd" "ehci_pci" "ahci" "virtio_pci" "virtio_scsi" "sd_mod" "sr_mod" ];
+  boot.initrd.availableKernelModules = [ "uhci_hcd" "ehci_pci" "ahci" "virtio_pci" "xhci_pci" "uas" "sd_mod" "sr_mod" "virtio_blk" ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ ];
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
-    { device = "/dev/disk/by-uuid/290464ae-cc68-4376-8643-7fa00548cdab";
+    { device = "/dev/disk/by-uuid/aa0c78a7-b948-446a-95a7-92cd1336c882";
       fsType = "btrfs";
       options = [ "subvol=root" ];
     };
 
   fileSystems."/home" =
-    { device = "/dev/disk/by-uuid/290464ae-cc68-4376-8643-7fa00548cdab";
+    { device = "/dev/disk/by-uuid/aa0c78a7-b948-446a-95a7-92cd1336c882";
       fsType = "btrfs";
       options = [ "subvol=home/active" ];
     };
 
   fileSystems."/home/.snapshots" =
-    { device = "/dev/disk/by-uuid/290464ae-cc68-4376-8643-7fa00548cdab";
+    { device = "/dev/disk/by-uuid/aa0c78a7-b948-446a-95a7-92cd1336c882";
       fsType = "btrfs";
       options = [ "subvol=home/snapshots" ];
     };
 
   fileSystems."/nix" =
-    { device = "/dev/disk/by-uuid/290464ae-cc68-4376-8643-7fa00548cdab";
+    { device = "/dev/disk/by-uuid/aa0c78a7-b948-446a-95a7-92cd1336c882";
       fsType = "btrfs";
       options = [ "subvol=nix" ];
     };
 
   fileSystems."/persist" =
-    { device = "/dev/disk/by-uuid/290464ae-cc68-4376-8643-7fa00548cdab";
+    { device = "/dev/disk/by-uuid/aa0c78a7-b948-446a-95a7-92cd1336c882";
       fsType = "btrfs";
       options = [ "subvol=persist" ];
     };
 
   fileSystems."/var/local" =
-    { device = "/dev/disk/by-uuid/290464ae-cc68-4376-8643-7fa00548cdab";
+    { device = "/dev/disk/by-uuid/aa0c78a7-b948-446a-95a7-92cd1336c882";
       fsType = "btrfs";
       options = [ "subvol=var_local/active" ];
     };
 
   fileSystems."/var/local/.snapshots" =
-    { device = "/dev/disk/by-uuid/290464ae-cc68-4376-8643-7fa00548cdab";
+    { device = "/dev/disk/by-uuid/aa0c78a7-b948-446a-95a7-92cd1336c882";
       fsType = "btrfs";
       options = [ "subvol=var_local/snapshots" ];
     };
 
   fileSystems."/var/log" =
-    { device = "/dev/disk/by-uuid/290464ae-cc68-4376-8643-7fa00548cdab";
+    { device = "/dev/disk/by-uuid/aa0c78a7-b948-446a-95a7-92cd1336c882";
       fsType = "btrfs";
       options = [ "subvol=var_log" ];
     };
 
   fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/1B49-A33F";
+    { device = "/dev/disk/by-partlabel/EFI";
       fsType = "vfat";
     };
 
   fileSystems."/mnt/media" =
-    { device = "/dev/disk/by-uuid/63EB-98D4";
-      fsType = "exfat";
+    { device = "/dev/disk/by-uuid/9c3cfc7b-f660-44eb-9c60-d32342cdf174";
+      fsType = "btrfs";
     };
 
-  swapDevices =
-    [ { device = "/dev/disk/by-uuid/eccff2ae-cc09-406f-8c07-5c147d494cb2"; }
-    ];
+  swapDevices = [ { device = "/dev/disk/by-partlabel/SWAP"; } ];
 
-  networking.useDHCP = lib.mkDefault true;
+  # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
+  # (the default) this is the recommended approach. When using systemd-networkd it's
+  # still possible to use this option, but it's recommended to use it in conjunction
+  # with explicit per-interface declarations with `networking.interfaces.<interface>.useDHCP`.
+  # networking.useDHCP = lib.mkDefault true;
   # networking.interfaces.enp6s18.useDHCP = lib.mkDefault true;
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";

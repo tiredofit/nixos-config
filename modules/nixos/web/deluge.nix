@@ -30,7 +30,7 @@
         enc_out_policy = 2;
         ignore_limits_on_local_network = true;
         info_sent = 0.0;
-        listen_ports = [ 6990 6990 ] ;
+        listen_ports = [ 6990 ] ;
         listen_random_port = 59103 ;
         listen_reuse_port = true ;
         listen_use_sys_port = false ;

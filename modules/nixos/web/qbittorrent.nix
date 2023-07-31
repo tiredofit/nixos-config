@@ -2,10 +2,10 @@
 {
     environment.systemPackages = [ pkgs.qbittorrent-nox ];
 
-    networking.firewall = {
-      allowedTCPPorts = [ 6990 8112 ];
-      allowedUDPPorts = [ 6990 8112 ];
-    };
+#    networking.firewall = {
+#      allowedTCPPorts = [ 6990 8112 ];
+#      allowedUDPPorts = [ 6990 8112 ];
+#    };
 
     systemd.services.qbittorrent = {
       after = [ "network.target" ];
@@ -43,4 +43,6 @@
         gid = null;
       };
     };
+
+   networking.firewall.enable = false;
 }
