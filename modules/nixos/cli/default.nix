@@ -9,14 +9,15 @@
 
   environment.systemPackages = with pkgs; [
     binutils            # standard binutils
-    bind
+    bind                # nslookup and nameserver tools
     coreutils           # gnu core utilities
-    cryptsetup
-    gptfdisk
+    cryptsetup          # open LUKS containers
+    gptfdisk            # partitioning
     curl                # swiss army knife
     du-dust             # rust version of du
     git                 # git
     git-lfs             # git large file support
+    hdparm              # platter hard drive tools
     htop                # process analysis
     iftop               # network i/o analysis
     inetutils           # internet tools

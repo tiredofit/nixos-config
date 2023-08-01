@@ -6,6 +6,7 @@
       ./cli/default.nix
       ./locale.nix
       ./nix.nix
+      ./power_management.nix
       ./secrets.nix
       ./users_groups.nix
     ];
