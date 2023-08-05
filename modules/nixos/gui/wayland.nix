@@ -9,11 +9,6 @@
     ];
 
   environment.pathsToLink = [ "/libexec" ]; # links /libexec from derivations to /run/current-system/sw
-
-  environment.systemPackages = with pkgs; [
-    acpi             # battery information
-  ];
-
   programs = {
     dconf.enable = true;
     seahorse.enable = true;
@@ -21,7 +16,6 @@
 
   services.xserver = {
     enable = true;
-
     desktopManager = {
       xterm.enable = false;
       session = [
@@ -58,8 +52,8 @@
   };
 
   services = {
-    gvfs.enable = true;    # Mount, trash, and other functionalities
     gnome.gnome-keyring.enable = true;
+    gvfs.enable = true;    # Mount, trash, and other functionalities
   };
 }
 

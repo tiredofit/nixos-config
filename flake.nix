@@ -1,5 +1,5 @@
 {
-  description = "Tired of I.T! NixOS configuration";
+  description = "Tired of I.T! NixOS Configuration";
 
   nixConfig = {
     experimental-features = [ "nix-command" "flakes" ];
@@ -24,82 +24,13 @@
     vscode-server.url = "github:nix-community/nixos-vscode-server";
   };
 
-  outputs = inputs@{
-    self,
-    nixpkgs,
-    impermanence,
-    nur,
-    sops-nix,
-    vscode-server,
-    ...
-  }: {
-
-   nixosConfigurations = {
-      beef = nixpkgs.lib.nixosSystem rec {
-        system = "x86_64-linux";
-        specialArgs = {
-          pkgs-stable = import inputs.nixpkgs {
-            system = system;
-            config.allowUnfree = true;
-          };
-          GUI = true;
-        } // inputs;
-
-        modules = [
-          ./hosts/beef
-          nur.nixosModules.nur
-#          sops-nix.nixosModules.sops
-          vscode-server.nixosModules.default
-        ];
-      };
-
-      beer = nixpkgs.lib.nixosSystem rec {
-        system = "aarch64-linux";
-        specialArgs = {
-          pkgs = import inputs.nixpkgs {
-            system = system;
-            config.allowUnfree = true;
-          };
-          kioskUsername = "dave";
-          kioskURL = "https://beer.tiredofit.ca";
-        } // inputs;
-
-        modules = [
-          ./hosts/beer
-        ];
-      };
-
-      butcher = nixpkgs.lib.nixosSystem rec {
-        system = "x86_64-linux";
-        specialArgs = {
-          pkgs = import inputs.nixpkgs {
-            system = system;
-            config.allowUnfree = true;
-          };
-        } // inputs;
-
-        modules = [
-          ./hosts/butcher
-          nur.nixosModules.nur
-        ];
-      };
-
-      soy = nixpkgs.lib.nixosSystem rec {
-        system = "x86_64-linux";
-        specialArgs = {
-          pkgs = import inputs.nixpkgs {
-            system = system;
-            config.allowUnfree = true;
-          };
-          GUI = true;
-        } // inputs;
-
-        modules = [
-          ./hosts/soy
-          nur.nixosModules.nur
-          vscode-server.nixosModules.default
-        ];
-      };
-    };
+  outputs = inputs @ { self, nixpkgs, disko, impermanence, nur, sops-nix, vscode-server, ... }:
+    {
+      nixosConfigurations = (                                               # NixOS configurations
+        import ./hosts {                                                    # Imports ./hosts/default.nix
+          inherit (nixpkgs) lib;
+          inherit inputs nixpkgs disko impermanence nur sops-nix vscode-server;
+        }
+      );
   };
 }

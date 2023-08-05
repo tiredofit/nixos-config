@@ -4,7 +4,6 @@
   programs = {
     less = {
       enable = true;
-
       commands = {
          s = "back-line";
          t = "forw-line";

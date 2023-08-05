@@ -1,4 +1,4 @@
-{ config, pkgs, nur, ... } @ args:
+{ config, pkgs, lib, nur, ... } @ args:
 
 {
   imports =
@@ -20,7 +20,10 @@
       ../../modules/nixos/services/virtualization-docker.nix
       ../../modules/nixos/services/virtualization-virt-manager.nix
       ../../modules/nixos/services/vscode-server.nix
+      ../../modules/nixos/test.nix
+      #./test2.nix
     ];
+
 
   boot = {
     binfmt = {
@@ -38,7 +41,6 @@
         useOSProber = false;
         efiInstallAsRemovable = true;
       };
-
     };
 
     initrd.luks.devices = {
@@ -75,32 +77,50 @@
   fileSystems."/var/log".options = [ "subvol=var_log" "compress=zstd" "noatime"  ];
   fileSystems."/var/log".neededForBoot = true;
 
+  hostoptions = {
+    impermanence.enable = true;
+  };
+
   networking = {
     hostName = "beef";
     networkmanager.enable = true;
   };
 
-  nixpkgs.config.allowUnfree = true;                                            # allow unfree packages
-  services.xserver.videoDrivers = [ "amdpu" ];                                  # nvidia 960
-  hardware.opengl.enable = true;                                                # enable opengl
+  #nixpkgs.config.allowUnfree = true;                                            # allow unfree packages
+
+  ## Graphics
+  services.xserver.videoDrivers = [ "amdpu" ];                                  # AMD Ryzen 7900
+  hardware = {
+    opengl = {
+      enable = true ;
+      driSupport = true;
+      extraPackages = with pkgs; [
+        amdvlk
+      ];
+    };
+  };
   #hardware.nvidia.package = config.boot.kernelPackages.nvidiaPackages.stable;   # stick with the stable track
   #hardware.nvidia.modesetting.enable = true;                                    # enable kms
 
-  powerManagement = {
-    enable = true ;
+
+
+  services = {
+    #docker_container_manager_apps.enable = true;
+    docker_container_manager_system.enable = true;
+    printing.drivers = with pkgs; [ hplip ];
   };
 
-  services.printing.drivers = with pkgs; [ hplip ];
-
-  #services.docker_container_manager_apps.enable = true;
-  services.docker_container_manager_system.enable = true;
-  system.stateVersion = "23.05";
-
-  sops.secrets.beef = {
-    sopsFile = ./secrets/secrets.yaml;
+  sops = {
+    secrets = {
+      beef = {
+        sopsFile = ./secrets/secrets.yaml;
+      };
+      common = {
+        sopsFile = ../common/secrets/secrets.yaml;
+      };
+    };
   };
 
-  sops.secrets.common = {
-    sopsFile = ../common/secrets/secrets.yaml;
-  };
+  system.stateVersion = "23.11";
+
 }

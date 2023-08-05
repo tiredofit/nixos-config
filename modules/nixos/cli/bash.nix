@@ -24,7 +24,7 @@
         inherit shellAliases;
         shellInit = ''
               ## History
-              export HISTFILE=/$USER/.bash_history
+              export HISTFILE=/$HOME/.bash_history
               ## Configure bash to append (rather than overwrite history)
               shopt -s histappend
 
