@@ -106,7 +106,7 @@ in
       environment.persistence."/persist" = {
         hideMounts = true ;
         directories = [
-          "/etc/NetworkManager"              # NetworkManager
+          "/etc/NetworkManager"              # NetworkManager TODO should be seperated
           "/root"                            # Root
           "/var/lib/NetworkManager"          # NetworkManager
         ] ++ cfg.directories;

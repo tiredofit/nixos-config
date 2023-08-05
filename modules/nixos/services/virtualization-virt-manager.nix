@@ -16,10 +16,7 @@
     spiceUSBRedirection.enable = true;
   };
 
-  environment.persistence."/persist" = {
-    hideMounts = true ;
-    directories = [
-      "/var/lib/libvirt"                 # Libvirt
-    ];
-  };
+  hostoptions.impermanence.directories = [
+    "/var/lib/libvirt"                 # Libvirt
+  ];
 }

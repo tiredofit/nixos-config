@@ -1,7 +1,6 @@
 {config, pkgs, lib, ...}:
 
 let
-
   apps_cfg = config.services.docker_container_manager_apps;
   name = "docker_container_manager";
   system_cfg = config.services.docker_container_manager_system;

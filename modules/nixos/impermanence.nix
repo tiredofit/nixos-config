@@ -67,17 +67,17 @@
         impermanence-fsdiff
       ];
 
-  environment.persistence."/persist" = {
-    hideMounts = true ;
-    directories = [
-      "/etc/NetworkManager"              # NetworkManager
-      "/root"                            # Root
-      "/var/lib/NetworkManager"          # NetworkManager
-    ];
-    files = [
-      "/etc/machine-id"
-    ];
-  };
+#  environment.persistence."/persist" = {
+#    hideMounts = true ;
+#    directories = [
+#      "/etc/NetworkManager"              # NetworkManager
+#      "/root"                            # Root
+#      "/var/lib/NetworkManager"          # NetworkManager
+#    ];
+#    files = [
+ #     "/etc/machine-id"
+#    ];
+#  };
 
   fileSystems."/persist".options = [ "subvol=persist" "compress=zstd" "noatime"  ];
   fileSystems."/persist".neededForBoot = true ;

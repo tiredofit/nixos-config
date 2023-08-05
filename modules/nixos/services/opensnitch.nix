@@ -1,13 +1,5 @@
 { config, pkgs, ... }:
 {
-
-  environment.persistence."/persist" = {
-    hideMounts = true ;
-    directories = [
-      "/var/lib/opensnitch"          # Opensnitch
-    ];
-  };
-
   services = {
     opensnitch = {
       enable = true;
@@ -15,4 +7,8 @@
       };
     };
   };
+
+  hostoptions.impermanence.directories = [
+    "/var/lib/opensnitch"          # Opensnitch
+  ];
 }

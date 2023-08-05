@@ -9,10 +9,7 @@
     };
   };
 
-  environment.persistence."/persist" = {
-    hideMounts = true ;
-    directories = [
-      "/var/lib/fail2ban"                # Fail2ban Database
-    ];
-  };
+  hostoptions.impermanence.directories = [
+    "/var/lib/fail2ban"                # Fail2ban Database
+  ];
 }
