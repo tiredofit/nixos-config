@@ -5,7 +5,7 @@
     [
       ./fonts.nix
       ../locale.nix
-      ../sound-ppiewire.nix
+      ../sound-pipewire.nix
     ];
 
   environment.pathsToLink = [ "/libexec" ]; # links /libexec from derivations to /run/current-system/sw
@@ -33,8 +33,8 @@
       startx.enable = false ;
       lightdm.enable = false ;
       gdm = {
-        enable = true ;
-        wayland = true ;
+        enable = false ;
+        wayland = false ;
       };
     };
 
@@ -42,9 +42,26 @@
     libinput.enable = true;
   };
 
+  services.greetd = {
+    enable = true;
+    settings = {
+      default_session = {
+        command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time";
+        user = "greeter";
+      };
+    };
+  };
+
   security = {
     pam = {
-      services.gdm.enableGnomeKeyring = true;
+      services = {
+       gdm.enableGnomeKeyring = true;
+       swaylock.text = ''
+         # PAM configuration file for the swaylock screen locker. By default, it includes
+         # the 'login' configuration file (see /etc/pam.d/login)
+         auth include login
+       '';
+      };
     };
     polkit = {
       enable = true;

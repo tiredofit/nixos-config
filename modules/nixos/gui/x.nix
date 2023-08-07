@@ -31,7 +31,7 @@
     };
 
     displayManager = {
-      startx.enable = false ;
+      startx.enable = true ;
       lightdm.enable = false ;
       gdm = {
         enable = true ;
@@ -43,6 +43,16 @@
     libinput.enable = true;
     xkbVariant = "";
   };
+
+#  services.greetd = {
+#    enable = true;
+#    settings = {
+#      default_session = {
+#        command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time";
+#        user = "greeter";
+#      };
+#    };
+#  };
 
   security = {
     pam = {

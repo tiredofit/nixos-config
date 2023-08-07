@@ -11,7 +11,8 @@
       ../../modules/nixos/plymouth.nix
       ../../modules/nixos/printing.nix
       ../../modules/nixos/raid.nix
-      ../../modules/nixos/gui/x.nix
+      #../../modules/nixos/gui/x.nix
+      ../../modules/nixos/gui/wayland.nix
       ../../modules/nixos/services/btrbak.nix
       ../../modules/nixos/services/service-docker_container_manager.nix
       ../../modules/nixos/services/opensnitch.nix
@@ -58,7 +59,14 @@
     };
 
     kernelPackages = pkgs.linuxPackages_latest;  # Latest kernel
-    kernelParams = [ "quiet" "amd_pstate=active" ];
+    kernelParams = [
+      "quiet"
+      "amd_pstate=active"
+      "video=DP-3:2560x1440@120"
+      "video=DP-2:2560x1440@120"
+      "video=HDMI-A-1:2560x1440@120"
+      "amdgpu.sg_display=0"
+    ];
 
     supportedFilesystems = [
       "btrfs"
@@ -88,14 +96,14 @@
   #nixpkgs.config.allowUnfree = true;                                            # allow unfree packages
 
   ## Graphics
-  services.xserver.videoDrivers = [ "amdpu" ];                                  # AMD Ryzen 7900
+  services.xserver.videoDrivers = [ "amdgpu" ];                                  # AMD Ryzen 7900
   hardware = {
     opengl = {
       enable = true ;
       driSupport = true;
-      extraPackages = with pkgs; [
-        amdvlk
-      ];
+      #extraPackages = with pkgs; [
+      #  amdvlk
+      #];
     };
   };
   #hardware.nvidia.package = config.boot.kernelPackages.nvidiaPackages.stable;   # stick with the stable track

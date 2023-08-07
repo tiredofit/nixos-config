@@ -13,10 +13,10 @@ in
       ./nix.nix
       ./power_management.nix
       ./secrets.nix
-      # ./impermanence.nix
+    #  ./impermanence.nix
       ./users_groups.nix
     ];
-    ++ lib.optionals ( impermanence && !encrypted) [
+    #++ lib.optionals ( impermanence && !encrypted) [
     #  ./impermanence_nocrypt.nix
     #]
     #++ lib.optionals ( impermanence && encrypted) [
