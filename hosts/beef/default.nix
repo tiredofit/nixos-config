@@ -118,6 +118,7 @@
     #docker_container_manager_apps.enable = true;
     docker_container_manager_system.enable = true;
     printing.drivers = with pkgs; [ hplip ];
+    udev.packages = [ pkgs.crda ];
   };
 
   sops = {
