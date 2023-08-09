@@ -8,7 +8,7 @@
      shell = pkgs.bashInteractive ;
      uid = 2323;
      group = "users" ;
-     extraGroups = [ "users" "networkmanager" "wheel" "docker" "adbusers" "libvirtd" ];
+     extraGroups = [ "users" "networkmanager" "wheel" "docker" "adbusers" "libvirtd" "input" ];
      openssh.authorizedKeys.keys = [
         "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAtKh1vr6m9j0y9T7sf928FcacPbIYP9DHzCv2hQIVPS daveconroy"
      ];

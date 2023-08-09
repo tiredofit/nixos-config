@@ -68,9 +68,20 @@
     };
   };
 
+  programs.hyprland = {
+    enable = true;
+  };
+
   services = {
     gnome.gnome-keyring.enable = true;
     gvfs.enable = true;    # Mount, trash, and other functionalities
+  };
+
+  xdg = {
+    portal = {
+      enable = true;
+      extraPortals = [ pkgs.xdg-desktop-portal-hyprland ];
+    };
   };
 }
 

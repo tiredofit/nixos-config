@@ -1,4 +1,4 @@
-{ lib, inputs, nixpkgs, disko, impermanence, nur, sops-nix, vscode-server, ... }:
+{ lib, inputs, nixpkgs, disko, hyprland, impermanence, nur, sops-nix, vscode-server, ... }:
 
 let
   pkgs = import nixpkgs {

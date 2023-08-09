@@ -15,6 +15,11 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    hyprland.url = "github:hyprwm/Hyprland/v0.28.0";
+    hyprwm-contrib = {
+      url = "github:hyprwm/contrib";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     impermanence.url = "github:nix-community/impermanence";
     nur.url = "github:nix-community/NUR";
     sops-nix = {
@@ -24,12 +29,12 @@
     vscode-server.url = "github:nix-community/nixos-vscode-server";
   };
 
-  outputs = inputs @ { self, nixpkgs, disko, impermanence, nur, sops-nix, vscode-server, ... }:
+  outputs = inputs @ { self, nixpkgs, disko, hyprland, impermanence, nur, sops-nix, vscode-server, ... }:
     {
       nixosConfigurations = (                                               # NixOS configurations
         import ./hosts {                                                    # Imports ./hosts/default.nix
           inherit (nixpkgs) lib;
-          inherit inputs nixpkgs disko impermanence nur sops-nix vscode-server;
+          inherit inputs nixpkgs disko hyprland impermanence nur sops-nix vscode-server;
         }
       );
   };
