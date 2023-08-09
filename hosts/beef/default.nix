@@ -90,7 +90,10 @@
 
   networking = {
     hostName = "beef";
-    networkmanager.enable = true;
+    networkmanager= {
+      enable = true;
+      wifi.backend = "iwd";
+    };
   };
 
   #nixpkgs.config.allowUnfree = true;                                            # allow unfree packages

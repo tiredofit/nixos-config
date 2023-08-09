@@ -56,7 +56,10 @@
 
   networking = {
     hostName = "soy";
-    networkmanager.enable = true;
+    networkmanager= {
+      enable = true;
+      wifi.backend = "iwd";
+    };
   };
 
   services.qemuGuest.enable = true

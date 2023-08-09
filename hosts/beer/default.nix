@@ -32,7 +32,10 @@ in
 
   networking = {
     hostName = "beer";
-    networkmanager.enable = true;
+    networkmanager= {
+      enable = true;
+      wifi.backend = "iwd";
+    };
   };
 
   nix.settings.trusted-users = [ "root" "@wheel" "dave" ];
