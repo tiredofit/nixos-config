@@ -11,8 +11,8 @@
       ../../modules/nixos/plymouth.nix
       ../../modules/nixos/printing.nix
       ../../modules/nixos/raid.nix
-      #../../modules/nixos/gui/x.nix
-      ../../modules/nixos/gui/wayland.nix
+      ../../modules/nixos/gui/x.nix
+      #../../modules/nixos/gui/wayland.nix
       ../../modules/nixos/services/btrbak.nix
       ../../modules/nixos/services/service-docker_container_manager.nix
       ../../modules/nixos/services/opensnitch.nix
