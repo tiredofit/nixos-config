@@ -92,14 +92,14 @@
     hostName = "beef";
     networkmanager= {
       enable = true;
-      wifi.backend = "iwd";
+      #wifi.backend = "iwd";
     };
   };
 
   #nixpkgs.config.allowUnfree = true;                                            # allow unfree packages
 
   ## Graphics
-  services.xserver.videoDrivers = [ "amdgpu" ];                                  # AMD Ryzen 7900
+  #services.xserver.videoDrivers = [ "amdgpu" ];                                  # AMD Ryzen 7900
   hardware = {
     opengl = {
       enable = true ;
