@@ -21,8 +21,6 @@
       ../../modules/nixos/services/virtualization-docker.nix
       ../../modules/nixos/services/virtualization-virt-manager.nix
       ../../modules/nixos/services/vscode-server.nix
-      ../../modules/nixos/test.nix
-      #./test2.nix
     ];
 
   boot = {

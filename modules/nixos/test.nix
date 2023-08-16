@@ -1,39 +1,46 @@
- {config, pkgs, lib, ...}:
+ {config, impermanence, lib, pkgs, ...}:
 
 let
-  cfg = config.hostoptions.impermanence ;
+  cfg = config.hostoptions.impermanence;
+  encryption = config.hostoptions.encryption;
 in
-   with lib;
+ with lib;
 {
+  imports =
+  [
+    impermanence.nixosModules.impermanence
+  ];
+
   options = {
     hostoptions.impermanence = {
       enable = mkOption {
         default = false;
         type = with types; bool;
-        description = "Wipe root filesystem and restore blank root BTRFS subvolume on boot. Also known as 'Erasing your darlings'.";
+        description = "Wipe root filesystem and restore blank root BTRFS subvolume on boot. Also known as 'Erasing your darlings'";
       };
       root-subvol = mkOption {
           type = types.str;
           default = "root";
-          description = "Root subvolume to wipe on boot.";
+          description = "Root subvolume to wipe on boot";
       };
       blank-root-subvol = mkOption {
         type = types.str;
         default = "root-blank";
-        description = "Blank root subvolume to restore on boot.";
+        description = "Blank root subvolume to restore on boot";
       };
       directories = mkOption {
         type = types.listOf types.anything;
         default = [];
-        description = "";
+        description = "Directories that should be persisted between reboots";
       };
       files = mkOption {
         type = types.listOf types.anything;
         default = [];
-        description = "";
+        description = "Files that should be persisted between reboots";
       };
     };
   };
+
 
     config = mkIf cfg.enable {
       boot.initrd = {

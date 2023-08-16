@@ -14,21 +14,14 @@
       };
     };
 
-    persistence."/persist" = {
-      hideMounts = true ;
-      directories = [
-        "/var/lib/docker"                  # Docker
-      ];
-    };
-
     systemPackages = with pkgs; [
       docker-compose
     ];
   };
 
-#  hostoptions.impermanence.directories = [
-#    "/var/lib/docker"                  # Docker
-#  ];
+  hostoptions.impermanence.directories = [
+    "/var/lib/docker"                  # Docker
+  ];
 
   system.activationScripts.create_docker_networks = let
     dockerBin = "${pkgs.docker}/bin/docker";
