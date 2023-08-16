@@ -42,9 +42,21 @@
     ];
   };
 
-  hostoptions.impermanence.directories = [
-    "/mnt/"
-  ];
+#  hostoptions = {
+#    impermanence = {
+#      enable = true;
+#      directories = [
+#        "/mnt/"
+#      ];
+#    };
+#  };
+
+  environment.persistence."/persist" = {
+    hideMounts = true ;
+    directories = [
+      "/mnt/"                  # Docker
+    ];
+  };
 
   fileSystems."/".options = [ "subvol=root" "compress=zstd" "noatime"  ];
   fileSystems."/boot".options = [ "defaults" "nosuid" "nodev" "noatime" "fmask=0022" "dmask=0022" "codepage=437" "iocharset=iso8859-1" "shortname=mixed" "errors=remount-ro" ] ;

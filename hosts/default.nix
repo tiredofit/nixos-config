@@ -56,18 +56,6 @@ in
     ];
   };
 
-  newbutcher = lib.nixosSystem rec {
-    system = "x86_64-linux";
-    specialArgs = {
-      inherit inputs;
-    } // inputs;
-
-    modules = [
-      ./newbutcher
-      nur.nixosModules.nur
-    ];
-  };
-
   soy = lib.nixosSystem rec {
     system = "x86_64-linux";
     specialArgs = {
