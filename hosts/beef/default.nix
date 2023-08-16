@@ -83,6 +83,7 @@
   fileSystems."/var/log".neededForBoot = true;
 
   hostoptions = {
+    encryption.enable = true;
     impermanence.enable = true;
   };
 
