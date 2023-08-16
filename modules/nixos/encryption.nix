@@ -1,7 +1,7 @@
  {config, lib, pkgs, ...}:
 
 let
-  encrypted = config.hostoptions.encryption;
+  cfg_encrypted = config.hostoptions.encryption;
 in
   with lib;
 {
@@ -22,5 +22,11 @@ in
         description = "Encrypted LUKS container to mount";
       };
     };
+  };
+
+  config = mkIf cfg_encrypted.enable {
+    systemPackages =  with pkgs; [
+      cryptsetup          # Manipulate LUKS containers
+    ];
   };
 }
