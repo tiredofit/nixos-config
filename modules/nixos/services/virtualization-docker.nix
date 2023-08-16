@@ -13,6 +13,7 @@
         mode = "0600";
       };
     };
+
     persistence."/persist" = {
       hideMounts = true ;
       directories = [
@@ -24,6 +25,10 @@
       docker-compose
     ];
   };
+
+#  hostoptions.impermanence.directories = [
+#    "/var/lib/docker"                  # Docker
+#  ];
 
   system.activationScripts.create_docker_networks = let
     dockerBin = "${pkgs.docker}/bin/docker";
