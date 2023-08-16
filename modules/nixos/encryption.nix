@@ -17,9 +17,9 @@ in
         description = "Encrypt Filesystem";
       };
       encrypted-partition = mkOption {
-          type = types.str;
-          default = "pool0_0";
-          description = "Encrypted LUKS container to mount";
+        type = types.str;
+        default = "pool0_0";
+        description = "Encrypted LUKS container to mount";
       };
     };
   };

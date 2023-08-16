@@ -5,8 +5,7 @@
     [
       nur.nixosModules.nur # Use `config.nur.repos.<user>.<package-name>` in NixOS Module for packages from the NUR.
       ./hardware-configuration.nix
-      ../../modules/nixos/default.nix
-      ../../modules/nixos/impermanence.nix
+      ../../modules/nixos
       ../../modules/nixos/gui/x.nix
       ../../modules/nixos/services/btrbak.nix
       ../../modules/nixos/services/openssh.nix
@@ -53,6 +52,11 @@
   fileSystems."/var/local/.snapshots".options = [ "subvol=var_local/snapshot" "compress=zstd" "noatime"  ];
   fileSystems."/var/log".options = [ "subvol=var_log" "compress=zstd" "noatime"  ];
   fileSystems."/var/log".neededForBoot = true;
+
+  hostoptions = {
+    encryption.enable = true;
+    impermanence.enable = true;
+  };
 
   networking = {
     hostName = "soy";

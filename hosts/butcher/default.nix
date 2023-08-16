@@ -6,7 +6,6 @@
       nur.nixosModules.nur # Use `config.nur.repos.<user>.<package-name>` in NixOS Module for packages from the NUR.
       ./hardware-configuration.nix
       ../../modules/nixos/default.nix
-      ../../modules/nixos/impermanence_nocrypt.nix
       ../../modules/nixos/services/btrbak.nix
       ../../modules/nixos/services/service-docker_container_manager.nix
       ../../modules/nixos/services/openssh.nix
@@ -42,20 +41,13 @@
     ];
   };
 
-#  hostoptions = {
-#    impermanence = {
-#      enable = true;
-#      directories = [
-#        "/mnt/"
-#      ];
-#    };
-#  };
-
-  environment.persistence."/persist" = {
-    hideMounts = true ;
-    directories = [
-      "/mnt/"                  # Docker
-    ];
+  hostoptions = {
+    impermanence = {
+      enable = true;
+      directories = [
+        "/mnt/"
+      ];
+    };
   };
 
   fileSystems."/".options = [ "subvol=root" "compress=zstd" "noatime"  ];

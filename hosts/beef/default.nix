@@ -7,7 +7,6 @@
       ./hardware-configuration.nix
       ../../modules/nixos/bluetooth.nix
       ../../modules/nixos/default.nix
-      ../../modules/nixos/impermanence.nix
       ../../modules/nixos/plymouth.nix
       ../../modules/nixos/printing.nix
       ../../modules/nixos/raid.nix
