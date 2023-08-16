@@ -5,10 +5,6 @@ let
 in
   with lib;
 {
-  imports =
-  [
-  ];
-
   options = {
     hostoptions.encryption = {
       enable = mkOption {
@@ -25,7 +21,7 @@ in
   };
 
   config = mkIf cfg_encrypted.enable {
-    systemPackages =  with pkgs; [
+    environment.systemPackages =  with pkgs; [
       cryptsetup          # Manipulate LUKS containers
     ];
   };
