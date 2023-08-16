@@ -1,4 +1,4 @@
-{ pkgs, config, specialArgs, ...}:
+{ config, pkgs, specialArgs, ...}:
 let
   inherit (specialArgs) kioskUsername kioskURL;
   autostart = ''
