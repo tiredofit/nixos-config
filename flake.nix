@@ -15,6 +15,11 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    hardware.url = "github:nixos/nixos-hardware";
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     hyprland.url = "github:hyprwm/Hyprland/v0.28.0";
     hyprwm-contrib = {
       url = "github:hyprwm/contrib";
@@ -29,13 +34,46 @@
     vscode-server.url = "github:nix-community/nixos-vscode-server";
   };
 
-  outputs = inputs @ { self, nixpkgs, disko, hyprland, impermanence, nur, sops-nix, vscode-server, ... }:
+  outputs = { self, nixpkgs, ... }@inputs:
+    let
+      inherit (self) outputs;
+      lib = nixpkgs.lib;
+      systems = [ "x86_64-linux" "aarch64-linux" ];
+      forEachSystem = f: lib.genAttrs systems (sys: f pkgsFor.${sys});
+      pkgsFor = nixpkgs.legacyPackages;
+    in
     {
-      nixosConfigurations = (                                               # NixOS configurations
-        import ./hosts {                                                    # Imports ./hosts/default.nix
-          inherit (nixpkgs) lib;
-          inherit inputs nixpkgs disko hyprland impermanence nur sops-nix vscode-server;
-        }
-      );
-  };
+      inherit lib;
+      nixosModules = import ./modules/nixos;
+      overlays = import ./overlays { inherit inputs outputs; };
+      packages = forEachSystem (pkgs: import ./pkgs { inherit pkgs; });
+      devShells = forEachSystem (pkgs: import ./shell.nix { inherit pkgs; });
+      formatter = forEachSystem (pkgs: pkgs.nixpkgs-fmt);
+
+      nixosConfigurations = {
+        beef =  lib.nixosSystem { # Workstation
+          modules = [ ./hosts/beef ];
+          specialArgs = { inherit inputs outputs; };
+        };
+
+        beer =  lib.nixosSystem { # Bar
+          modules = [ ./hosts/beer ];
+          specialArgs = {
+            inherit inputs outputs;
+            kioskUsername = "dave";
+            kioskURL = "https://beer.tiredofit.ca";
+          };
+        };
+
+        butcher =  lib.nixosSystem { # Local Server
+          modules = [ ./hosts/butcher ];
+          specialArgs = { inherit inputs outputs; };
+        };
+
+        soy =  lib.nixosSystem { # Fake assed wanna-be
+          modules = [ ./hosts/soy ];
+          specialArgs = { inherit inputs outputs; };
+        };
+      };
+    };
 }

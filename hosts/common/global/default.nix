@@ -1,46 +1,66 @@
 # This file (and the global directory) holds config that i use on all hosts
-{ inputs, outputs, ... }: {
+{ inputs, outputs, pkgs, ... }: {
   imports = [
-#    inputs.home-manager.nixosModules.home-manager
-#    ./acme.nix
-#    ./auto-upgrade.nix
-#    ./fish.nix
-#    ./locale.nix
-#    ./nix.nix
-#    ./openssh.nix
-#    ./optin-persistence.nix
-#    ./podman.nix
-#    ./sops.nix
-#    ./ssh-serve-store.nix
-#    ./steam-hardware.nix
-#    ./systemd-initrd.nix
-#    ./tailscale.nix
+    inputs.home-manager.nixosModules.home-manager
+    ./bash.nix
+    ./diceware.nix
+    ./less.nix
+    ./locale.nix
+    ./nix.nix
+    ./openssh.nix
+    ./sops.nix
   ] ++ (builtins.attrValues outputs.nixosModules);
 
- # home-manager.extraSpecialArgs = { inherit inputs outputs; };
+  boot = {
+    kernel.sysctl = {
+      "vm.dirty_ratio" = 6;                         # sync disk when buffer reach 6% of memory
+    };
+    kernelPackages = pkgs.linuxPackages_latest;     # Latest kernel
+  };
+
+  environment = {
+    enableAllTerminfo = true;
+    systemPackages = with pkgs; [
+      binutils            # standard binutils
+      bind                # nslookup and nameserver tools
+      coreutils           # gnu core utilities
+      curl                # swiss army knife
+      du-dust             # rust version of du
+      git                 # git
+      git-lfs             # git large file support
+      htop                # process analysis
+      iftop               # network i/o analysis
+      inetutils           # internet tools
+      iotop               # i/o analysis
+      links2              # console web browser
+      lsof                # list open files
+      mtr                 # traceroute
+      ncdu                # disk usage gui
+      nano                # editor
+      nvd                 # Nix Diffs
+      psmisc              # process analysis
+      wget                # file fetcher
+    ]
+    ++ (lib.optionals pkgs.stdenv.isLinux [
+      pciutils            # pci statistics
+      strace              # debug
+    ]);
+  };
+
+  home-manager.extraSpecialArgs = { inherit inputs outputs; };
+
+  hardware.enableRedistributableFirmware = true;
+
+  networking.domain = "tiredofit.ca";
 
   nixpkgs = {
     overlays = builtins.attrValues outputs.overlays;
     config = {
       allowUnfree = true;
-  #    # FIXME
-  #    permittedInsecurePackages = [
-  #      "openssl-1.1.1u"
-  #    ];
+      permittedInsecurePackages = [
+      ];
     };
   };
-
-  # Fix for qt6 plugins
-  # TODO: maybe upstream this?
-  #environment.profileRelativeSessionVariables = {
-  #  QT_PLUGIN_PATH = [ "/lib/qt-6/plugins" ];
-  #};
-
-  environment.enableAllTerminfo = true;
-
-  hardware.enableRedistributableFirmware = true;
-  #networking.domain = "m7.rs";
-
   # Increase open file limit for sudoers
   security.pam.loginLimits = [
     {

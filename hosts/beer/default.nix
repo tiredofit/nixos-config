@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ pkgs, inputs, ...}: {
 let
  resolutionfix = pkgs.writeShellScriptBin "resolution_fix" ''
     sudo cvt 2560 1080 60
@@ -7,13 +7,15 @@ let
   '';
 in
 {
-  imports =
-    [
-      ./hardware-configuration.nix
-      ../../modules/nixos/default.nix
-      ../../modules/nixos/services/openssh.nix
-      ../../modules/nixos/gui/x-kiosk.nix
-    ];
+
+imports = [
+    ./hardware-configuration.nix
+
+    ../common/global
+    ../common/optional/gui/x-kiosk.nix
+
+    ../common/users/dave
+  ];
 
   boot = {
     loader = {
@@ -24,28 +26,26 @@ in
     kernelPackages = pkgs.linuxPackages_latest;  # Latest kernel
   };
 
+  environment.systemPackages = with pkgs; [
+    arandr
+    libraspberrypi
+    resolutionfix
+    xorg.libxcvt
+    xterm
+  ];
+
   networking = {
     hostName = "beer";
     networkmanager= {
       enable = true;
-      wifi.backend = "iwd";
     };
   };
-
-  nix.settings.trusted-users = [ "root" "@wheel" "dave" ];
-  system.stateVersion = "23.11";
 
   services.xserver = {
     videoDrivers = [ "fbdev" ];
   };
 
-  environment.systemPackages = with pkgs; [
-    arandr
-    libraspberrypi
-    xterm
-    xorg.libxcvt
-    resolutionfix
-  ];
+  system.stateVersion = "23.11";
 }
 
 

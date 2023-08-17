@@ -1,45 +1,31 @@
-{ config, pkgs, lib, nur, ... } @ args:
+{ pkgs, inputs, ...}: {
 
-{
-  imports =
-    [
-      nur.nixosModules.nur # Use `config.nur.repos.<user>.<package-name>` in NixOS Module for packages from the NUR.
-      ./hardware-configuration.nix
-      ../../modules/nixos/bluetooth.nix
-      ../../modules/nixos/default.nix
-      ../../modules/nixos/plymouth.nix
-      ../../modules/nixos/printing.nix
-      ../../modules/nixos/raid.nix
-      ../../modules/nixos/gui/x.nix
-      #../../modules/nixos/gui/wayland.nix
-      ../../modules/nixos/services/btrbak.nix
-      ../../modules/nixos/services/service-docker_container_manager.nix
-      ../../modules/nixos/services/opensnitch.nix
-      ../../modules/nixos/services/openssh.nix
-      ../../modules/nixos/services/tailscale.nix
-      ../../modules/nixos/services/virtualization-docker.nix
-      ../../modules/nixos/services/virtualization-virt-manager.nix
-      ../../modules/nixos/services/vscode-server.nix
-    ];
+  imports = [
+    inputs.hardware.nixosModules.common-cpu-amd
+    inputs.hardware.nixosModules.common-cpu-amd-pstate
+    inputs.hardware.nixosModules.common-cpu-amd-raphael-igpu
+    inputs.hardware.nixosModules.common-pc-hdd
+    inputs.hardware.nixosModules.common-pc-ssd
+    inputs.nur.nixosModules.nur
+    inputs.vscode-server.nixosModules.default
+    ./hardware-configuration.nix
+
+    ../common/global
+    ../common/optional/gui/graphics-acceleration.nix
+    ../common/optional/gui/x.nix
+
+    ../common/optional/cross_compile-aarch64.nix
+    ../common/optional/services/fail2ban.nix
+    ../common/optional/services/opensnitch.nix
+    ../common/optional/plymouth.nix
+    ../common/optional/services/tailscale.nix
+    ../common/optional/services/virtualization-docker.nix
+    ../common/optional/services/virtualization-virt-manager.nix
+    ../common/optional/services/vscode-server.nix
+    ../common/users/dave
+  ];
 
   boot = {
-    binfmt = {
-      emulatedSystems = [ "aarch64-linux" ]; # Allow to build aarch64 binaries
-    };
-    loader = {
-      efi = {
-        canTouchEfiVariables = false;
-      };
-      grub = {
-        enable = true;
-        device = "nodev";
-        efiSupport = true;
-        enableCryptodisk = false;
-        useOSProber = false;
-        efiInstallAsRemovable = true;
-      };
-    };
-
     initrd.luks.devices = {
       "pool0_0" = {
          allowDiscards = true;
@@ -51,84 +37,35 @@
       };
     };
 
-    kernel.sysctl = {
-      "vm.dirty_ratio" = 6;   # sync disk when buffer reach 6% of memory
-    };
-
-    kernelPackages = pkgs.linuxPackages_latest;  # Latest kernel
     kernelParams = [
       "quiet"
-      "amd_pstate=active"
       "video=DP-3:2560x1440@120"
       "video=DP-2:2560x1440@120"
       "video=HDMI-A-1:2560x1440@120"
       "amdgpu.sg_display=0"
     ];
-
-    supportedFilesystems = [
-      "btrfs"
-      "vfat"
-    ];
   };
 
-  fileSystems."/".options = [ "subvol=root" "compress=zstd" "noatime"  ];
-  fileSystems."/home".options = [ "subvol=home/active" "compress=zstd" "noatime"  ];
-  fileSystems."/home".neededForBoot = true;
-  fileSystems."/home/.snapshots".options = [ "subvol=home/snapshot" "compress=zstd" "noatime"  ];
-  fileSystems."/nix".options = [ "subvol=nix" "compress=zstd" "noatime"  ];
-  fileSystems."/var/local".options = [ "subvol=var_local/active" "compress=zstd" "noatime"  ];
-  fileSystems."/var/local/.snapshots".options = [ "subvol=var_local/snapshot" "compress=zstd" "noatime"  ];
-  fileSystems."/var/log".options = [ "subvol=var_log" "compress=zstd" "noatime"  ];
-  fileSystems."/var/log".neededForBoot = true;
-
   hostoptions = {
+    bluetooth.enable = true;
+    boot-efi.enable = true;
+    btrfs.enable=true;
     encryption.enable = true;
     impermanence.enable = true;
+    powermanagement.enable = true;
+    printing.enable = true;
+    raid.enable = true;
+    #services.docker_container_manager.enable = true;
   };
 
   networking = {
     hostName = "beef";
     networkmanager= {
       enable = true;
-      #wifi.backend = "iwd";
     };
   };
 
-  #nixpkgs.config.allowUnfree = true;                                            # allow unfree packages
-
-  ## Graphics
-  #services.xserver.videoDrivers = [ "amdgpu" ];                                  # AMD Ryzen 7900
-  hardware = {
-    opengl = {
-      enable = true ;
-      driSupport = true;
-      #extraPackages = with pkgs; [
-      #  amdvlk
-      #];
-    };
-  };
-  #hardware.nvidia.package = config.boot.kernelPackages.nvidiaPackages.stable;   # stick with the stable track
-  #hardware.nvidia.modesetting.enable = true;                                    # enable kms
-
-
-
-  services = {
-    #docker_container_manager_apps.enable = true;
-    docker_container_manager_system.enable = true;
-    printing.drivers = with pkgs; [ hplip ];
-    udev.packages = [ pkgs.crda ];
-  };
-
-  sops = {
-    secrets = {
-      beef = {
-        sopsFile = ./secrets/secrets.yaml;
-      };
-      common = {
-        sopsFile = ../common/secrets/secrets.yaml;
-      };
-    };
-  };
+  #services.docker_container_manager = true;
 
   system.stateVersion = "23.11";
 

@@ -1,4 +1,4 @@
- {config, impermanence, lib, pkgs, ...}:
+ {config, inputs, lib, outputs, pkgs, ...}:
 
 let
   cfg_impermanence = config.hostoptions.impermanence;
@@ -8,7 +8,7 @@ in
 {
   imports =
   [
-    impermanence.nixosModules.impermanence
+    inputs.impermanence.nixosModules.impermanence
   ];
 
   options = {
