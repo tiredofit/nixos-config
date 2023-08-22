@@ -22,7 +22,9 @@ in
 
   config = mkIf cfg_powermanagement.enable {
     environment.systemPackages = with pkgs; [
+      hdparm                # Hard Drive management
       power-profiles-daemon # dbus power profiles
+      smartctl              # SMART montioring
     ];
 
     powerManagement = {
