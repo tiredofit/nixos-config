@@ -72,12 +72,14 @@ in {
                       mountpoint = "/";
                       mountOptions = [ "compress=zstd" "noatime" ];
                     };
-                    "/home" = { mountOptions = [ "compress=zstd" "noatime" ]; };
+                    "/home" = {
+                      mountOptions = [ "compress=zstd" "noatime" ];
+                    };
                     "/home/active" = {
                       mountpoint = "/home";
                       mountOptions = [ "compress=zstd" "noatime" ];
                     };
-                    "/home/snapshot" = {
+                    "/home/snapshots" = {
                       mountpoint = "/home/.snapshots";
                       mountOptions = [ "compress=zstd" "noatime" ];
                     };
@@ -89,6 +91,14 @@ in {
                       mountpoint = "/persist";
                       mountOptions = [ "compress=zstd" "noatime" ];
                     };
+                    "/persist/active" = {
+                      mountpoint = "/persist";
+                      mountOptions = [ "compress=zstd" "noatime" ];
+                    };
+                    "/persist/snapshots" = {
+                      mountpoint = "/persist/.snapshots";
+                      mountOptions = [ "compress=zstd" "noatime" ];
+                    };
                     "/var_local" = {
                       mountpoint = "/var/local";
                       mountOptions = [ "compress=zstd" "noatime" ];
@@ -97,7 +107,7 @@ in {
                       mountpoint = "/var/local";
                       mountOptions = [ "compress=zstd" "noatime" ];
                     };
-                    "/var_local/snapshot" = {
+                    "/var_local/snapshots" = {
                       mountpoint = "/var/local/.snapshots";
                       mountOptions = [ "compress=zstd" "noatime" ];
                     };
