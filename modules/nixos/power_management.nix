@@ -28,7 +28,7 @@ in
     powerManagement = {
       enable = true ;
       powerUpCommands = mkIf cfg_powermanagement.disks-platter '' # Shutdown after 9 minutes
-        ${pkgs.bash}/bin/bash -c "set -x ; ${pkgs.hdparm}/bin/hdparm -S 9 -B 127 $(${pkgs.utillinux}/bin/lsblk -dnp -o name,rota | ${pkgs.gnugrep}/bin/grep '.*\\s1'| ${pkgs.gawk}/bin/awk '{print $1}')"
+        ${pkgs.bash}/bin/bash -c "${pkgs.hdparm}/bin/hdparm -S 108 -B 127 $(${pkgs.utillinux}/bin/lsblk -dnp -o name,rota | ${pkgs.gnugrep}/bin/grep '.*\s1'| ${pkgs.gawk}/bin/awk '{print $1}')"
       '';
     };
 
