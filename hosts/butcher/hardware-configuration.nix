@@ -40,7 +40,13 @@
   fileSystems."/persist" =
     { device = "/dev/disk/by-uuid/740f60e3-d62c-48db-b74a-668912c0aef1";
       fsType = "btrfs";
-      options = [ "subvol=persist" ];
+      options = [ "subvol=persist/active" ];
+    };
+
+  fileSystems."/persist/.snapshots" =
+    { device = "/dev/disk/by-uuid/740f60e3-d62c-48db-b74a-668912c0aef1";
+      fsType = "btrfs";
+      options = [ "subvol=persist/snapshots" ];
     };
 
   fileSystems."/var/local" =
