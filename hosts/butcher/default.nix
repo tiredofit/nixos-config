@@ -27,7 +27,8 @@
 
   hostoptions = {
     boot-efi.enable = true;
-    btrfs.enable=true;
+    btrfs.enable = true;
+    docker_container_manager.enable = true;
     impermanence = {
       enable = true;
       directories = [
@@ -52,6 +53,5 @@
   };
 
   services.qemuGuest.enable = true;
-  #services.docker_container_manager. enable = true;
   system.stateVersion = "23.11";
 }
