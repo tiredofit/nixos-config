@@ -11,7 +11,7 @@ creation_rules:
     - age:
       - *host_beef
       - *host_butcher
-#      - *host_selecta
+      - *host_selecta
       - *host_soy
       - *user_dave
   - path_regex: hosts/common/users/secrets.yaml
@@ -19,7 +19,7 @@ creation_rules:
     - age:
       - *host_beef
       - *host_butcher
-#      - *host_selecta
+      - *host_selecta
       - *host_soy
       - *user_dave
   - path_regex: hosts/beef/secrets/.*
