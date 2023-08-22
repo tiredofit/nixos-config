@@ -29,13 +29,16 @@ in
 
     powerManagement = {
       enable = true ;
-      powerUpCommands = mkIf cfg_powermanagement.disks-platter '' # Shutdown after 9 minutes
-        ${pkgs.bash}/bin/bash -c "set -x ; ${pkgs.hdparm}/bin/hdparm -S 108 -B 127 $(${pkgs.utillinux}/bin/lsblk -dnp -o name,rota | ${pkgs.gnugrep}/bin/grep '.*\s1'| ${pkgs.gawk}/bin/awk '{print $1}')"
-      '';
     };
 
     services = {
       power-profiles-daemon.enable = true;
+      udev = {
+        path = [ pkgs.hdparm ];
+        extraRules = ''
+          ACTION=="add|change", KERNEL=="sd[a-z]", ATTRS{queue/rotational}=="1", RUN+="${pkgs.hdparm}/bin/hdparm -S 108 -B 127 /dev/%k"
+        '';
+      };
       thermald.enable = true ;
     };
   };
