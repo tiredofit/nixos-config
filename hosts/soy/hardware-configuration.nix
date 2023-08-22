@@ -44,7 +44,14 @@
   fileSystems."/persist" =
     { device = "/dev/disk/by-uuid/558e1b77-4ddc-4080-82e7-ecfb4045a79d";
       fsType = "btrfs";
-      options = [ "subvol=persist" ];
+      options = [ "subvol=persist/active" ];
+      neededForBoot = true;
+    };
+
+  fileSystems."/persist/.snapshots" =
+    { device = "/dev/disk/by-uuid/558e1b77-4ddc-4080-82e7-ecfb4045a79d";
+      fsType = "btrfs";
+      options = [ "subvol=persist/snapshots" ];
       neededForBoot = true;
     };
 
@@ -76,7 +83,7 @@
     { device = "/dev/disk/by-uuid/CAE8-394C";
       fsType = "vfat";
     };
-   
+
   swapDevices = [{
     device = "/swap/swapfile";
     size = (1024 * 4) + (1024 * 2); # RAM size + 2 GB
