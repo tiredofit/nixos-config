@@ -145,8 +145,11 @@ in
 
     fileSystems = mkIf cfg_impermanence.enable {
       "/persist" = {
-        options = [ "subvol=persist" "compress=zstd" "noatime"  ];
+        options = [ "subvol=persist/active" "compress=zstd" "noatime"  ];
         neededForBoot = true;
+      };
+      "/persist/.snapshots" = {
+        options = [ "subvol=persist/snapshots" "compress=zstd" "noatime"  ];
       };
     };
 
