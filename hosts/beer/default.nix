@@ -13,7 +13,7 @@ imports = [
     ../common/global
     ../common/optional/gui/x-kiosk.nix
 
-    ../common/users/dave
+    ../../users/dave
   ];
 
   boot = {

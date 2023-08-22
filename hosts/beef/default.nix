@@ -24,8 +24,8 @@
     ../common/optional/services/virtualization-virt-manager.nix
     ../common/optional/services/vscode-server.nix
 
-    ../common/users/dave
-    ../common/users/root
+    ../../users/dave
+    ../../users/root
   ];
 
   boot = {

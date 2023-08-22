@@ -15,7 +15,7 @@
     ../common/optional/tailscale.nix
     ../common/optional/virtualization-docker.nix
 
-    ../common/users/dave
+    ../../users/dave
   ];
 
 

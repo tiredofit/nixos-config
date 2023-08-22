@@ -18,8 +18,8 @@
     ../common/optional/services/virtualization-docker.nix
     ../common/optional/services/virtualization-virt-manager.nix
 
-    ../common/users/dave
-    ../common/users/root
+    ../../users/dave
+    ../../users/root
   ];
 
   boot = {

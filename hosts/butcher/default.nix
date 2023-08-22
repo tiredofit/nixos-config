@@ -12,7 +12,7 @@
     ../common/optional/services/virtualization-docker.nix
     ../common/optional/services/vscode-server.nix
 
-    ../common/users/dave
+    ../../users/dave
   ];
 
   boot = {
