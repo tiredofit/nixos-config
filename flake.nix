@@ -79,6 +79,11 @@
           modules = [ ./hosts/soy ];
           specialArgs = { inherit inputs outputs; };
         };
+
+        soy2 =  lib.nixosSystem { # Fake assed wanna-be
+          modules = [ ./hosts/soy2 ];
+          specialArgs = { inherit inputs outputs; };
+        };
       };
     };
 }

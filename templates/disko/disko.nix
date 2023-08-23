@@ -111,6 +111,10 @@ in {
                       mountpoint = "/var/local/.snapshots";
                       mountOptions = [ "compress=zstd" "noatime" ];
                     };
+                    "/var_log" = {
+                      mountpoint = "/var/log";
+                      mountOptions = [ "compress=zstd" "noatime" ];
+                    };
                   };
                 };
               };
