@@ -355,16 +355,17 @@ check_for_repository() {
                         done
 
                         _dir_flake=$(mktemp -d)
+                        print_info "Cloning Git repository to '${_dir_flake}'"
                         git clone ${q_git_repository} "${_dir_flake}"
                         git_clone_exit_code=$?
-                        echo "Git Clone Exit Code: ${git_clone_exit_code}"
+
                     ;;
                     "Local Filesystem" )
                         counter=1
                         q_git_repository=" "
                         while [[ $q_git_repository = *" "* ]];  do
-                            if [ $counter -gt 1 ] ; then print_error "Git Repositories cannot have spaces in them" ; fi ;
-                            read -e -p "$(echo -e ${clg}** ${cdgy}Enter the location of your Git Repository:\ ${coff})" q_git_repository
+                            if [ $counter -gt 1 ] ; then print_error "Git Repositories path cannot have spaces in them" ; fi ;
+                            read -e -p "$(echo -e ${clg}** ${cdgy}Enter the location of your on your filesystem:\ ${coff})" q_git_repository
                             (( counter+=1 ))
                         done
 
