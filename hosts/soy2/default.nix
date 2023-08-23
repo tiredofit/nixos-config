@@ -39,7 +39,6 @@
     encryption.enable = false;
     impermanence.enable = true;
     powermanagement.enable = true;
-    services.docker_container_manager = true;
   };
 
 
@@ -50,6 +49,6 @@
     };
   };
 
-  services.qemuGuest.enable = true
+  services.qemuGuest.enable = true;
   system.stateVersion = "23.11";
 }

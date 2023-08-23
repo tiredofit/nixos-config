@@ -83,6 +83,7 @@
         soy2 =  lib.nixosSystem { # Fake assed wanna-be
           modules = [ ./hosts/soy2 ];
           specialArgs = { inherit inputs outputs; };
+          system = "x86_64-linux";
         };
       };
     };
