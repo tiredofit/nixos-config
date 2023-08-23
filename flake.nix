@@ -51,12 +51,12 @@
       formatter = forEachSystem (pkgs: pkgs.nixpkgs-fmt);
 
       nixosConfigurations = {
-        beef =  lib.nixosSystem { # Workstation
+        beef = lib.nixosSystem { # Workstation
           modules = [ ./hosts/beef ];
           specialArgs = { inherit inputs outputs; };
         };
 
-        beer =  lib.nixosSystem { # Bar
+        beer = lib.nixosSystem { # Bar
           modules = [ ./hosts/beer ];
           specialArgs = {
             inherit inputs outputs;
@@ -65,22 +65,22 @@
           };
         };
 
-        butcher =  lib.nixosSystem { # Local Server
+        butcher = lib.nixosSystem { # Local Server
           modules = [ ./hosts/butcher ];
           specialArgs = { inherit inputs outputs; };
         };
 
-        selecta =  lib.nixosSystem { # Production Station
+        selecta = lib.nixosSystem { # Production Station
           modules = [ ./hosts/selecta ];
           specialArgs = { inherit inputs outputs; };
         };
 
-        soy =  lib.nixosSystem { # Fake assed wanna-be
+        soy = lib.nixosSystem { # Fake assed wanna-be
           modules = [ ./hosts/soy ];
           specialArgs = { inherit inputs outputs; };
         };
 
-        soy2 =  lib.nixosSystem { # Fake assed wanna-be
+        soy2 = lib.nixosSystem { # Fake assed wanna-be
           modules = [ ./hosts/soy2 ];
           specialArgs = { inherit inputs outputs; };
           system = "x86_64-linux";

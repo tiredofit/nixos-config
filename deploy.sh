@@ -14,7 +14,7 @@ case "$1" in
         printf "\033c"
         cat << EOF
 ****************************************************************************************************************************
-** NixOS Installation Script - Revision ${SCRIPT_VERSION}
+** NixOS Deployment - Revision ${SCRIPT_VERSION}
 **
 ** - Based on a series of questions, this tool will setup a working NixOS Installtion from either a NixOS ISO
 **   or an alternative operating system such as the OVH Rescue Image
@@ -46,12 +46,6 @@ EOF
         :
     ;;
 esac
-
-# Check is Nix is installed
-if ! command -v "nix" &>/dev/null; then
-    echo "Nix is not installed!"
-    exit 1
-fi
 
 ########################################################################################
 ### System Functions                                                                 ###
@@ -358,7 +352,6 @@ check_for_repository() {
                         print_info "Cloning Git repository to '${_dir_flake}'"
                         git clone ${q_git_repository} "${_dir_flake}"
                         git_clone_exit_code=$?
-
                     ;;
                     "Local Filesystem" )
                         counter=1
@@ -377,7 +370,7 @@ check_for_repository() {
 }
 
 q_menu() {
-     if [ "${os}" = "nixos" ] ; then
+    if [ "${os}" = "nixos" ] ; then
         option_upgrade=Upgrade_System
     fi
     COLUMNS=12
@@ -421,8 +414,142 @@ flake_tools() {
             sudo nixos-rebuild switch --flake "${_dir_flake}"/#$(hostname)
         ;;
     esac
-
 }
+
+q_deploy() {
+    COLUMNS=12
+    prompt="Which host do you want to deploy?"
+    options=( $(find ${_dir_flake}/hosts/* -maxdepth 0 -type d | rev | cut -d / -f 1 | rev | sed "/common/d" | xargs -0) )
+    PS3="$prompt "
+    select opt in "${options[@]}" "Quit" ; do
+        if (( REPLY == 1 + ${#options[@]} )) ; then
+            echo "Bye!"
+            exit 2
+        elif (( REPLY > 0 && REPLY <= ${#options[@]} )) ; then
+            break
+        else
+            echo "Invalid option. Try another one."
+        fi
+    done
+    COLUMNS=$oldcolumns
+    export deploy_host=${opt}
+
+    # cat flake.nix | sed -e '/${deploy_host} =/,/};/!d' -e '/specialArgs = {/,/};/!d' | tail +2 | sed "/};/d"
+}
+
+generate_ssh_key() {
+    _dir_remote_rootfs=$(mktemp -d)
+    mkdir -p "${_dir_remote_rootfs}"/${feature_impermanence}/etc/ssh/
+    ssh-keygen -q -N "" -t ed25519 -C "${deploy_host}" -f "${_dir_remote_rootfs}"/"${feature_impermanence}"/etc/ssh/ssh_host_ed25519_key
+    mkdir -p hosts/"${deploy_host}"/secrets
+    cp -R "${_dir_remote_rootfs}"/"${feature_impermanence}"/etc/ssh/ssh_host_ed25519_key.pub hosts/"${deploy_host}"/secrets/
+}
+
+generate_age_secrets() {
+    mkdir -p "${_dir_remote_rootfs}"/"${feature_impermanence}"/root/.config/sops/age/
+    ssh-to-age -private-key -i "${_dir_remote_rootfs}"/etc/ssh/ssh_host_ed25519_key > "${_dir_remote_rootfs}"/"${feature_impermanence}"/root/.config/sops/age/keys.txt
+    sudo chown root:root "${_dir_remote_rootfs}"/"${feature_impermanence}"/root/.config/sops/age/keys.txt
+    sudo chmod 400 "${_dir_remote_rootfs}"/"${feature_impermanence}"/root/.config/sops/age/keys.txt
+    export _age_key_pub=$(cat "${_dir_remote_rootfs}"/"${feature_impermanence}"/etc/ssh/ssh_host_ed25519_key.pub | ssh-to-age )
+    echo -n "${bgn}Updating Secrets{$boff}"
+    cat <<EOF
+
+    In this first release, we are doing manual edits to files. Copy this blurb to an editor for the time being..
+    Copy this line and place it underneath the 'keys:' section
+
+  - &host_${deploy_host} ${_age_key_pub}
+
+    Next - make sure that under the creation rules that it says something like this:
+
+    - path_regex: hosts/common/secrets/.*
+    key_groups:
+    - age:
+      - *host_${deploy_host}
+      - *host_host1
+      - *host_host2
+      - *host_host3
+      - *user_$(whoami)
+  - path_regex: users/secrets.yaml
+    key_groups:
+    - age:
+      - *host_${deploy_host}
+      - *host_host1
+      - *host_host2
+      - *host_host3
+      - *user_$(whoami)
+
+    Finally - Make sure there is a section for the host defined that looks similar to this:
+
+  - path_regex: hosts/soy/secrets/.*
+    key_groups:
+    - age:
+      - *host_${deploy_host}
+      - *user_$(whoami)
+EOF
+
+    read -n 1 -s -r -p "Press any key to open the editor"
+    EDITOR=${EDITOR:-"nano"}
+    $EDITOR ${_dir_flake}/.sops.yaml
+
+    cat <<EOF
+    ** Adding example host secret
+
+    Now, we're going to open a sample secret file. Delete everything in the file and replace it with the following line and save:
+
+    ${deploy_host}: Example secret for ${deploy_host}
+
+EOF
+    read -n 1 -s -r -p "Press any key to open the secrets editor"
+    sops ${_dir_flake}/hosts/${deploy_host}/secrets/secrets.yaml
+
+
+    #yq -i '."keys" += "&host_'$(echo $deploy_host)' '$(echo $_age_key_pub)'"' .sops.playground.yaml
+    #yq -i '.creation_rules[] | select(.path_regex=="hosts/common/secrets/.*") | ."key_groups" += [{"age": ["*host_'$(echo $deploy_host)'"]}] ' .sops.playground.yaml
+    #yq -i '.creation_rules[] | select(.path_regex=="users/secrets.yaml") | ."key_groups" += [{"age": ["*host_'$(echo $deploy_host)'"]}] ' .sops.playground.yaml
+}
+
+q_disk() {
+    COLUMNS=12
+    prompt="Which Disk template do you want to deploy?"
+    options=( $(find ${_dir_flake}/templates/disko/* -maxdepth 0 -type f | rev | cut -d / -f 1 | rev | sed "s|.nix||g" | xargs -0) )
+    PS3="$prompt "
+    select opt in "${options[@]}" "Quit" ; do
+        if (( REPLY == 1 + ${#options[@]} )) ; then
+            echo "Bye!"
+            exit 2
+        elif (( REPLY > 0 && REPLY <= ${#options[@]} )) ; then
+            break
+        else
+            echo "Invalid option. Try another one."
+        fi
+    done
+    COLUMNS=$oldcolumns
+    export deploy_disk=${opt}
+
+    echo "DEPLOY DISK IS: ${deploy_disk}"
+    ## Need to do something about this and ask for LUKS password
+}
+
+deploy_host() {
+    counter=1
+    remote_host_ip_address_tmp=256.256.256.256
+    until ( valid_ip $remote_host_ip_address_tmp ) ; do
+        if [ $counter -gt 1 ] ; then print_error "IP is bad, please reenter" ; fi ;
+            read -e -p "$(echo -e ${clg}** ${cdgy}Remote Host IP Address: \ ${coff})" remote_host_ip_address_tmp
+        (( counter+=1 ))
+    done
+    remote_host_ip_address=$remote_host_ip_address_tmp
+    print_info "Commencing install to Host: ${deploy_host} (${remote_host_ip_address})"
+    #nix run github:numtide/nixos-anywhere -- --no-reboot ${feature_luks} --extra-files ${_dir_remote_rootfs}" "${_dir_flake}"/#${deploy_host} root@${remote_host_ip_address}
+}
+
 check_dependencies
-check_for_repository
-q_menu
+#check_for_repository
+#q_deploy
+#generate_ssh_key
+#generate_age_key
+#q_disk
+#deploy_host
+#q_menu
+
+# cat flake.nix | sed -e '/${deploy_host} =/,/};/!d' -e '/specialArgs = {/,/};/!d' | tail +2 | sed "/};/d"

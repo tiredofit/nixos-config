@@ -14,7 +14,7 @@ creation_rules:
       - *host_selecta
       - *host_soy
       - *user_dave
-  - path_regex: hosts/common/users/secrets.yaml
+  - path_regex: users/secrets.yaml
     key_groups:
     - age:
       - *host_beef
