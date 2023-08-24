@@ -550,6 +550,6 @@ check_dependencies
 #generate_age_key
 #q_disk
 #deploy_host
-#q_menu
+q_menu
 
 # cat flake.nix | sed -e '/${deploy_host} =/,/};/!d' -e '/specialArgs = {/,/};/!d' | tail +2 | sed "/};/d"
