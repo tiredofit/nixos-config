@@ -28,8 +28,13 @@
     ];
   };
 
+  host = {
+    hardware = {
+      bluetooth = enable;
+    };
+  };
+
   hostoptions = {
-    bluetooth.enable = true;
     boot-efi.enable = true;
     btrfs.enable = true;
     encryption.enable = false;

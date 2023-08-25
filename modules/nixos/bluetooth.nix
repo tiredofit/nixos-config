@@ -1,12 +1,12 @@
 {config, lib, pkgs, ...}:
 
 let
-  cfg_bluetooth = config.hostoptions.bluetooth;
+  cfg = config.host.hardware.bluetooth;
 in
   with lib;
 {
   options = {
-    hostoptions.bluetooth = {
+    host.hardware.bluetooth = {
       enable = mkOption {
         default = false;
         type = with types; bool;
@@ -15,7 +15,7 @@ in
     };
   };
 
-  config = mkIf cfg_bluetooth.enable {
+  config = mkIf cfg.enable {
     hardware.bluetooth.enable = true;
     services.blueman.enable = true;
 
