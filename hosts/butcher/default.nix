@@ -32,6 +32,8 @@
         directories = [
           "/mnt/"
         ];
+      };
+      powermanagement.enable = true;
     };
   };
 

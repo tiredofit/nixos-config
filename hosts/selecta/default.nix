@@ -32,6 +32,7 @@
     feature = {
       encryption.enable = true;
       impermanence.enable = true;
+      powermanagement.enable = true;
     };
 
     hardware = {
@@ -44,8 +45,6 @@
   hostoptions = {
     boot-efi.enable = true;
     btrfs.enable = true;
-    impermanence.enable = true;
-    powermanagement.enable = true;
     raid.enable = false;
   };
 

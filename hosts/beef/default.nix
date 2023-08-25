@@ -53,6 +53,7 @@
     feature = {
       encryption.enable = true;
       impermanence.enable = true;
+      powermanagement.enable = true;
     };
     hardware = {
       bluetooth.enable = true;
@@ -65,7 +66,6 @@
     boot-efi.enable = true;
     btrfs.enable = true;
     docker_container_manager.enable = true;
-    powermanagement.enable = true;
     raid.enable = true;
   };
 

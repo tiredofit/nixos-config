@@ -1,12 +1,12 @@
 {config, lib, pkgs, ...}:
 
 let
-  cfg_powermanagement = config.hostoptions.powermanagement;
+  cfg = config.host.feature.powermanagement;
 in
   with lib;
 {
   options = {
-    hostoptions.powermanagement = {
+    host.feature.powermanagement = {
       enable = mkOption {
         default = true;
         type = with types; bool;
@@ -15,12 +15,12 @@ in
       disks-platter = mkOption {
         default = true;
         type = with types; bool;
-        description = "Enables powermanagement spin down for platter hard drives";
+        description = "Enables spin down for platter hard drives";
       };
     };
   };
 
-  config = mkIf cfg_powermanagement.enable {
+  config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
       hdparm                # Hard Drive management
       power-profiles-daemon # dbus power profiles
