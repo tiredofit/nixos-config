@@ -33,15 +33,17 @@
   host = {
     feature = {
       boot-efi.enable = true;
-      btrfs.enable = true;
-      encryption.enable = true;
-      impermanence.enable = true;
       powermanagement.enable = true;
       virtualization = {
         docker = {
           enable = true;
         };
       };
+    };
+    filesystem = {
+      btrfs.enable = true;
+      encryption.enable = true;
+      impermanence.enable = true;
     };
     hardware = {
       raid.enable = true;

@@ -28,13 +28,17 @@
   host = {
     feature = {
       boot-efi.enable = true;
-      btrfs.enable = true;
-      impermanence = {
-        enable = true;
-        directories = [
-          "/mnt/"
-        ];
+      filesystem = {
+        btrfs.enable = true;
+        encryption.enable = true;
+        impermanence = {
+          enable = true;
+          directories = [
+            "/mnt/"
+          ];
+        };
       };
+
       powermanagement.enable = true;
       virtualization = {
         docker = {

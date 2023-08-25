@@ -1,12 +1,12 @@
 {config, lib, pkgs, ...}:
 
 let
-  cfg = config.host.feature.btrfs;
+  cfg = config.host.filesystem.btrfs;
 in
   with lib;
 {
   options = {
-    host.feature.btrfs = {
+    host.filesystem.btrfs = {
       enable = mkOption {
         default = true;
         type = with types; bool;

@@ -1,12 +1,12 @@
  {config, lib, pkgs, ...}:
 
 let
-  cfg = config.host.feature.encryption;
+  cfg = config.host.filesystem.encryption;
 in
   with lib;
 {
   options = {
-    host.feature.encryption = {
+    host.filesystem.encryption = {
       enable = mkOption {
         default = false;
         type = with types; bool;

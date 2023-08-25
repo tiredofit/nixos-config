@@ -35,9 +35,9 @@ in
     };
 
     host = {
-      feature = {
+      filesystem = {
         impermanence.directories =
-          lib.mkIf config.host.feature.impermanence.enable [
+          lib.mkIf config.host.filesystem.impermanence.enable [
             "/var/lib/docker" # Docker
           ];
       };

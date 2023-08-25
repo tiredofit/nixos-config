@@ -9,7 +9,7 @@ in
     openssh = {
       enable = true;
       hostKeys =
-        if config.host.feature.impermanence.enable
+        if config.host.filesystem.impermanence.enable
         then
           [
             {

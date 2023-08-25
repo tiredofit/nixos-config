@@ -19,7 +19,7 @@ in
     hardware.bluetooth.enable = true;
     services.blueman.enable = true;
 
-    host.feature.impermanence.directories = mkIf config.host.feature.impermanence.enable [
+    host.filesystem.impermanence.directories = mkIf config.host.filesystem.impermanence.enable [
       "/var/lib/bluetooth"               # Bluetooth
     ];
   };

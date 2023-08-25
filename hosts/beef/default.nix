@@ -49,15 +49,12 @@
   host = {
     feature = {
       boot-efi.enable = true;
-      btrfs.enable = true;
       development = {
         crosscompilation = {
           enable = true;
           platform = "aarch64-linux";
         };
       };
-      encryption.enable = true;
-      impermanence.enable = true;
       powermanagement.enable = true;
       virtualization = {
         docker = {
@@ -68,6 +65,11 @@
           daemon.enable = true;
         };
       };
+    };
+    filesystem = {
+      btrfs.enable = true;
+      encryption.enable = true;
+      impermanence.enable = true;
     };
     hardware = {
       bluetooth.enable = true;

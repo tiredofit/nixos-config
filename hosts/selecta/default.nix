@@ -29,9 +29,6 @@
   host = {
     feature = {
       boot-efi.enable = true;
-      btrfs.enable = true;
-      encryption.enable = true;
-      impermanence.enable = true;
       powermanagement.enable = true;
       virtualization = {
         docker = {
@@ -43,7 +40,11 @@
         };
       };
     };
-
+    filesystem = {
+      btrfs.enable = true;
+      encryption.enable = true;
+      impermanence.enable = true;
+    };
     hardware = {
       bluetooth.enable = true;
       printing.enable = true;
