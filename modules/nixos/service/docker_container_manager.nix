@@ -1,15 +1,15 @@
 {config, lib, pkgs, ...}:
 
 let
-  cfg = config.hostoptions.docker_container_manager;
+  cfg = config.host.service.docker_container_manager;
   name = "docker_container_manager";
 in
   with lib;
 {
   options = {
-    hostoptions.docker_container_manager = {
+    host.service.docker_container_manager = {
       enable = mkOption {
-        default = true;
+        default = false;
         type = with types; bool;
         description = "Start and stop containers on bootup / shutdown";
       };

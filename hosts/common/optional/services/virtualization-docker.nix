@@ -1,9 +1,5 @@
 { config, lib, pkgs, ... }:
 {
-  imports = [
-    ./service-docker_container_manager.nix
-  ];
-
   environment = {
     etc = {
       "docker/daemon.json" = {
@@ -23,9 +19,16 @@
     ];
   };
 
-  hostoptions.impermanence.directories = lib.mkIf config.hostoptions.impermanence.enable [
-    "/var/lib/docker"                  # Docker
-  ];
+  host = {
+    feature = {
+      impermanence.directories = lib.mkIf config.host.feature.impermanence.enable [
+        "/var/lib/docker"                  # Docker
+      ];
+    };
+    service = {
+        docker_container_manager = true;
+    };
+  };
 
   programs = {
     bash = {

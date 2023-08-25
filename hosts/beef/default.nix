@@ -21,7 +21,7 @@
     ../common/optional/steam.nix
     ../common/optional/services/tailscale.nix
     ../common/optional/services/virtualization-docker.nix
-    ../common/optional/services/virtualization-virt-manager.nix
+    #../common/optional/services/virtualization-virt-manager.nix
     ../common/optional/services/vscode-server.nix
 
     ../../users/dave
@@ -56,7 +56,12 @@
       encryption.enable = true;
       impermanence.enable = true;
       powermanagement.enable = true;
-
+      virtualization = {
+        virtd = {
+          client.enable = true;
+          daemon.enable = true;
+        };
+      };
     };
     hardware = {
       bluetooth.enable = true;

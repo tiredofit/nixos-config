@@ -1,7 +1,7 @@
 {config, lib, pkgs, ...}:
 
 let
-  wireless = config.host.hardware.wireless;
+  cfg = config.host.hardware.wireless;
 in
   with lib;
 {
