@@ -27,6 +27,7 @@
 
   host = {
     feature = {
+      boot-efi.enable = true;
       btrfs.enable = true;
       impermanence = {
         enable = true;
@@ -39,8 +40,6 @@
   };
 
   hostoptions = {
-    boot-efi.enable = true;
-    btrfs.enable = true;
     docker_container_manager.enable = true;
   };
 

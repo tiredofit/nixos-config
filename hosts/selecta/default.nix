@@ -30,6 +30,7 @@
 
   host = {
     feature = {
+      boot-efi.enable = true;
       btrfs.enable = true;
       encryption.enable = true;
       impermanence.enable = true;
@@ -44,8 +45,6 @@
   };
 
   hostoptions = {
-    boot-efi.enable = true;
-    btrfs.enable = true;
     raid.enable = false;
   };
 

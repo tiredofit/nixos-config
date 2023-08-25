@@ -35,6 +35,7 @@ imports = [
 
   host = {
     feature = {
+      boot-efi.enable = false;
       btrfs.enable = false;
     };
   };

@@ -1,12 +1,12 @@
 {config, lib, pkgs, ...}:
 
 let
-  cfg_boot-efi = config.hostoptions.boot-efi;
+  cfg = config.host.feature.boot-efi;
 in
   with lib;
 {
   options = {
-    hostoptions.boot-efi = {
+    host.feature.boot-efi = {
       enable = mkOption {
         default = true;
         type = with types; bool;
@@ -15,7 +15,7 @@ in
     };
   };
 
-  config = mkIf cfg_boot-efi.enable {
+  config = mkIf cfg.enable {
     boot = {
       loader = {
         efi = {
