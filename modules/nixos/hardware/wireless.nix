@@ -1,21 +1,21 @@
 {config, lib, pkgs, ...}:
 
 let
-  cfg_wireless = config.hostoptions.wireless;
+  wireless = config.host.hardware.wireless;
 in
   with lib;
 {
   options = {
-    hostoptions.wireless = {
+    host.hardware.wireless = {
       enable = mkOption {
-        default = true;
+        default = false;
         type = with types; bool;
         description = "Enables tools for wireless";
       };
     };
   };
 
-  config = mkIf cfg_wireless.enable {
+  config = mkIf cfg.enable {
     boot.extraModprobeConfig = ''
       options cfg80211 ieee80211_regdom="CA"
     '';

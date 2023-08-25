@@ -6,5 +6,4 @@
   hostoption_impermanence = import ./impermanence.nix;
   hostoption_power_management = import ./power_management.nix;
   hostoption_raid = import ./raid.nix;
-  hostoption_wireless = import ./wireless.nix;
 }
