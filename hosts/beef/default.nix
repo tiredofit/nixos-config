@@ -50,9 +50,14 @@
   };
 
   host = {
+    feature = {
+      encryption.enable = true;
+      impermanence.enable = true;
+    };
     hardware = {
-      bluetooth = enable;
-      printing = enable;
+      bluetooth.enable = true;
+      printing.enable = true;
+      wireless.enable = true;
     };
   };
 
@@ -60,8 +65,6 @@
     boot-efi.enable = true;
     btrfs.enable = true;
     docker_container_manager.enable = true;
-    encryption.enable = true;
-    impermanence.enable = true;
     powermanagement.enable = true;
     raid.enable = true;
   };

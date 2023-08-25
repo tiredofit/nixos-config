@@ -25,17 +25,20 @@
     ];
   };
 
+  host = {
+    feature = {
+      impermanence = {
+        enable = true;
+        directories = [
+          "/mnt/"
+        ];
+    };
+  };
+
   hostoptions = {
     boot-efi.enable = true;
     btrfs.enable = true;
     docker_container_manager.enable = true;
-    impermanence = {
-      enable = true;
-      directories = [
-        "/mnt/"
-      ];
-    };
-
   };
 
   networking = {

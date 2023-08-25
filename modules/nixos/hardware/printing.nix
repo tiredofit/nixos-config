@@ -26,7 +26,7 @@ in
       };
     };
 
-    hostoptions.impermanence.directories = mkIf config.hostoptions.impermanence.enable [
+    host.feature.impermanence.directories = mkIf config.host.feature.impermanence.enable [
       "/var/lib/cups"          # CUPS
     ];
   };

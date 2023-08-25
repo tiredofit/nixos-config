@@ -33,11 +33,16 @@
     ];
   };
 
+  host = {
+    feature = {
+      encryption.enable = true;
+      impermanence.enable = true;
+    };
+  };
+
   hostoptions = {
     boot-efi.enable = true;
     btrfs.enable = true;
-    encryption.enable = false;
-    impermanence.enable = true;
     powermanagement.enable = true;
   };
 

@@ -5,7 +5,7 @@
     vscode-server.enable = true;
   };
 
-  hostoptions.impermanence.directories = lib.mkIf config.hostoptions.impermanence.enable [
+  host.feature.impermanence.directories = lib.mkIf config.host.feature.impermanence.enable [
     "/var/empty"               # VS Code server throws error on startup without this
   ];
 }

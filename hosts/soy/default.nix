@@ -31,14 +31,18 @@
     ];
   };
 
-  hostoptions = {
-    boot-efi.enable = true;
-    btrfs.enable=true;
-    encryption.enable = true;
-    impermanence.enable = true;
-    powermanagement.enable = true;
+  host = {
+    feature = {
+      encryption.enable = true;
+      impermanence.enable = true;
+    };
   };
 
+  hostoptions = {
+    boot-efi.enable = true;
+    btrfs.enable=true
+    powermanagement.enable = true;
+  };
 
   networking = {
     hostName = "soy";

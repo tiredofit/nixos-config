@@ -1,7 +1,7 @@
  {config, inputs, lib, outputs, pkgs, ...}:
 
 let
-  cfg_impermanence = config.hostoptions.impermanence;
+  cfg_impermanence = config.host.feature.impermanence;
   cfg_encrypt = config.host.feature.encryption;
 in
   with lib;
@@ -12,7 +12,7 @@ in
   ];
 
   options = {
-    hostoptions.impermanence = {
+    host.feature.impermanence = {
       enable = mkOption {
         default = false;
         type = with types; bool;
