@@ -40,12 +40,9 @@
     hardware = {
       bluetooth.enable = true;
       printing.enable = true;
+      raid.enable = true;
       wireless.enable = true;
     };
-  };
-
-  hostoptions = {
-    raid.enable = false;
   };
 
   networking = {

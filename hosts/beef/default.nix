@@ -56,17 +56,18 @@
       encryption.enable = true;
       impermanence.enable = true;
       powermanagement.enable = true;
+
     };
     hardware = {
       bluetooth.enable = true;
       printing.enable = true;
       wireless.enable = true;
+      raid.enable = true;
     };
   };
 
   hostoptions = {
     docker_container_manager.enable = true;
-    raid.enable = true;
   };
 
   networking = {

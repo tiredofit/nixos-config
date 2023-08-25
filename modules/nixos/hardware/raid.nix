@@ -1,12 +1,12 @@
 {config, lib, pkgs, ...}:
 
 let
-  cfg_raid = config.hostoptions.raid;
+  cfg = config.host.hardware.raid;
 in
   with lib;
 {
   options = {
-    hostoptions.raid = {
+    host.hardware.raid = {
       enable = mkOption {
         default = false;
         type = with types; bool;
@@ -15,7 +15,7 @@ in
     };
   };
 
-  config = mkIf cfg_raid.enable {
+  config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
       dmraid
       gptfdisk

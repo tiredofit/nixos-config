@@ -39,6 +39,9 @@
       impermanence.enable = true;
       powermanagement.enable = true;
     };
+    hardware = {
+      raid.enable = true;
+    };
   };
 
   networking = {
