@@ -1,16 +1,16 @@
  {config, lib, pkgs, ...}:
 
 let
-  cfg_encrypted = config.hostoptions.encryption;
+  cfg = config.host.feature.encryption;
 in
   with lib;
 {
   options = {
-    hostoptions.encryption = {
+    host.feature.encryption = {
       enable = mkOption {
         default = false;
         type = with types; bool;
-        description = "Encrypt Filesystem";
+        description = "Encrypt Filesystem using LUKS";
       };
       encrypted-partition = mkOption {
         type = types.str;
@@ -20,7 +20,7 @@ in
     };
   };
 
-  config = mkIf cfg_encrypted.enable {
+  config = mkIf cfg.enable {
     environment.systemPackages =  with pkgs; [
       cryptsetup          # Manipulate LUKS containers
     ];

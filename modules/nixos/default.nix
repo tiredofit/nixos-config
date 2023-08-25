@@ -1,4 +1,5 @@
 {
+  host_feature = import ./feature;
   host_hardware = import ./hardware;
   hostoption_boot-efi = import ./boot-efi.nix;
   hostoption_btrfs = import ./btrfs.nix;

@@ -2,7 +2,7 @@
 
 let
   cfg_impermanence = config.hostoptions.impermanence;
-  cfg_encrypt = config.hostoptions.encryption;
+  cfg_encrypt = config.host.feature.encryption;
 in
   with lib;
 {
