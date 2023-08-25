@@ -14,7 +14,6 @@
     ../common/optional/gui/graphics-acceleration.nix
     ../common/optional/gui/x.nix
 
-    ../common/optional/cross_compile-aarch64.nix
     ../common/optional/services/fail2ban.nix
     #../common/optional/services/opensnitch.nix
     ../common/optional/plymouth.nix
@@ -51,6 +50,12 @@
     feature = {
       boot-efi.enable = true;
       btrfs.enable = true;
+      development = {
+        crosscompilation = {
+          enable = true;
+          platform = "aarch64-linux";
+        };
+      };
       encryption.enable = true;
       impermanence.enable = true;
       powermanagement.enable = true;

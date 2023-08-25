@@ -1,5 +1,6 @@
 {
 host_feature_boot-efi = import ./feature/boot-efi.nix;
+host_feature_cross_compilation = import ./feature/cross_compilation.nix;
 host_feature_btrfs = import ./feature/btrfs.nix;
 host_feature_encryption = import ./feature/encryption.nix;
 host_feature_impermanence = import ./feature/impermanence.nix;
