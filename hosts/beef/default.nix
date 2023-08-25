@@ -20,8 +20,6 @@
     ../common/optional/plymouth.nix
     ../common/optional/steam.nix
     ../common/optional/services/tailscale.nix
-    ../common/optional/services/virtualization-docker.nix
-    #../common/optional/services/virtualization-virt-manager.nix
     ../common/optional/services/vscode-server.nix
 
     ../../users/dave
@@ -57,6 +55,9 @@
       impermanence.enable = true;
       powermanagement.enable = true;
       virtualization = {
+        docker = {
+          enable = true;
+        };
         virtd = {
           client.enable = true;
           daemon.enable = true;
@@ -69,10 +70,6 @@
       wireless.enable = true;
       raid.enable = true;
     };
-  };
-
-  hostoptions = {
-    docker_container_manager.enable = true;
   };
 
   networking = {

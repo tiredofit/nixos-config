@@ -13,7 +13,6 @@
 
     ../common/optional/plymouth.nix
     ../common/optional/tailscale.nix
-    ../common/optional/virtualization-docker.nix
 
     ../../users/dave
   ];
@@ -38,6 +37,11 @@
       encryption.enable = true;
       impermanence.enable = true;
       powermanagement.enable = true;
+      virtualization = {
+        docker = {
+          enable = true;
+        };
+      };
     };
     hardware = {
       raid.enable = true;

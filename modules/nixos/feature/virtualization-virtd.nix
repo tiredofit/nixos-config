@@ -34,7 +34,6 @@ in
       virt-manager
     ];
 
-
     virtualisation = lib.mkIf cfg_daemon.enable {
       libvirtd = {
         enable = true;

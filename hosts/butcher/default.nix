@@ -36,11 +36,16 @@
         ];
       };
       powermanagement.enable = true;
+      virtualization = {
+        docker = {
+          enable = true;
+        };
+        virtd = {
+          client.enable = true;
+          daemon.enable = true;
+        };
+      };
     };
-  };
-
-  hostoptions = {
-    docker_container_manager.enable = true;
   };
 
   networking = {

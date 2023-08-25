@@ -15,8 +15,6 @@
     ../common/optional/gui/x.nix
 
     ../common/optional/plymouth.nix
-    ../common/optional/services/virtualization-docker.nix
-    ../common/optional/services/virtualization-virt-manager.nix
 
     ../../users/dave
     ../../users/root
@@ -35,6 +33,15 @@
       encryption.enable = true;
       impermanence.enable = true;
       powermanagement.enable = true;
+      virtualization = {
+        docker = {
+          enable = true;
+        };
+        virtd = {
+          client.enable = true;
+          daemon.enable = true;
+        };
+      };
     };
 
     hardware = {

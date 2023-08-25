@@ -9,7 +9,6 @@
     ./nix.nix
     ./openssh.nix
     ./sops.nix
-#    ./sops.nix
   ] ++ (builtins.attrValues outputs.nixosModules);
 
   boot = {
