@@ -52,6 +52,7 @@
   host = {
     hardware = {
       bluetooth = enable;
+      printing = enable;
     };
   };
 
@@ -62,7 +63,6 @@
     encryption.enable = true;
     impermanence.enable = true;
     powermanagement.enable = true;
-    printing.enable = true;
     raid.enable = true;
   };
 

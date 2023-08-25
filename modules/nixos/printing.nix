@@ -1,12 +1,12 @@
 {config, lib, pkgs, ...}:
 
 let
-  cfg_printing = config.hostoptions.printing;
+  cfg = config.host.hardware.printing;
 in
   with lib;
 {
   options = {
-    hostoptions.printing = {
+    host.hardware.printing = {
       enable = mkOption {
         default = false;
         type = with types; bool;
@@ -15,7 +15,7 @@ in
     };
   };
 
-  config = mkIf cfg_printing.enable {
+  config = mkIf cfg.enable {
     services = {
       printing = {
         enable = true;
