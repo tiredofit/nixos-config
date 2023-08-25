@@ -27,6 +27,7 @@
 
   host = {
     feature = {
+      btrfs.enable = true;
       impermanence = {
         enable = true;
         directories = [

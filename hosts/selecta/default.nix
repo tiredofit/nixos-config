@@ -30,6 +30,7 @@
 
   host = {
     feature = {
+      btrfs.enable = true;
       encryption.enable = true;
       impermanence.enable = true;
       powermanagement.enable = true;

@@ -33,6 +33,12 @@ imports = [
     xterm
   ];
 
+  host = {
+    feature = {
+      btrfs.enable = false;
+    };
+  };
+
   networking = {
     hostName = "beer";
     networkmanager= {

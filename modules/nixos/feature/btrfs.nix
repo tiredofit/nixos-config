@@ -1,12 +1,12 @@
 {config, lib, pkgs, ...}:
 
 let
-  cfg_btrfs = config.hostoptions.btrfs;
+  cfg = config.host.feature.btrfs;
 in
   with lib;
 {
   options = {
-    hostoptions.btrfs = {
+    host.feature.btrfs = {
       enable = mkOption {
         default = true;
         type = with types; bool;
@@ -15,7 +15,7 @@ in
     };
   };
 
-  config = mkIf cfg_btrfs.enable {
+  config = mkIf cfg.enable {
     boot = {
       supportedFilesystems = [
         "btrfs"
