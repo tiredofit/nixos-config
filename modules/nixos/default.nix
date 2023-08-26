@@ -1,26 +1,26 @@
 {
-host_feature_boot-efi = import ./feature/boot-efi.nix;
-host_feature_boot-graphical = import ./feature/boot-graphical.nix;
-host_feature_cross_compilation = import ./feature/cross_compilation.nix;
-host_feature_power_management = import ./feature/power_management.nix;
-host_feature_virtualization-docker = import ./feature/virtualization-docker.nix;
-host_feature_virtualization-flatpak = import ./feature/virtualization-flatpak.nix;
-host_feature_virtualization-virtd = import ./feature/virtualization-virtd.nix;
+host-feature-boot-efi = import ./feature/boot-efi.nix;
+host-feature-boot-graphical = import ./feature/boot-graphical.nix;
+host-feature-cross_compilation = import ./feature/cross_compilation.nix;
+host-feature-power_management = import ./feature/power_management.nix;
+host-feature-virtualization-docker = import ./feature/virtualization-docker.nix;
+host-feature-virtualization-flatpak = import ./feature/virtualization-flatpak.nix;
+host-feature-virtualization-virtd = import ./feature/virtualization-virtd.nix;
 
-host_filesystem_btrfs = import ./filesystem/btrfs.nix;
-host_filesystem_encryption = import ./filesystem/encryption.nix;
-host_filesystem_impermanence = import ./filesystem/impermanence.nix;
+host-filesystem-btrfs = import ./filesystem/btrfs.nix;
+host-filesystem-encryption = import ./filesystem/encryption.nix;
+host-filesystem-impermanence = import ./filesystem/impermanence.nix;
 
-host_hardware_bluetooth = import ./hardware/bluetooth.nix;
-host_hardware_printing = import ./hardware/printing.nix;
-host_hardware_raid = import ./hardware/raid.nix;
-host_hardware_wireless = import ./hardware/wireless.nix;
+host-hardware-bluetooth = import ./hardware/bluetooth.nix;
+host-hardware-printing = import ./hardware/printing.nix;
+host-hardware-raid = import ./hardware/raid.nix;
+host-hardware-wireless = import ./hardware/wireless.nix;
 
-host_network_firewall_fail2ban = import ./network/firewall-fail2ban.nix;
-host_network_firewall_opensnitch = import ./network/firewall-opensnitch.nix;
-host_network_vpn_tailscale = import ./network/vpn-tailscale.nix;
+host-network-firewall_fail2ban = import ./network/firewall-fail2ban.nix;
+host-network-firewall_opensnitch = import ./network/firewall-opensnitch.nix;
+host-network-vpn_tailscale = import ./network/vpn-tailscale.nix;
 
-host_service_docker_container_manager = import ./service/docker_container_manager.nix;
-host_service_eternal_terminal = import ./service/eternal_terminal.nix;
-host_service_vscode_server = import ./service/vscode_server.nix;
+host-service-docker_container_manager = import ./service/docker_container_manager.nix;
+host-service-eternal_terminal = import ./service/eternal_terminal.nix;
+host-service-vscode_server = import ./service/vscode_server.nix;
 }
