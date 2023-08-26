@@ -1,13 +1,7 @@
 { pkgs, inputs, ...}: {
 
   imports = [
-    inputs.hardware.nixosModules.common-cpu-amd
-    inputs.hardware.nixosModules.common-cpu-amd-pstate
-    inputs.hardware.nixosModules.common-cpu-amd-raphael-igpu
-    inputs.hardware.nixosModules.common-pc-hdd
-    inputs.hardware.nixosModules.common-pc-ssd
     inputs.nur.nixosModules.nur
-    inputs.vscode-server.nixosModules.default
     ./hardware-configuration.nix
 
     ../common/global
@@ -75,6 +69,8 @@
       cpu = "amd";
       graphics = {
         acceleration.enable = true;
+        displayServer = "x";
+        gpu = "integrated-amd";
       };
       printing.enable = true;
       sound = {

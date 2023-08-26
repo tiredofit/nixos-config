@@ -1,10 +1,14 @@
-{config, lib, pkgs, ...}:
+{config, inputs, lib, pkgs, ...}:
 
 let
   cfg = config.host.service.vscode_server;
 in
   with lib;
 {
+  imports = [
+    inputs.vscode-server.nixosModules.default
+  ];
+
   options = {
     host.service.vscode_server = {
       enable = mkOption {

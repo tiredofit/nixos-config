@@ -46,6 +46,10 @@
     };
     hardware = {
       cpu = "vm-amd";
+      graphics = {
+        enable = true;
+        displayServer = "x";
+      };
       raid.enable = true;
       sound = {
         enable = true;

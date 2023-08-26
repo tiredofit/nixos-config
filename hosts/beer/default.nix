@@ -40,8 +40,12 @@ imports = [
       btrfs.enable = false;
     };
     hardware = {
-      sound = {
+      graphics = {
         enable = true;
+        displayServer = "x";
+      };
+      sound = {
+        enable = false;
         server = "pulseaudio";
       };
     };

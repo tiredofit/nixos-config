@@ -1,13 +1,7 @@
 { config, pkgs, inputs, ...}: {
 
   imports = [
-    inputs.hardware.nixosModules.common-cpu-amd
-    inputs.hardware.nixosModules.common-cpu-amd-pstate
-    inputs.hardware.nixosModules.common-gpu-nvidia-nonprime
-    inputs.hardware.nixosModules.common-pc-hdd
-    inputs.hardware.nixosModules.common-pc-ssd
     inputs.nur.nixosModules.nur
-    inputs.vscode-server.nixosModules.default
     ./hardware-configuration.nix
 
     ../common/global
@@ -46,9 +40,18 @@
       encryption.enable = true;
       impermanence.enable = true;
     };
+    graphics = {
+      enable = true;
+      displayServer = "x";
+    };
     hardware = {
       bluetooth.enable = true;
       cpu = "amd";
+      graphics = {
+        enable = true;
+        acceleration = true;
+        gpu = "nvidia";
+      }
       printing.enable = true;
       raid.enable = true;
       sound = {
@@ -71,8 +74,5 @@
     };
   };
 
-
-  hardware.nvidia.package = config.boot.kernelPackages.nvidiaPackages.stable;   # stick with the stable track
-  hardware.nvidia.modesetting.enable = true;                                    # enable kms
   system.stateVersion = "23.11";
 }

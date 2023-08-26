@@ -1,5 +1,4 @@
-# This file (and the global directory) holds config that i use on all hosts
-{ inputs, outputs, pkgs, ... }: {
+{ inputs, outputs, lib, pkgs, ... }: {
   imports = [
     inputs.home-manager.nixosModules.home-manager
     ./bash.nix
@@ -85,4 +84,6 @@
   ];
 
   security.sudo.wheelNeedsPassword = false ;
+
+  services.fstrim.enable = lib.mkDefault true;
 }
