@@ -14,8 +14,6 @@
     ../common/optional/gui/graphics-acceleration.nix
     ../common/optional/gui/x.nix
 
-    ../common/optional/steam.nix
-
     ../../users/dave
     ../../users/root
   ];
@@ -52,6 +50,10 @@
           enable = true;
           platform = "aarch64-linux";
         };
+      };
+      gaming = {
+        enable = true;
+        steam.enable = true;
       };
       powermanagement.enable = true;
       virtualization = {
