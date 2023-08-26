@@ -3,6 +3,7 @@ host-feature-boot-efi = import ./feature/boot-efi.nix;
 host-feature-boot-graphical = import ./feature/boot-graphical.nix;
 host-feature-cross_compilation = import ./feature/cross_compilation.nix;
 host-feature-power_management = import ./feature/power_management.nix;
+host-feature-s3ql = import ./feature/s3ql.nix;
 host-feature-virtualization-docker = import ./feature/virtualization-docker.nix;
 host-feature-virtualization-flatpak = import ./feature/virtualization-flatpak.nix;
 host-feature-virtualization-virtd = import ./feature/virtualization-virtd.nix;
