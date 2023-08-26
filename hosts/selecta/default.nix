@@ -28,7 +28,10 @@
 
   host = {
     feature = {
-      boot-efi.enable = true;
+      boot = {
+        efi.enable = true;
+        graphical.enable = true;
+      };
       powermanagement.enable = true;
       virtualization = {
         docker = {

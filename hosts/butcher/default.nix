@@ -10,7 +10,6 @@
     ../common/global
 
     ../common/optional/services/virtualization-docker.nix
-    ../common/optional/services/vscode-server.nix
 
     ../../users/dave
   ];
@@ -27,18 +26,7 @@
 
   host = {
     feature = {
-      boot-efi.enable = true;
-      filesystem = {
-        btrfs.enable = true;
-        encryption.enable = true;
-        impermanence = {
-          enable = true;
-          directories = [
-            "/mnt/"
-          ];
-        };
-      };
-
+      boot.efi.enable = true;
       powermanagement.enable = true;
       virtualization = {
         docker = {
@@ -50,6 +38,19 @@
         };
       };
     };
+    filesystem = {
+      btrfs.enable = true;
+      encryption.enable = true;
+      impermanence = {
+        enable = true;
+        directories = [
+          "/mnt/"
+        ];
+      };
+    };
+    service = {
+      vscode_server.enable = true;
+    }
   };
 
   networking = {

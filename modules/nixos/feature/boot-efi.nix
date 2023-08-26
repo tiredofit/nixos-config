@@ -1,12 +1,12 @@
 {config, lib, pkgs, ...}:
 
 let
-  cfg = config.host.feature.boot-efi;
+  cfg = config.host.feature.boot.efi;
 in
   with lib;
 {
   options = {
-    host.feature.boot-efi = {
+    host.feature.boot.efi = {
       enable = mkOption {
         default = true;
         type = with types; bool;

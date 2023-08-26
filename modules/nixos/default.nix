@@ -1,5 +1,6 @@
 {
 host_feature_boot-efi = import ./feature/boot-efi.nix;
+host_feature_boot-graphical = import ./feature/boot-graphical.nix;
 host_feature_cross_compilation = import ./feature/cross_compilation.nix;
 host_feature_powermanagement = import ./feature/power_management.nix;
 host_feature_virtualization-docker = import ./feature/virtualization-docker.nix;
@@ -16,4 +17,5 @@ host_hardware_raid = import ./hardware/raid.nix;
 host_hardware_wireless = import ./hardware/wireless.nix;
 
 host_service_docker_container_manager= import ./service/docker_container_manager.nix;
+host_service_vscode_server= import ./service/vscode_server.nix;
 }

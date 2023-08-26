@@ -16,10 +16,8 @@
 
     ../common/optional/services/fail2ban.nix
     #../common/optional/services/opensnitch.nix
-    ../common/optional/plymouth.nix
     ../common/optional/steam.nix
     ../common/optional/services/tailscale.nix
-    ../common/optional/services/vscode-server.nix
 
     ../../users/dave
     ../../users/root
@@ -48,7 +46,10 @@
 
   host = {
     feature = {
-      boot-efi.enable = true;
+      boot = {
+        efi.enable = true;
+        graphical.enable = true;
+      };
       development = {
         crosscompilation = {
           enable = true;
@@ -76,6 +77,9 @@
       printing.enable = true;
       wireless.enable = true;
       raid.enable = true;
+    };
+    service = {
+      vscode_server.enable = true;
     };
   };
 
