@@ -16,13 +16,13 @@ in
   };
   ## TODO Add additional options
   config = mkIf cfg.enable {
-    sssd = {
-      enable = true;
-      sshAuthorizedKeysintegration = true;
-        PermitRootLogin = "no" ;
+    services = {
+      sssd = {
+        enable = true;
+        sshAuthorizedKeysIntegration = true;
+        config = ''
+        '';
       };
-      config = ''
-      '';
     };
   };
 }

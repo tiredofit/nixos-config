@@ -17,8 +17,8 @@ in
 
   ## TODO - Create additional options and SystemD service
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [;
+    environment.systemPackages = with pkgs; [
       s3ql
-    ]
+    ];
   };
 }

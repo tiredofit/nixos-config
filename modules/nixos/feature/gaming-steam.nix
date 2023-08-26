@@ -1,10 +1,10 @@
 {config, lib, pkgs, ...}:
 
 let
-  cfg_steam = config.host.feature.gaming.steam;
+  cfg = config.host.feature.gaming.steam;
 in
   with lib;
-  eith pkgs;
+  with pkgs;
 {
   options = {
     host.feature.gaming.steam = {
@@ -16,14 +16,14 @@ in
     };
   };
 
-  config = mkIf cfg.enable {
-    environment.systemPackages = mkIf config.host.feature.gaming.enable [
+  config = lib.mkIf (cfg.enable && config.host.feature.gaming.enable) {
+    environment.systemPackages = [
       steam-rom-manager
       steam-run
       steam-tui
     ];
 
-    programs.steam = mkIf config.host.feature.gaming.enable {
+    programs.steam = {
       enable = true;
       remotePlay.openFirewall = true;
       dedicatedServer.openFirewall = true;

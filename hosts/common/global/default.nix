@@ -8,7 +8,6 @@
     ./locale.nix
     ./nix.nix
     ./openssh.nix
-    ./sops.nix
   ] ++ (builtins.attrValues outputs.nixosModules);
 
   boot = {
@@ -58,6 +57,12 @@
   home-manager.extraSpecialArgs = { inherit inputs outputs; };
 
   hardware.enableRedistributableFirmware = true;
+
+  host = {
+    feature = {
+      secrets.enable = true;
+    };
+  };
 
   networking.domain = "tiredofit.ca";
 

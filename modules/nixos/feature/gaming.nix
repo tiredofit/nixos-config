@@ -1,10 +1,9 @@
 {config, lib, pkgs, ...}:
 
 let
-  cfg_steam = config.host.feature.gaming;
+  cfg = config.host.feature.gaming;
 in
   with lib;
-  eith pkgs;
 {
   options = {
     host.feature.gaming = {

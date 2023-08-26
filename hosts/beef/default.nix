@@ -11,7 +11,6 @@
     ./hardware-configuration.nix
 
     ../common/global
-    ../common/optional/gui/graphics-acceleration.nix
     ../common/optional/gui/x.nix
 
     ../../users/dave
@@ -73,6 +72,9 @@
     };
     hardware = {
       bluetooth.enable = true;
+      graphics = {
+        acceleration.enable = true;
+      };
       printing.enable = true;
       wireless.enable = true;
       raid.enable = true;
