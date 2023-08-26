@@ -26,6 +26,7 @@
   };
 
   environment = {
+    defaultPackages = []; # Don't install any default programs, force everything
     enableAllTerminfo = true;
     systemPackages = with pkgs; [
       binutils            # standard binutils
@@ -46,6 +47,7 @@
       nano                # editor
       nvd                 # Nix Diffs
       psmisc              # process analysis
+      rsync               # Transfer files
       wget                # file fetcher
     ]
     ++ (lib.optionals pkgs.stdenv.isLinux [
