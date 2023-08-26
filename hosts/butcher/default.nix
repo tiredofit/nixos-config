@@ -9,8 +9,6 @@
     ./hardware-configuration.nix
     ../common/global
 
-    ../common/optional/services/virtualization-docker.nix
-
     ../../users/dave
   ];
 
@@ -26,7 +24,10 @@
 
   host = {
     feature = {
-      boot.efi.enable = true;
+      boot = {
+        efi.enable = true;
+      };
+
       powermanagement.enable = true;
       virtualization = {
         docker = {

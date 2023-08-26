@@ -14,7 +14,6 @@
     ../common/optional/gui/graphics-acceleration.nix
     ../common/optional/gui/x.nix
 
-    ../common/optional/services/fail2ban.nix
     ../common/optional/steam.nix
     ../common/optional/services/tailscale.nix
 
@@ -79,6 +78,7 @@
     };
     network = {
       firewall = {
+        fail2ban.enable = true;
         opensnitch.enable = false;
       };
     };

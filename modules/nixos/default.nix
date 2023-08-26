@@ -16,9 +16,9 @@ host_hardware_printing = import ./hardware/printing.nix;
 host_hardware_raid = import ./hardware/raid.nix;
 host_hardware_wireless = import ./hardware/wireless.nix;
 
+host_network_firewall_fail2ban = import ./network/firewall-fail2ban.nix;
 host_network_firewall_opensnitch = import ./network/firewall-opensnitch.nix;
 
 host_service_docker_container_manager = import ./service/docker_container_manager.nix;
 host_service_vscode_server = import ./service/vscode_server.nix;
-
 }
