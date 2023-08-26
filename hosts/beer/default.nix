@@ -39,6 +39,12 @@ imports = [
     filesystem = {
       btrfs.enable = false;
     };
+    hardware = {
+      sound = {
+        enable = true;
+        server = "pulseaudio";
+      };
+    };
   };
 
   networking = {

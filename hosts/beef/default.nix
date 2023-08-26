@@ -76,6 +76,10 @@
         acceleration.enable = true;
       };
       printing.enable = true;
+      sound = {
+        enable = true;
+        server = "pulseaudio";
+      };
       wireless.enable = true;
       raid.enable = true;
     };

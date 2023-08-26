@@ -46,6 +46,10 @@
     };
     hardware = {
       raid.enable = true;
+      sound = {
+        enable = true;
+        server = "pulseaudio";
+      };
     };
   };
 

@@ -4,7 +4,6 @@
   imports =
     [
       ./fonts.nix
-      ../sound-pulseaudio.nix
     ];
 
   environment.pathsToLink = [ "/libexec" ]; # links /libexec from derivations to /run/current-system/sw

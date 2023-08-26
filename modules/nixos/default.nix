@@ -20,6 +20,7 @@ host-hardware-bluetooth = import ./hardware/bluetooth.nix;
 host-hardware-graphics = import ./hardware/graphics.nix;
 host-hardware-printing = import ./hardware/printing.nix;
 host-hardware-raid = import ./hardware/raid.nix;
+host-hardware-sound = import ./hardware/sound.nix;
 host-hardware-wireless = import ./hardware/wireless.nix;
 
 host-network-firewall_fail2ban = import ./network/firewall-fail2ban.nix;

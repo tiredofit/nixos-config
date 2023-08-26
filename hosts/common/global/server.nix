@@ -18,7 +18,7 @@
   networking.firewall.enable = true;
 
   # No need for sound on a server
-  sound.enable = false;
+  #sound.enable = false;
 
   systemd = {
     # Given that our systems are headless, emergency mode is useless.

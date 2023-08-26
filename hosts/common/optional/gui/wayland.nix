@@ -4,13 +4,16 @@
   imports =
     [
       ./fonts.nix
-      ../sound-pipewire.nix
     ];
 
   environment.pathsToLink = [ "/libexec" ]; # links /libexec from derivations to /run/current-system/sw
   programs = {
     dconf.enable = true;
     seahorse.enable = true;
+  };
+
+  host = {
+    hardware.sound.server = mkForce "pipewire";
   };
 
   services.xserver = {

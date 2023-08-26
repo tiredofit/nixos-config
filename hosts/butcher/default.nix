@@ -27,7 +27,6 @@
       boot = {
         efi.enable = true;
       };
-
       powermanagement.enable = true;
       virtualization = {
         docker = {
@@ -48,6 +47,9 @@
           "/mnt/"
         ];
       };
+    };
+    hardware = {
+      sound.enable = false;
     };
     network = {
       vpn = {
