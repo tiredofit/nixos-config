@@ -16,12 +16,10 @@ with lib;
         type = with types; bool;
         description = "Enables Graphics Support";
       };
-      acceleration = {
-        enable = mkOption {
-          default = false;
-          type = with types; bool;
-          description = "Enables graphics acceleration";
-        };
+      acceleration = mkOption {
+        default = false;
+        type = with types; bool;
+        description = "Enables graphics acceleration";
       };
       displayServer = mkOption {
         type = types.str;
@@ -38,7 +36,7 @@ with lib;
 
   config = {
     hardware = {
-        opengl = lib.mkIf ( config.host.hardware.graphics.acceleration.enable && config.host.hardware.graphics.enable ){
+        opengl = lib.mkIf ( config.host.hardware.graphics.acceleration && config.host.hardware.graphics.enable ){
           enable = true ;
           driSupport = true;
           driSupport32Bit = true;

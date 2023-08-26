@@ -3,6 +3,7 @@ host-feature-authentication-sssd = import ./feature/authentication-sssd.nix;
 host-feature-boot-efi = import ./feature/boot-efi.nix;
 host-feature-boot-graphical = import ./feature/boot-graphical.nix;
 host-feature-cross_compilation = import ./feature/cross_compilation.nix;
+host-feature-displayManager = import ./feature/displayManager.nix;
 host-feature-gaming = import ./feature/gaming.nix;
 host-feature-gaming-steam = import ./feature/gaming-steam.nix;
 host-feature-power_management = import ./feature/power_management.nix;
@@ -27,6 +28,8 @@ host-hardware-wireless = import ./hardware/wireless.nix;
 host-network-firewall_fail2ban = import ./network/firewall-fail2ban.nix;
 host-network-firewall_opensnitch = import ./network/firewall-opensnitch.nix;
 host-network-vpn_tailscale = import ./network/vpn-tailscale.nix;
+
+host-role = import ./roles/default.nix;
 
 host-service-docker_container_manager = import ./service/docker_container_manager.nix;
 host-service-eternal_terminal = import ./service/eternal_terminal.nix;

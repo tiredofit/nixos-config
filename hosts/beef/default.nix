@@ -5,7 +5,7 @@
     ./hardware-configuration.nix
 
     ../common/global
-    ../common/optional/gui/x.nix
+    #../common/optional/gui/x.nix
 
     ../../users/dave
     ../../users/root
@@ -44,6 +44,9 @@
           platform = "aarch64-linux";
         };
       };
+      displayManager = {
+        server = "x";
+      };
       gaming = {
         enable = true;
         steam.enable = true;
@@ -68,7 +71,7 @@
       bluetooth.enable = true;
       cpu = "amd";
       graphics = {
-        acceleration.enable = true;
+        acceleration = true;
         displayServer = "x";
         gpu = "integrated-amd";
       };
@@ -89,6 +92,7 @@
         tailscale.enable = true;
       };
     };
+    #
     service = {
        vscode_server.enable = true;
     };
