@@ -9,7 +9,6 @@
     ./hardware-configuration.nix
 
     ../common/global
-    ../common/optional/gui/x.nix
 
     ../../users/dave
   ];
