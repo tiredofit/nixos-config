@@ -12,7 +12,6 @@
     #./hardware-configuration.nix
 
     ../common/global
-
     ../../users/dave
   ];
 
