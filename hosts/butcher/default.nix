@@ -49,6 +49,11 @@
         ];
       };
     };
+    network = {
+      vpn = {
+        tailscale.enable = true;
+      };
+    };
     service = {
       vscode_server.enable = true;
     }

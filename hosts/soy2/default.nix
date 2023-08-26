@@ -17,8 +17,6 @@
     ../common/global
     ../common/optional/gui/x.nix
 
-    #../common/optional/tailscale.nix
-
     ../../users/dave
   ];
 

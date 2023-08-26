@@ -15,7 +15,6 @@
     ../common/optional/gui/x.nix
 
     ../common/optional/steam.nix
-    ../common/optional/services/tailscale.nix
 
     ../../users/dave
     ../../users/root
@@ -80,6 +79,9 @@
       firewall = {
         fail2ban.enable = true;
         opensnitch.enable = false;
+      };
+      vpn = {
+        tailscale.enable = true;
       };
     };
     service = {

@@ -52,6 +52,11 @@
       raid.enable = true;
       wireless.enable = true;
     };
+    network = {
+      vpn = {
+        tailscale.enable = true;
+      };
+    };
   };
 
   networking = {
