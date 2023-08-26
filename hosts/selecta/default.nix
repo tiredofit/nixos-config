@@ -48,6 +48,7 @@
     };
     hardware = {
       bluetooth.enable = true;
+      cpu = "amd";
       printing.enable = true;
       raid.enable = true;
       sound = {

@@ -45,6 +45,7 @@
       impermanence.enable = true;
     };
     hardware = {
+      cpu = "vm-amd";
       raid.enable = true;
       sound = {
         enable = true;

@@ -20,6 +20,7 @@ in
         opengl = lib.mkIf config.host.hardware.graphics.acceleration.enable {
           enable = true ;
           driSupport = true;
+          driSupport32Bit = true;
         };
     };
   };

@@ -72,6 +72,7 @@
     };
     hardware = {
       bluetooth.enable = true;
+      cpu = "amd";
       graphics = {
         acceleration.enable = true;
       };

@@ -17,6 +17,7 @@ host-filesystem-encryption = import ./filesystem/encryption.nix;
 host-filesystem-impermanence = import ./filesystem/impermanence.nix;
 
 host-hardware-bluetooth = import ./hardware/bluetooth.nix;
+host-hardware-cpu = import ./hardware/cpu.nix;
 host-hardware-graphics = import ./hardware/graphics.nix;
 host-hardware-printing = import ./hardware/printing.nix;
 host-hardware-raid = import ./hardware/raid.nix;

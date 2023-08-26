@@ -49,6 +49,7 @@
       };
     };
     hardware = {
+      cpu = "vm-intel";
       sound.enable = false;
     };
     network = {
