@@ -65,6 +65,10 @@ in {
               wayland = false ;
             };
           };
+
+        layout = "us";
+          libinput.enable = true;
+
         })
 
         (lib.mkIf (config.host.role == "kiosk") {

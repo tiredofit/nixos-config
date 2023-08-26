@@ -7,5 +7,6 @@ with lib;
       default = "none";
       description = "Role of Host: kiosk";
     };
+    ## TODO add host.role.kiosk.url and host.role.kiosk.browser
   };
 }
