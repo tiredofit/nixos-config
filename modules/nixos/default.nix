@@ -2,7 +2,7 @@
 host_feature_boot-efi = import ./feature/boot-efi.nix;
 host_feature_boot-graphical = import ./feature/boot-graphical.nix;
 host_feature_cross_compilation = import ./feature/cross_compilation.nix;
-host_feature_powermanagement = import ./feature/power_management.nix;
+host_feature_power_management = import ./feature/power_management.nix;
 host_feature_virtualization-docker = import ./feature/virtualization-docker.nix;
 host_feature_virtualization-flatpak = import ./feature/virtualization-flatpak.nix;
 host_feature_virtualization-virtd = import ./feature/virtualization-virtd.nix;
@@ -21,5 +21,6 @@ host_network_firewall_opensnitch = import ./network/firewall-opensnitch.nix;
 host_network_vpn_tailscale = import ./network/vpn-tailscale.nix;
 
 host_service_docker_container_manager = import ./service/docker_container_manager.nix;
+host_service_eternal_terminal = import ./service/eternal_terminal.nix;
 host_service_vscode_server = import ./service/vscode_server.nix;
 }
