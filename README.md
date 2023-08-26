@@ -26,12 +26,16 @@ If you would like to base your own configuration from this, you will need to be 
     - `global`: Applications and tools installed on all hosts regardless of what they do
     - `optional`: Applications and tools that can be added _a la carte_
       - `gui`: Graphical Applications, including desktop greeters
-    - `services`: Services that run in the background or act as a daemon
     - `secrets`: Secrets that are available to all users
   - `<host_a>`: "host_a" specific hardware and host configuration
     - `secrets`: Secrets that are specific to the 'host_a' host
   - `...`: And so on as above with other hosts
-- `modules`: Modules that are specific to this implementation and don't exist upstream
+- `modules`: Modules that are specific to this implementation and allow for toggled configuration
+  - `features`: Features such as virtualization, gaming, cross compilation
+  - `filesystem`: Encryption, impermanence, BTRFS options
+  - `hardware`: Bluetooth, Printing, Sound, Wireless
+  - `network`: Firewalls and VPNs
+  - `service`: Miscellanious daemons
 - `overlays`: Ammendments and updates to packages that exist in the nix ecosphere
 - `pkgs`: Custom packages, services, scripts that are specific to this installation
 - `users`: Individual User folders
