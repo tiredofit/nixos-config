@@ -14,8 +14,6 @@
     ../common/optional/gui/graphics-acceleration.nix
     ../common/optional/gui/x.nix
 
-    ../common/optional/plymouth.nix
-
     ../../users/dave
     ../../users/root
   ];

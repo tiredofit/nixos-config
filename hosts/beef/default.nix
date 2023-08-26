@@ -15,7 +15,6 @@
     ../common/optional/gui/x.nix
 
     ../common/optional/services/fail2ban.nix
-    #../common/optional/services/opensnitch.nix
     ../common/optional/steam.nix
     ../common/optional/services/tailscale.nix
 
@@ -78,8 +77,13 @@
       wireless.enable = true;
       raid.enable = true;
     };
+    network = {
+      firewall = {
+        opensnitch.enable = false;
+      };
+    };
     service = {
-      vscode_server.enable = true;
+       vscode_server.enable = true;
     };
   };
 
