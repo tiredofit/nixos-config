@@ -63,6 +63,7 @@
         tailscale.enable = true;
       };
     };
+    role = "desktop";
   };
 
   networking = {

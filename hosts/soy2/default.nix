@@ -53,6 +53,7 @@
         server = "pulseaudio";
       };
     };
+    role = "lite";
   };
 
   networking = {

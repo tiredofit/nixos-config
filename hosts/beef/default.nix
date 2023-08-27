@@ -91,7 +91,7 @@
         tailscale.enable = true;
       };
     };
-    #
+    role = "desktop";
     service = {
        vscode_server.enable = true;
     };

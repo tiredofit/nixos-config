@@ -10,9 +10,7 @@ with lib;
     # that need only the basics
     # hybrid is for desktops that are also servers (my homelabs, basically)
     # vms are for quick dirty tests, lighter than the "lite" configuration
-      type = mkOption {
-        type = types.enum ["laptop" "desktop" "server" "kiosk" "hybrid" "lite" "vm"];
-      };
+      type = types.enum ["laptop" "desktop" "server" "kiosk" "hybrid" "lite" "vm"];
       ## TODO add host.role.kiosk.url and host.role.kiosk.browser
     };
   };

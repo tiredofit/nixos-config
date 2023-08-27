@@ -54,6 +54,7 @@
         tailscale.enable = true;
       };
     };
+    role = "server";
     service = {
       vscode_server.enable = true;
     }

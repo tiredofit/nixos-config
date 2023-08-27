@@ -55,6 +55,7 @@
         server = "pulseaudio";
       };
     };
+    role = "vm";
   };
 
   networking = {
