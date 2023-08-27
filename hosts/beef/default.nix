@@ -48,7 +48,10 @@
       };
       gaming = {
         enable = true;
-        steam.enable = true;
+        steam = {
+          enable = true;
+          protonGE = true;
+        };
       };
       powermanagement.enable = true;
       virtualization = {

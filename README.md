@@ -86,9 +86,14 @@ For example to have a base AMD system using with an integrated GPU using BTRFS a
       virtualization = {
         docker.enable = true;
       };
+    };
     hardware = {
       cpu = "amd";
-      gpu = "integrated-amd";
+      graphics = {
+        acceleration = true;
+        displayServer = "x";
+        gpu = "integrated-amd";
+      };
       webcam.enable = true;
     };
     service = {
@@ -97,7 +102,7 @@ For example to have a base AMD system using with an integrated GPU using BTRFS a
         harden = true;
       };
     };
-  }
+  };
 ```
 
 Features and options are changing often.
