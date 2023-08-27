@@ -58,17 +58,17 @@
 
   hardware.enableRedistributableFirmware = true;
 
-  #host = {
-  #  feature = {
-  #    secrets.enable = true;
-  #  };
-  #  service = {
-  #    ssh = {
-  #      enable = true;
-  #      harden = true;
-  #    };
-  #  };
-  #};
+  host = {
+    feature = {
+      secrets.enable = true;
+    };
+    service = {
+      ssh = {
+        enable = true;
+        harden = true;
+      };
+    };
+  };
 
   networking.domain = "tiredofit.ca";
 
