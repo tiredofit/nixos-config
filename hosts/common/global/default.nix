@@ -1,4 +1,4 @@
-{ inputs, outputs, lib, pkgs, ... }: {
+{ confg, inputs, outputs, lib, pkgs, ... }: {
   imports = [
     inputs.home-manager.nixosModules.home-manager
     ./bash.nix
@@ -58,17 +58,17 @@
 
   hardware.enableRedistributableFirmware = true;
 
-  host = {
-    feature = {
-      secrets.enable = true;
-    };
-    service = {
-      ssh = {
-        enable = true;
-        harden = true;
-      };
-    };
-  };
+  #host = {
+  #  feature = {
+  #    secrets.enable = true;
+  #  };
+  #  service = {
+  #    ssh = {
+  #      enable = true;
+  #      harden = true;
+  #    };
+  #  };
+  #};
 
   networking.domain = "tiredofit.ca";
 
