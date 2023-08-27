@@ -16,11 +16,13 @@
   };
 
   documentation = {
-    enable = false;
     doc.enable = false;
-    info.enable = false;
-    man.enable = false;
     nixos.enable = false;
+    info.enable = false;
+    man = {
+      enable = lib.mkDefault true;
+      generateCaches = lib.mkDefault true;
+    };
   };
 
   environment = {
