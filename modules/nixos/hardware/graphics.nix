@@ -27,7 +27,7 @@ with lib;
         description = "Display Server: x or wayland";
       };
       gpu = mkOption {
-        type = types.str;
+        type = types.enum ["pi" "amd" "intel" "nvidia" "hybrid-nv" "hybrid-amd" "integrated-amd" null];
         default = null;
         description = "Type of GPU: hybrid-amd, hybrid-nvidia, integrated-amd, intel,  nvidia";
       };
