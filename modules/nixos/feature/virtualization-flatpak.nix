@@ -36,4 +36,8 @@ in
     services.flatpak.enable = true;
     system.fsPackages = [ pkgs.bindfs ];
   };
+
+  host.filesystem.impermanence.directories = lib.mkIf config.host.filesystem.impermanence.enable [
+    "/var/lib/flatpak"                 # Flatpak
+  ];
 }
