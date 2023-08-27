@@ -64,6 +64,43 @@ git clone https://github.com/tiredofit/nixos-config.git /mnt/etc/nixos
 nixos-install --root /mnt --flake /mnt/etc/nixos#<host>
 ```
 
+#### Experimental Deploy Scripts
+
+- An experimental deployment script `deploy.sh` is being built to allow one to:
+  - Update Flake
+  - Update running system
+  - Generate SSH Key and AGE keys per host
+  - Update host / repository secrets
+  - Remotely install a new system based on configuration via SSH
+  - Build locally and remotely update an in place system via SSH
+
+### Configuring a system
+
+Features are toggleable via the `host` configuration options. Have a look insie the `modules/nixos` folder for options available.
+
+For example to have a base AMD system using with an integrated GPU using BTRFS as a file system that allowed SSH, Docker, and a hardware webcam it would be configured as such:
+
+```
+  host = {
+    feature = {
+      virtualization = {
+        docker.enable = true;
+      };
+    hardware = {
+      cpu = "amd";
+      gpu = "integrated-amd";
+      webcam.enable = true;
+    };
+    service = {
+      ssh = {
+        enable = true;
+        harden = true;
+      };
+    };
+  }
+```
+
+Features and options are changing often.
 
 ### Keep it up to date
 

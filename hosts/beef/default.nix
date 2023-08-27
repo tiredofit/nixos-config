@@ -82,6 +82,7 @@
       };
       webcam.enable = true;
       wireless.enable = true;
+      yubikey.enable = true;
     };
     network = {
       firewall = {

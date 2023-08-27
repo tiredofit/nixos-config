@@ -27,6 +27,7 @@ host-hardware-raid = import ./hardware/raid.nix;
 host-hardware-sound = import ./hardware/sound.nix;
 host-hardware-webcam = import ./hardware/webcam.nix;
 host-hardware-wireless = import ./hardware/wireless.nix;
+host-hardware-yubikey = import ./hardware/yubikey.nix;
 
 host-network-firewall_fail2ban = import ./network/firewall-fail2ban.nix;
 host-network-firewall_opensnitch = import ./network/firewall-opensnitch.nix;
