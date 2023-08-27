@@ -20,8 +20,18 @@ in
       plymouth = {
         enable = true ;
         theme = "lone" ;
-         themePackages = [(pkgs.adi1090x-plymouth-themes.override {selected_themes = ["lone"];})];
+        themePackages = [(pkgs.adi1090x-plymouth-themes.override {selected_themes = ["lone"];})];
       };
+    };
+
+    # make plymouth work with sleep
+    powerManagement = {
+      powerDownCommands = ''
+        ${pkgs.plymouth}/bin/plymouth --show-splash
+      '';
+      resumeCommands = ''
+        ${pkgs.plymouth}/bin/plymouth --quit
+      '';
     };
   };
 }

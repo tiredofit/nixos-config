@@ -18,7 +18,7 @@ in
         default = "grub";
         type = types.enum [ "grub" ];
         description = "Enables booting via Grub";
-        ## TODO Consider creating top level boot.nix feature and integrating systemd-boot
+        ## TODO Consider creating top level boot.nix feature and integrating systemd-boot or none (pi)
       };
     };
   };
@@ -36,6 +36,9 @@ in
           enableCryptodisk = mkDefault false;
           useOSProber = mkDefault false;
           efiInstallAsRemovable = true;
+          #theme = null;
+          #backgroundColor = null;
+          #splashImage = null
         };
       };
     };
