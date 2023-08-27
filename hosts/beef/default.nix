@@ -75,12 +75,13 @@
         gpu = "integrated-amd";
       };
       printing.enable = true;
+      raid.enable = true;
       sound = {
         enable = true;
         server = "pulseaudio";
       };
+      webcam.enable = true;
       wireless.enable = true;
-      raid.enable = true;
     };
     network = {
       firewall = {
