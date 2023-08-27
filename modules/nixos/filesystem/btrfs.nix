@@ -12,6 +12,11 @@ in
         type = with types; bool;
         description = "Enables settings for a BTRFS installation including snapshots";
       };
+      autoscrub = mkOption {
+       default = true;
+        type = with types; bool;
+        description = "Enable autoscrubbing of file systems";
+      };
     };
   };
 
@@ -55,6 +60,10 @@ in
             };
           };
         };
+      };
+      btrfs.autoScrub = mkIf cfg.autoscrub {
+        enable = true;
+        fileSystems = ["/"];
       };
     };
   };
