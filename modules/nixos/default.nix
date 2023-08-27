@@ -16,6 +16,7 @@ host-feature-virtualization-virtd = import ./feature/virtualization-virtd.nix;
 host-filesystem-btrfs = import ./filesystem/btrfs.nix;
 host-filesystem-encryption = import ./filesystem/encryption.nix;
 host-filesystem-impermanence = import ./filesystem/impermanence.nix;
+host-filesystem-swap_file = import ./filesystem/swapfile.nix;
 
 host-hardware-bluetooth = import ./hardware/bluetooth.nix;
 host-hardware-cpu = import ./hardware/cpu.nix;
