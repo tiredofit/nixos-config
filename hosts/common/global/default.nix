@@ -9,10 +9,16 @@
   ] ++ (builtins.attrValues outputs.nixosModules);
 
   boot = {
+    initrd = {
+      systemd = {
+        strip = true;                               # Saves considerable space in initrd
+      };
+    };
     kernel.sysctl = {
       "vm.dirty_ratio" = 6;                         # sync disk when buffer reach 6% of memory
     };
     kernelPackages = pkgs.linuxPackages_latest;     # Latest kernel
+
   };
 
   documentation = {
