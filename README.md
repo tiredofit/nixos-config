@@ -24,7 +24,6 @@ If you would like to base your own configuration from this, you will need to be 
 - `hosts`: Host Configurations
   - `common`: Shared configurations consumed by all hosts.
     - `global`: Applications and tools installed on all hosts regardless of what they do
-    - `optional`: Applications and tools that can be added _a la carte_
     - `secrets`: Secrets that are available to all users
   - `<host_a>`: "host_a" specific hardware and host configuration
     - `secrets`: Secrets that are specific to the 'host_a' host
