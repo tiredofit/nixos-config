@@ -26,6 +26,7 @@ in
     };
 
     host.filesystem.impermanence.directories = lib.mkIf config.host.filesystem.impermanence.enable [
+      "/var/cache/tailscale"
       "/var/lib/tailscale"
     ];
   };
