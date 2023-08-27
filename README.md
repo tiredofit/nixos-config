@@ -28,6 +28,7 @@ If you would like to base your own configuration from this, you will need to be 
   - `<host_a>`: "host_a" specific hardware and host configuration
     - `secrets`: Secrets that are specific to the 'host_a' host
   - `...`: And so on as above with other hosts
+- `lib`: Helpers, functions, libraries and timesavers
 - `modules`: Modules that are specific to this implementation and allow for toggled configuration
   - `features`: Features such as virtualization, gaming, cross compilation
   - `filesystem`: Encryption, impermanence, BTRFS options

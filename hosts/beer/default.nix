@@ -44,6 +44,7 @@ imports = [
         enable = true;
         displayServer = "x";
       };
+      role = "kiosk";
       sound = {
         enable = false;
         server = "pulseaudio";
