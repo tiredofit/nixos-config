@@ -6,7 +6,6 @@
     ./less.nix
     ./locale.nix
     ./nix.nix
-    ./openssh.nix
   ] ++ (builtins.attrValues outputs.nixosModules);
 
   boot = {
@@ -62,6 +61,12 @@
   host = {
     feature = {
       secrets.enable = true;
+    };
+    service = {
+      ssh = {
+        enable = true;
+        harden = true;
+      };
     };
   };
 
