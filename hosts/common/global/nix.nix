@@ -17,6 +17,8 @@
       accept-flake-config = true;
       auto-optimise-store = lib.mkDefault true;
       experimental-features = [ "nix-command" "flakes" "repl-flake" ];
+      # show more log lines for failed builds
+      log-lines = 30;
       # Free up to 10GiB whenever there is less than 5GB left.
       # this setting is in bytes, so we multiply with 1024 thrice
       min-free = "${toString (5 * 1024 * 1024 * 1024)}";
