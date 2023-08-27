@@ -22,14 +22,19 @@ with lib;
         description = "Enables graphics acceleration";
       };
       displayServer = mkOption {
-        type = types.str;
+        type = types.enum ["x" "wayland" null];
         default = null;
         description = "Display Server: x or wayland";
       };
       gpu = mkOption {
         type = types.enum ["pi" "amd" "intel" "nvidia" "hybrid-nv" "hybrid-amd" "integrated-amd" null];
         default = null;
-        description = "Type of GPU: hybrid-amd, hybrid-nvidia, integrated-amd, intel,  nvidia";
+        description = "Manufacturer/type of the primary system gpu";
+      };
+      monitors = mkOption {
+        type = with types; listOf str;
+        default = [];
+        description = "Declare the order of monitors in Window manager configurations";
       };
     };
   };
