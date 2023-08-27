@@ -12,6 +12,7 @@ with lib;
     # vms are for quick dirty tests, lighter than the "lite" configuration
       type = types.enum ["laptop" "desktop" "server" "kiosk" "hybrid" "lite" "vm"];
       ## TODO add host.role.kiosk.url and host.role.kiosk.browser
+      ## TODO Setup documentation.enable and settings for different roles
     };
   };
 }

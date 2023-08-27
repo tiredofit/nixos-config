@@ -14,8 +14,14 @@
     };
 
     settings = {
+      accept-flake-config = true;
       auto-optimise-store = lib.mkDefault true;
       experimental-features = [ "nix-command" "flakes" "repl-flake" ];
+      # Free up to 10GiB whenever there is less than 5GB left.
+      # this setting is in bytes, so we multiply with 1024 thrice
+      min-free = "${toString (5 * 1024 * 1024 * 1024)}";
+      max-free = "${toString (10 * 1024 * 1024 * 1024)}";
+      max-jobs = "auto";
       trusted-users = [ "root" "@wheel" ];
       warn-dirty = false;
     };
