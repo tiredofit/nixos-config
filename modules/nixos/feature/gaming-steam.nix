@@ -27,6 +27,7 @@ in
       enable = true;
       remotePlay.openFirewall = true;
       dedicatedServer.openFirewall = true;
+      withProtonGE = true;
     };
   };
 }
