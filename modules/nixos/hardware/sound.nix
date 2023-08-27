@@ -49,5 +49,9 @@ in
     security.rtkit = mkIf (cfg.enable && cfg.server == "pipewire") {
       enable = true;
     };
+
+    host.filesystem.impermanence.directories = mkIf (cfg.enable && cfg.server == "pipewire" && config.host.filesystem.impermanence.enable) [
+      "/var/lib/pipewire"
+    ];
   };
 }
