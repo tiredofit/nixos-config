@@ -67,7 +67,12 @@
     filesystem = {
       btrfs.enable = true;
       encryption.enable = true;
-      impermanence.enable = true;
+      impermanence = {
+        enable = true;
+        directories = [
+          "/mnt/"
+        ];
+      };
     };
     hardware = {
       bluetooth.enable = true;
