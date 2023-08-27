@@ -16,7 +16,22 @@ in
   };
 
   config = mkIf cfg.enable {
-    hardware.bluetooth.enable = true;
+    modules.system.boot.extraKernelParams = ["btusb"];
+
+    hardware.bluetooth = {
+      enable = true;
+      package = pkgs.bluez5-experimental;
+      #hsphfpd.enable = true;
+      powerOnBoot = true;
+      disabledPlugins = ["sap"];
+      settings = {
+        General = {
+          JustWorksRepairing = "always";
+          MultiProfile = "multiple";
+        };
+      };
+    };
+
     services.blueman.enable = true;
 
     host.filesystem.impermanence.directories = mkIf config.host.filesystem.impermanence.enable [
