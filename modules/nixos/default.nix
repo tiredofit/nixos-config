@@ -25,6 +25,7 @@ host-hardware-graphics = import ./hardware/graphics.nix;
 host-hardware-printing = import ./hardware/printing.nix;
 host-hardware-raid = import ./hardware/raid.nix;
 host-hardware-sound = import ./hardware/sound.nix;
+host-hardware-touchpad = import ./hardware/touchpad.nix;
 host-hardware-webcam = import ./hardware/webcam.nix;
 host-hardware-wireless = import ./hardware/wireless.nix;
 host-hardware-yubikey = import ./hardware/yubikey.nix;
