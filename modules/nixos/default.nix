@@ -7,6 +7,7 @@ host-feature-displayManager = import ./feature/displayManager.nix;
 host-feature-gaming = import ./feature/gaming.nix;
 host-feature-gaming-steam = import ./feature/gaming-steam.nix;
 host-feature-power_management = import ./feature/power_management.nix;
+host-feature-power_management-tlp = import ./feature/power_management-tlp.nix;
 host-feature-security = import ./feature/security.nix;
 host-feature-secrets = import ./feature/secrets.nix;
 host-feature-s3ql = import ./feature/s3ql.nix;

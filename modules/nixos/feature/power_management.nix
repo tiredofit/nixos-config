@@ -32,7 +32,7 @@ in
     };
 
     services = {
-      power-profiles-daemon.enable = true;
+      power-profiles-daemon.enable = mkDefault true;
       udev = {
         path = [ pkgs.hdparm ];
         extraRules = ''
