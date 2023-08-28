@@ -25,13 +25,13 @@ in
     };
 
     # make plymouth work with sleep
-    powerManagement = {
-      powerDownCommands = ''
-        ${pkgs.plymouth}/bin/plymouth --show-splash
-      '';
-      resumeCommands = ''
-        ${pkgs.plymouth}/bin/plymouth --quit
-      '';
-    };
+    #powerManagement = {
+    #  powerDownCommands = ''
+    #    ${pkgs.plymouth}/bin/plymouth --show-splash
+    #  '';
+    #  resumeCommands = ''
+    #    ${pkgs.plymouth}/bin/plymouth --quit
+    #  '';
+    #};
   };
 }
