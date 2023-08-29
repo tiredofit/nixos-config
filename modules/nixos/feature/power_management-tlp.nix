@@ -9,7 +9,7 @@ in
   options = {
     host.feature.powermanagement = {
       laptop = mkOption {
-        default = true;
+        default = false;
         type = with types; bool;
         description = "Enables laptop powermanagement tools";
       };

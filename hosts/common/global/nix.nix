@@ -48,6 +48,8 @@
     activationScripts.report-changes = ''
       PATH=$PATH:${lib.makeBinPath [ pkgs.nvd pkgs.nix ]}
       nvd diff $(ls -dv /nix/var/nix/profiles/system-*-link | tail -2)
+      mkdir -p /var/log/activations
+      nvd diff $(ls -dv /nix/var/nix/profiles/system-*-link | tail -2) > /var/log/activations/$(date +'%Y%m%d%H%M%S')-$(ls -dv /nix/var/nix/profiles/system-*-link | tail -1 | cut -d '-' -f 2)-$(readlink $(ls -dv /nix/var/nix/profiles/system-*-link | tail -1) | cut -d - -f 4-).log
     '';
     autoUpgrade.enable = false;
     stateVersion = lib.mkDefault "23.11";

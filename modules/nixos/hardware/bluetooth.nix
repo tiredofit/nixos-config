@@ -16,7 +16,7 @@ in
   };
 
   config = mkIf cfg.enable {
-    boot.kernelParams = ["btusb"];
+    #boot.kernelParams = ["btusb"];
     hardware.bluetooth = {
       enable = true;
       package = pkgs.bluez5-experimental;

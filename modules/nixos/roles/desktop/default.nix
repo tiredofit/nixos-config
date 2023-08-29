@@ -1,12 +1,46 @@
-{ config, lib, pkgs, ... }:
-
+{ config, lib, modulesPath, pkgs, ... }:
 let
   role = config.host.role;
 in
   with lib;
 {
+  imports = [
+    (modulesPath + "/installer/scan/not-detected.nix")
+  ];
+
   config = mkIf (role == "desktop") {
     host = {
+      feature = {
+        boot = {
+          efi.enable = mkDefault true;
+          graphical.enable = mkDefault true;
+        };
+        development = {
+          crosscompilation = {
+            enable = mkDefault true;
+            platform = "aarch64-linux";
+          };
+        };
+        powermanagement.enable = mkDefault true;
+        virtualization = {
+          docker = {
+            enable = mkDefault true;
+          };
+          virtd = {
+            client.enable = mkDefault true;
+            daemon.enable = mkDefault true;
+          };
+        };
+      };
+      filesystem = {
+        btrfs.enable = mkDefault true;
+        impermanence = {
+          enable = mkDefault true;
+          directories = [
+            "/mnt/"
+          ];
+        };
+      };
       hardware = {
         bluetooth.enable = mkDefault true;    # Most wireless cards have bluetooth radios
         graphics = {
@@ -19,6 +53,24 @@ in
         wireless.enable = mkDefault true;     # Most systems have some sort of 802.11
         yubikey.enable = mkDefault true;      #
       };
+      network = {
+        firewall = {
+          fail2ban.enable = mkDefault true;     #
+          opensnitch.enable = mkDefault false;  # Only activated by opensnitch-ui
+        };
+        vpn = {
+          tailscale.enable = mkDefault true;
+        };
+      };
+      service = {
+        vscode_server.enable = true;
+      };
     };
-  };
+
+    networking = {
+      networkmanager= {
+        enable = mkDefault true;
+      };
+    };
+ };
 }

@@ -19,6 +19,11 @@ in
     boot.extraModprobeConfig = ''
       options cfg80211 ieee80211_regdom="CA"
     '';
+
+    environment.systemPackages = with pkgs; [
+      iw
+    ];
+
     hardware.wirelessRegulatoryDatabase = true;
 
     services.udev.packages = [ pkgs.crda ];

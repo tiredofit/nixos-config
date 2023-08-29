@@ -81,6 +81,12 @@
           specialArgs = { inherit inputs outputs; };
         };
 
+        disko = lib.nixosSystem { # Disko
+          modules = [ ./hosts/disko ];
+          specialArgs = { inherit inputs outputs; };
+          system = "x86_64-linux";
+        };
+
         selecta = lib.nixosSystem { # Production Station
           modules = [ ./hosts/selecta ];
           specialArgs = { inherit inputs outputs; };
@@ -91,11 +97,7 @@
           specialArgs = { inherit inputs outputs; };
         };
 
-        soy2 = lib.nixosSystem { # Disko
-          modules = [ ./hosts/soy2 ];
-          specialArgs = { inherit inputs outputs; };
-          system = "x86_64-linux";
-        };
+
       };
     };
 }

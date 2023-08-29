@@ -11,8 +11,6 @@ imports = [
     ./hardware-configuration.nix
 
     ../common/global
-    ../common/optional/gui/x-kiosk.nix
-
     ../../users/dave
   ];
 
@@ -22,7 +20,6 @@ imports = [
       grub.enable = false;
     };
     kernelParams = [ "video=2560x1080@60" ];
-    kernelPackages = pkgs.linuxPackages_latest;  # Latest kernel
   };
 
   environment.systemPackages = with pkgs; [
@@ -45,23 +42,14 @@ imports = [
         displayServer = "x";
       };
       role = "kiosk";
-      sound = {
-        enable = false;
-        server = "pulseaudio";
-      };
     };
   };
 
   networking = {
     hostName = "beer";
-    networkmanager= {
-      enable = true;
-    };
   };
 
   services.xserver = {
     videoDrivers = [ "fbdev" ];
   };
-
-  system.stateVersion = "23.11";
 }

@@ -1,4 +1,4 @@
-{ pkgs, inputs, ...}: {
+{ inputs, pkgs, ...}: {
 
   imports = [
     inputs.nur.nixosModules.nur
@@ -33,16 +33,6 @@
 
   host = {
     feature = {
-      boot = {
-        efi.enable = true;
-        graphical.enable = true;
-      };
-      development = {
-        crosscompilation = {
-          enable = true;
-          platform = "aarch64-linux";
-        };
-      };
       displayManager = {
         server = "x";
       };
@@ -53,66 +43,24 @@
           protonGE = true;
         };
       };
-      powermanagement.enable = true;
-      virtualization = {
-        docker = {
-          enable = true;
-        };
-        virtd = {
-          client.enable = true;
-          daemon.enable = true;
-        };
-      };
     };
     filesystem = {
-      btrfs.enable = true;
       encryption.enable = true;
-      impermanence = {
-        enable = true;
-        directories = [
-          "/mnt/"
-        ];
-      };
     };
     hardware = {
-      bluetooth.enable = true;
       cpu = "amd";
       graphics = {
-        acceleration = true;
         displayServer = "x";
         gpu = "integrated-amd";
       };
-      printing.enable = true;
-      raid.enable = true;
       sound = {
-        enable = true;
         server = "pulseaudio";
-      };
-      webcam.enable = true;
-      wireless.enable = true;
-      yubikey.enable = true;
-    };
-    network = {
-      firewall = {
-        fail2ban.enable = true;
-        opensnitch.enable = false;
-      };
-      vpn = {
-        tailscale.enable = true;
       };
     };
     role = "desktop";
-    service = {
-       vscode_server.enable = true;
-    };
   };
 
   networking = {
     hostName = "beef";
-    networkmanager= {
-      enable = true;
-    };
   };
-
-  system.stateVersion = "23.11";
 }

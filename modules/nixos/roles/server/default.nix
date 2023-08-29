@@ -1,13 +1,25 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, modulesPath, pkgs, ... }:
 let
   role = config.host.role;
 in
   with lib;
 {
+
+  imports = [
+    (modulesPath + "/installer/scan/not-detected.nix")
+  ];
+
   config = mkIf (role == "server") {
-    boot.kernel.sysctl = {
-      "net.core.default_qdisc" = "fq";
-      "net.ipv4.tcp_congestion_control" = "bbr";      # use TCP BBR has significantly increased throughput and reduced latency for connections
+    boot = {
+      initrd = {
+        boot = {
+          checkJournalingFS = false;                  # Get the server up as fast as possible
+        };
+      };
+      kernel.sysctl = {
+        "net.core.default_qdisc" = "fq";
+        "net.ipv4.tcp_congestion_control" = "bbr";      # use TCP BBR has significantly increased throughput and reduced latency for connections
+      };
     };
 
     documentation = {                                 # This makes some nix commands not display --help
@@ -22,20 +34,40 @@ in
     fonts.fontconfig.enable = lib.mkDefault false;    # No GUI
 
     host = {
+      feature = {
+        virtualization = {
+          docker = {
+            enable = mkDefault true;
+          };
+        };
+      };
+      filesystem = {
+        btrfs.enable = mkDefault true;
+        encryption.enable = mkDefault true;
+        impermanence.enable = mkDefault true;
+      };
       hardware = {
         bluetooth.enable = mkDefault false;
         graphics = {
           enable = mkDefault false;                   # Maybe if we were doing openCL
         };
-        printing.enable = mkDefault false;             # My use case never involves a print server
+        printing.enable = mkDefault false;            # My use case never involves a print server
         sound.enable = mkDefault false;
         webcam.enable = mkDefault false;
-        wireless.enable = mkDefault false;             # Most servers are ethernet?
+        wireless.enable = mkDefault false;            # Most servers are ethernet?
         yubikey.enable = mkDefault false;
       };
     };
 
-    networking.firewall.enable = true;                # Make sure firewall is enabled
+    networking = {
+      dhcpcd.enable = mkDefault false;                # Let's stay static
+      enableIPv6 = mkDefault false;                   # See you in 2040
+      firewall.enable = mkDefault true;               # Make sure firewall is enabled
+      networkmanager= {
+        enable = mkDefault false;                     # systemd-networkd is cleaner and built in
+      };
+      useNetworkd = mkDefault true;
+    };
 
     programs.nano.defaultEditor = lib.mkDefault true;
 

@@ -1,10 +1,11 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, modulesPath, pkgs, ... }:
 let
   role = config.host.role;
 in
   with lib;
 {
   imports = [
+    (modulesPath + "/installer/scan/not-detected.nix")
     ./power
   ];
 
@@ -15,6 +16,11 @@ in
           enable = true;
           laptop = true;
         };
+      };
+      filesystem = {
+        btrfs.enable = mkDefault true;
+        encryption.enable = mkDefault true;
+        impermanence.enable = mkDefault true;
       };
       hardware = {
         bluetooth.enable = mkDefault true;    # Most wireless cards have bluetooth radios
@@ -28,6 +34,12 @@ in
         webcam.enable = mkDefault true;       # Age of video conferencing
         wireless.enable = mkDefault true;     # Most systems have some sort of 802.11
         yubikey.enable = mkDefault true;      #
+      };
+    };
+
+    networking = {
+      networkmanager= {
+        enable = mkDefault true;
       };
     };
   };
