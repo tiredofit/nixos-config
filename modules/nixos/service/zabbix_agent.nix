@@ -32,7 +32,6 @@ in
         default = null;
         description = "Server to send Active checks";
       };
-
     };
   };
 
