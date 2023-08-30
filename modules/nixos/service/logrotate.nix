@@ -1,4 +1,4 @@
-{config, inputs, lib, pkgs, ...}:
+{config, lib, pkgs, ...}:
 
 let
   cfg = config.host.service.logrotate;

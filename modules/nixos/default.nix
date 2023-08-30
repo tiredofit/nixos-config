@@ -39,6 +39,7 @@ host-role = import ./roles/default.nix;
 
 host-service-docker_container_manager = import ./service/docker_container_manager.nix;
 host-service-eternal_terminal = import ./service/eternal_terminal.nix;
+host-service-logrotate = import ./service/logrotate.nix;
 host-service-ssh = import ./service/ssh.nix;
 host-service-vscode_server = import ./service/vscode_server.nix;
 host-service-zabbix_agent = import ./service/zabbix_agent.nix;
