@@ -1,4 +1,6 @@
-{ confg, inputs, outputs, lib, pkgs, ... }: {
+{ confg, inputs, outputs, lib, pkgs, ... }:
+  with lib;
+{
   imports = [
     inputs.home-manager.nixosModules.home-manager
     ./bash.nix
@@ -11,29 +13,29 @@
   boot = {
     initrd = {
       systemd = {
-        strip = true;                               # Saves considerable space in initrd
+        strip = mkDefault true;                               # Saves considerable space in initrd
       };
     };
     kernel.sysctl = {
-      "vm.dirty_ratio" = 6;                         # sync disk when buffer reach 6% of memory
+      "vm.dirty_ratio" = mkDefault 6;                         # sync disk when buffer reach 6% of memory
     };
     kernelPackages = pkgs.linuxPackages_latest;     # Latest kernel
 
   };
 
   documentation = {
-    doc.enable = false;
-    nixos.enable = false;
-    info.enable = false;
+    doc.enable = mkDefault false;
+    nixos.enable = mkDefault false;
+    info.enable = mkDefault false;
     man = {
-      enable = lib.mkDefault true;
-      generateCaches = lib.mkDefault true;
+      enable = mkDefault true;
+      generateCaches = mkDefault true;
     };
   };
 
   environment = {
     defaultPackages = []; # Don't install any default programs, force everything
-    enableAllTerminfo = true;
+    enableAllTerminfo = mkDefault true;
     systemPackages = with pkgs; [
       binutils            # standard binutils
       bind                # nslookup and nameserver tools
@@ -64,24 +66,24 @@
 
   home-manager.extraSpecialArgs = { inherit inputs outputs; };
 
-  hardware.enableRedistributableFirmware = true;
+  hardware.enableRedistributableFirmware = mkDefault true;
 
   host = {
     feature = {
-      secrets.enable = true;
+      secrets.enable = mkDefault true;
     };
     service = {
       logrotate = {
-        enable = true;
+        enable = mkDefault true;
       };
       ssh = {
-        enable = true;
-        harden = true;
+        enable = mkDefault true;
+        harden = mkDefault true;
       };
     };
   };
 
-  networking.domain = "tiredofit.ca";
+  networking.domain = mkDefault "tiredofit.ca";
 
   # Increase open file limit for sudoers
   security.pam.loginLimits = [
@@ -99,7 +101,7 @@
     }
   ];
 
-  security.sudo.wheelNeedsPassword = false ;
+  security.sudo.wheelNeedsPassword = mkDefault false ;
 
-  services.fstrim.enable = lib.mkDefault true;
+  services.fstrim.enable = mkDefault true;
 }
