@@ -19,7 +19,7 @@ in
       };
       listenPort = mkOption {
         type = types.port;
-        default = "10050";
+        default = 10050;
         description = "IP Address to accept connections from servers";
       };
       server = mkOption {
