@@ -12,13 +12,12 @@ in
   config = mkIf (role == "server") {
     boot = {
       initrd = {
-        boot = {
-          checkJournalingFS = false;                  # Get the server up as fast as possible
-        };
+        checkJournalingFS = false;                      # Get the server up as fast as possible
       };
+
       kernel.sysctl = {
         "net.core.default_qdisc" = "fq";
-        "net.ipv4.tcp_congestion_control" = "bbr";      # use TCP BBR has significantly increased throughput and reduced latency for connections
+        "net.ipv4.tcp_congestion_control" = "bbr";    # use TCP BBR has significantly increased throughput and reduced latency for connections
       };
     };
 
@@ -68,8 +67,6 @@ in
       };
       useNetworkd = mkDefault true;
     };
-
-    programs.nano.defaultEditor = lib.mkDefault true;
 
     systemd = {
       enableEmergencyMode = false;                    # Allow system to continue booting in headless mode.
