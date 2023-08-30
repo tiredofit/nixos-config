@@ -7,6 +7,7 @@ with lib;
     ./kiosk
     ./laptop
     ./minimal
+    ./server
     ./vm
   ];
 
