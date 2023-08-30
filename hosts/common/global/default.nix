@@ -71,6 +71,9 @@
       secrets.enable = true;
     };
     service = {
+      logrotate = {
+        enable = true;
+      };
       ssh = {
         enable = true;
         harden = true;
