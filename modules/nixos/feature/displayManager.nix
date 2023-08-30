@@ -10,9 +10,9 @@ with lib;
   options = {
     host.feature.displayManager = {
       server = mkOption {
-        type = types.str;
+        type = types.enum ["x" "wayland"];
         default = null;
-        description = "Type of displayManager: x or wayland";
+        description = "Type of displayManager";
       };
     };
   };

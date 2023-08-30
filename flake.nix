@@ -96,8 +96,6 @@
           modules = [ ./hosts/soy ];
           specialArgs = { inherit inputs outputs; };
         };
-
-
       };
     };
 }
