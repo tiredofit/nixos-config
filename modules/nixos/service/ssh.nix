@@ -4,6 +4,10 @@ let
   hosts = outputs.nixosConfigurations;
   pubKey = host: ../../../hosts/${host}/secrets/ssh_host_ed25519_key.pub;
   cfg = config.host.service.ssh;
+  logLevel =
+    if config.host.network.firewall.fail2ban.enable
+    then "VERBOSE"
+    else "INFO";
 in
   with lib;
 {
@@ -14,10 +18,25 @@ in
         type = with types; bool;
         description = "Enable remote accesa via secure shell";
       };
+      extraConfig = mkOption {
+        default = "";
+        type = types.lines;
+        description = "Verbatim contents of sshd_config";
+      };
       harden = mkOption {
         default = false;
         type = with types; bool;
         description = "Harden with more secure settings";
+      };
+      listenIP = mkOption {
+        type = types.str;
+        default = "0.0.0.0";
+        description = "IP Address to listen for remote connections";
+      };
+      listenPort = mkOption {
+        type = types.port;
+        default = 22;
+        description = "Port to listen on";
       };
     };
   };
@@ -41,37 +60,44 @@ in
                 type = "ed25519";
               }
             ];
+        listenAddresses = [
+          {
+            addr = mkDefault cfg.listenIP;
+            port = mkDefault cfg.listenPort;
+          }
+        ];
+        openFirewall = mkDefault true ;
+        startWhenNeeded = mkDefault false;
         settings = {
+          GatewayPorts = "clientspecified";
+          KbdInteractiveAuthentication = mkDefault true;
+          LogLevel = mkDefault logLevel;
+          PasswordAuthentication = mkDefault true;
           PermitRootLogin = mkDefault "no" ;
           StreamLocalBindUnlink = "yes";
-          GatewayPorts = "clientspecified";
+          X11Forwarding = mkDefault true;
           Ciphers = mkIf cfg.harden [
-           "chacha20-poly1305@openssh.com"
-           "aes256-gcm@openssh.com"
-           "aes128-gcm@openssh.com"
-           "aes256-ctr"
-           "aes192-ctr"
-           "aes128-ctr"
+            "aes256-ctr"
+            "aes192-ctr"
+            "aes128-ctr"
+            "aes256-gcm@openssh.com"
+            "aes128-gcm@openssh.com"
+            "chacha20-poly1305@openssh.com"
           ];
           KexAlgorithms = mkIf cfg.harden [
             "curve25519-sha256@libssh.org"
-            "ecdh-sha2-nistp521"
-            "ecdh-sha2-nistp384"
-            "ecdh-sha2-nistp256"
             "diffie-hellman-group-exchange-sha256"
-            "curve25519-sha256"
-            "curve25519-sha256@libssh.org"
-            "diffie-hellman-group16-sha512"
-            "diffie-hellman-group18-sha512"
-            "sntrup761x25519-sha512@openssh.com"
+            "ecdh-sha2-nistp256"
+            "ecdh-sha2-nistp384"
+            "ecdh-sha2-nistp521"
           ];
           Macs = mkIf cfg.harden [
             "hmac-sha2-512-etm@openssh.com"
             "hmac-sha2-256-etm@openssh.com"
-            "umac-128-etm@openssh.com"
             "hmac-sha2-512"
             "hmac-sha2-256"
             "umac-128@openssh.com"
+            "umac-128-etm@openssh.com"
           ];
         };
       };

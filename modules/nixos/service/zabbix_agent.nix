@@ -60,6 +60,7 @@ in
           Server = mkDefault cfg.server;
           ServerActive = mkDefault cfg.serverActive";
         };
+
       logrotate.settings."/var/log/zabbix/zabbix_agentd.log" = {
 
       };
