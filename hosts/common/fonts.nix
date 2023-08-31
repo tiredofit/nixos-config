@@ -1,8 +1,11 @@
-{ lib, config, pkgs, ... }:
-
+{ config, lib, pkgs, ... }:
+let
+  graphics = config.host.hardware.graphics;
+in
+  with lib;
 {
   # all fonts are linked to /nix/var/nix/profiles/system/sw/share/X11/fonts
-  fonts = {
+  fonts = mkIf graphics.enable {
     # use fonts specified by user rather than default ones
     enableDefaultPackages = false;
     fontDir.enable = true;
@@ -37,8 +40,8 @@
     # user defined fonts
     # the reason there's Noto Color Emoji everywhere is to override DejaVu's
     # B&W emojis that would sometimes show instead of some Color emojis
-    fontconfig = {
-      enable = true ;
+    fontconfig = mkIf graphics.enable {
+      enable = true;
       antialias = true;
       cache32Bit = true;
       hinting.enable = true;
