@@ -21,11 +21,6 @@ with lib;
         type = with types; bool;
         description = "Enables graphics acceleration";
       };
-      displayServer = mkOption {
-        type = types.enum ["x" "wayland" null];
-        default = null;
-        description = "Display Server: x or wayland";
-      };
       gpu = mkOption {
         type = types.enum ["pi" "amd" "intel" "nvidia" "hybrid-nv" "hybrid-amd" "integrated-amd" null];
         default = null;
