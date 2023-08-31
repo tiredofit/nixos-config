@@ -3,7 +3,7 @@
   imports = [
     inputs.disko.nixosModules.disko
     ../../templates/disko/efi-btrfs-swap.nix
-
+    ../../templates/hardware/vm-qemu.nix
     inputs.nur.nixosModules.nur
 
     #./hardware-configuration.nix
