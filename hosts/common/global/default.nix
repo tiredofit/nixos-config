@@ -23,17 +23,6 @@
       "vm.dirty_ratio" = mkDefault 6;                         # sync disk when buffer reach 6% of memory
     };
     kernelPackages = pkgs.linuxPackages_latest;     # Latest kernel
-
-  };
-
-  documentation = {
-    doc.enable = mkDefault false;
-    nixos.enable = mkDefault false;
-    info.enable = mkDefault false;
-    man = {
-      enable = mkDefault true;
-      generateCaches = mkDefault true;
-    };
   };
 
   environment = {
