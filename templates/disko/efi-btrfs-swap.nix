@@ -57,17 +57,6 @@ in
                     mountpoint = "/nix";
                     mountOptions = [ "compress=zstd" "noatime" ];
                   };
-                  "/persist" = {
-                    mountOptions = [ "compress=zstd" "noatime" ];
-                  };
-                  "/persist/active" = {
-                    mountpoint = "/persist";
-                    mountOptions = [ "compress=zstd" "noatime" ];
-                  };
-                  "/persist/snapshots" = {
-                    mountpoint = "/persist/.snapshots";
-                    mountOptions = [ "compress=zstd" "noatime" ];
-                  };
                   "/var_local" = {
                     mountpoint = "/var/local";
                     mountOptions = [ "compress=zstd" "noatime" ];

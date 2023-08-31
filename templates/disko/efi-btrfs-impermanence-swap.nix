@@ -1,12 +1,11 @@
 let
   disk1 = "/dev/vda";
-  disk2 = "/dev/vdb";
 in
 {
   disko.devices = {
     disk = {
       ${disk1} = {
-        device = "${disk1}";
+        device = "${disk1}" ;
         type = "disk";
         content = {
           type = "gpt";
@@ -37,7 +36,7 @@ in
               size = "100%";
               content = {
                 type = "btrfs";
-                extraArgs = [ "-f" "-m raid1 -d raid1" "${disk2}" ];
+                extraArgs = [ "-f" ];
                 subvolumes = {
                   "/root" = {
                     mountpoint = "/";
@@ -56,6 +55,17 @@ in
                   };
                   "/nix" = {
                     mountpoint = "/nix";
+                    mountOptions = [ "compress=zstd" "noatime" ];
+                  };
+                  "/persist" = {
+                    mountOptions = [ "compress=zstd" "noatime" ];
+                  };
+                  "/persist/active" = {
+                    mountpoint = "/persist";
+                    mountOptions = [ "compress=zstd" "noatime" ];
+                  };
+                  "/persist/snapshots" = {
+                    mountpoint = "/persist/.snapshots";
                     mountOptions = [ "compress=zstd" "noatime" ];
                   };
                   "/var_local" = {
@@ -80,13 +90,6 @@ in
           };
         };
       };
-      #${disk2} = {
-      #  device = "${disk2}";
-      #  type = "disk";
-      #  content = {
-      #    type = "nodev";
-      #  };
-      #};
     };
   };
 }
