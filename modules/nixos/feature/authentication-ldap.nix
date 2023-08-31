@@ -37,34 +37,6 @@ in
         type = with types; bool;
         description = "Use TLS";
       };
-
-      loglevel = {
-        sssd = mkOption {
-          default = false;
-          type = with types; int;
-          description = "SSSD Log Level 0-9";
-        };
-        nss = mkOption {
-          default = cfg.loglevel.sssd;
-          type = with types; int;
-          description = "NSS Log Level 0-9";
-        };
-        pam = mkOption {
-          default = cfg.loglevel.pam;
-          type = with types; int;
-          description = "PAM Log Level 0-9";
-        };
-        ssh = mkOption {
-          default = cfg.loglevel.sssd;
-          type = with types; int;
-          description = "SSH Log Level 0-9";
-        };
-        sudo = mkOption {
-          default = cfg.loglevel.sssd;
-          type = with types; int;
-          description = "Sudo Log Level 0-9";
-        };
-      };
     };
   };
 
