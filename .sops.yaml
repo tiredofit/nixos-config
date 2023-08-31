@@ -32,6 +32,11 @@ creation_rules:
     - age:
       - *host_butcher
       - *user_dave
+  - path_regex: hosts/disko/secrets/.*
+    key_groups:
+    - age:
+      - *host_butcher
+      - *user_dave
   - path_regex: hosts/selecta/secrets/.*
     key_groups:
     - age:
