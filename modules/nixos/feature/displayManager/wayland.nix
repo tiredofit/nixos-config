@@ -2,9 +2,10 @@
 with lib;
 let
   inherit (specialArgs) kioskUsername kioskURL;
-  displayManager = config.host.feature.displayManager.server ;
+  displayManager = config.host.feature.displayManager.server;
+  graphics = config.host.hardware.graphics;
 in {
-  config = mkIf (displayManager == "wayland") {
+  config = mkIf (graphics.enable && displayManager == "wayland") {
     environment.pathsToLink = [ "/libexec" ]; # links /libexec from derivations to /run/current-system/sw
 
     programs = mkIf (config.host.role != "kiosk") {
