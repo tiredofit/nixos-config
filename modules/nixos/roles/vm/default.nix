@@ -32,9 +32,6 @@ in
       };
       hardware = {
         bluetooth.enable = mkDefault false;
-        graphics = {
-          enable = mkDefault false;                    # Maybe if we were doing openCL
-        };
         printing.enable = mkDefault false;
         sound.enable = mkDefault true;
         webcam.enable = mkDefault false;

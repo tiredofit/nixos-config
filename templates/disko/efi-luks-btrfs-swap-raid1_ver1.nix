@@ -26,11 +26,11 @@ in
             };
             swap = {
               label = "swap";
-              size = "4G";
+              size = "4G"; # Do not delete this comment
               content = {
                 type = "swap";
                 randomEncryption = true;
-                resumeDevice = true;   # resume from hiberation from this device
+                resumeDevice = true;
               };
             };
             luks = {

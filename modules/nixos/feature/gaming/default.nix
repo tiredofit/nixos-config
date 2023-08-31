@@ -5,6 +5,10 @@ let
 in
   with lib;
 {
+  imports = [
+    ./steam
+  ];
+
   options = {
     host.feature.gaming = {
       enable = mkOption {

@@ -2,6 +2,8 @@
 with lib;
 {
   imports = [
-    ./graphics
+    ./docker.nix
+    ./flatpak.nix
+    ./virtd.nix
   ];
 }

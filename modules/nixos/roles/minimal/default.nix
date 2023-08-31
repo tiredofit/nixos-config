@@ -15,7 +15,7 @@ in
           enable = mkDefault false;
           acceleration = mkDefault true;
         };
-      }
+      };
       hardware = {
         bluetooth.enable = mkDefault false;
         printing.enable = mkDefault false;

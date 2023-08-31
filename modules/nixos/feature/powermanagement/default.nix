@@ -5,6 +5,9 @@ let
 in
   with lib;
 {
+  imports = [
+    ./tlp.nix
+  ];
   options = {
     host.feature.powermanagement = {
       enable = mkOption {
