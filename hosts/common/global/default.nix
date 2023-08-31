@@ -12,6 +12,9 @@
 
   boot = {
     initrd = {
+      compressor = mkDefault "zstd";
+      compressorArgs = mkDefault ["-19"];
+
       systemd = {
         strip = mkDefault true;                               # Saves considerable space in initrd
       };
