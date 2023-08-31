@@ -1,16 +1,13 @@
 {config, lib, pkgs, ...}:
-
-with lib;
+  with lib;
 {
 
   imports = [
-    ./gpu/amd.nix
-    ./gpu/intel.nix
-    ./gpu/nvidia.nix
+    ./backend
   ];
 
   options = {
-    host.hardware.graphics = {
+    host.feature.graphics = {
       enable = mkOption {
         default = false;
         type = with types; bool;
@@ -21,10 +18,10 @@ with lib;
         type = with types; bool;
         description = "Enables graphics acceleration";
       };
-      gpu = mkOption {
-        type = types.enum ["pi" "amd" "intel" "nvidia" "hybrid-nv" "hybrid-amd" "integrated-amd" null];
+      backend = mkOption {
+        type = types.enum ["x" "wayland" null];
         default = null;
-        description = "Manufacturer/type of the primary system gpu";
+        description = "Backend of displayManager";
       };
       monitors = mkOption {
         type = with types; listOf str;
@@ -36,8 +33,8 @@ with lib;
 
   config = {
     hardware = {
-        opengl = lib.mkIf ( config.host.hardware.graphics.acceleration && config.host.hardware.graphics.enable ){
-          enable = true ;
+        opengl = mkIf ((config.host.feature.graphics.enable) && (config.host.feature.graphics.acceleration)) {
+          enable = true;
           driSupport = true;
           driSupport32Bit = true;
         };

@@ -10,12 +10,14 @@ in
 
   config = mkIf (role == "minimal") {
     host = {
-      hardware = {
-        bluetooth.enable = mkDefault false;
+      feature = {
         graphics = {
           enable = mkDefault false;
           acceleration = mkDefault true;
         };
+      }
+      hardware = {
+        bluetooth.enable = mkDefault false;
         printing.enable = mkDefault false;
         sound.enable = mkDefault false;
         webcam.enable = mkDefault false;

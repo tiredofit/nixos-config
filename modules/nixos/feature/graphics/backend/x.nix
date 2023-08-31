@@ -12,10 +12,9 @@ let
 
   inherit (pkgs) writeScript;
 
-  displayManager = config.host.feature.displayManager.server ;
-  graphics = config.host.hardware.graphics;
+  graphics = config.host.feature.graphics;
 in {
-  config = mkIf (graphics.enable && displayManager == "x") {
+  config = mkIf (graphics.enable && graphics.backend == "x") {
     environment.pathsToLink = [ "/libexec" ]; # links /libexec from derivations to /run/current-system/sw
 
     programs = mkIf (config.host.role != "kiosk") {

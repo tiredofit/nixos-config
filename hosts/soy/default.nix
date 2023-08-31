@@ -17,10 +17,10 @@
 
   host = {
     feature = {
-      boot = {
-        efi.enable = true;
+      graphics = {
+        enable = true;
+        displayServer = "x";
       };
-      powermanagement.enable = true;
       virtualization = {
         docker = {
           enable = true;
@@ -34,10 +34,6 @@
     };
     hardware = {
       cpu = "vm-amd";
-      graphics = {
-        enable = true;
-        displayServer = "x";
-      };
       raid.enable = true;
       sound = {
         server = "pulseaudio";

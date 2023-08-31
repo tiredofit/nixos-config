@@ -26,16 +26,16 @@ in
   config = mkIf (role == "kiosk") {
     host = {
       feature = {
+        graphics = {
+          enable = mkDefault true;
+          acceleration = mkDefault true;
+        };
         powermanagement = {
           enable = mkDefault false;
         };
       };
       hardware = {
         bluetooth.enable = mkDefault false;
-        graphics = {
-          enable = mkDefault true;
-          acceleration = mkDefault true;
-        };
         printing.enable = mkDefault false;
         sound.enable = mkDefault false;
         webcam.enable = mkDefault true;

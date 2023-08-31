@@ -34,6 +34,9 @@ in
 
     host = {
       feature = {
+        graphics = {
+          enable = mkDefault false;                   # Maybe if we were doing openCL
+        };
         virtualization = {
           docker = {
             enable = mkDefault true;
@@ -47,9 +50,7 @@ in
       };
       hardware = {
         bluetooth.enable = mkDefault false;
-        graphics = {
-          enable = mkDefault false;                   # Maybe if we were doing openCL
-        };
+
         printing.enable = mkDefault false;            # My use case never involves a print server
         sound.enable = mkDefault false;
         webcam.enable = mkDefault false;

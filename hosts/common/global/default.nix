@@ -5,6 +5,7 @@
     inputs.home-manager.nixosModules.home-manager
     ./bash.nix
     ./diceware.nix
+    ../fonts.nix
     ./less.nix
     ./locale.nix
     ./nix.nix

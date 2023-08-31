@@ -1,6 +1,6 @@
 { config, lib, pkgs, ... }:
 let
-  graphics = config.host.hardware.graphics;
+  graphics = config.host.feature.graphics;
 in
   with lib;
 {

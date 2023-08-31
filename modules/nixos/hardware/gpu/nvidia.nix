@@ -17,8 +17,8 @@ let
     then config.boot.kernelPackages.nvidiaPackages.stable
     else config.boot.kernelPackages.nvidiaPackages.beta;
 
-  device = config.host.hardware.graphics;
-  desktop = config.host.hardware.graphics.desktop;
+  device = config.host.hardware;
+  backend = config.host.feature.graphics.backend;
 in {
   config = mkIf (device.gpu == "nvidia" || device.gpu == "hybrid-nvidia")  {
     nixpkgs.config.allowUnfree = true;
@@ -28,7 +28,7 @@ in {
         videoDrivers = ["nvidia"];
       }
 
-      (mkIf ( !desktop == "wayland") {
+      (mkIf ( !backend == "wayland") {
         # disable DPMS
         monitorSection = ''
           Option "DPMS" "false"
@@ -52,22 +52,22 @@ boot = {
 
     environment = {
       sessionVariables = mkMerge [
-        {
+        (mkIf (config.host.feature.graphics.enable) {
           LIBVA_DRIVER_NAME = "nvidia";
-        }
+        })
 
-        (mkIf (desktop == "wayland") {
+        (mkIf ((config.host.feature.graphics.enable) && (backend == "wayland")) {
           WLR_NO_HARDWARE_CURSORS = "1";
           #__GLX_VENDOR_LIBRARY_NAME = "nvidia";
           #GBM_BACKEND = "nvidia-drm"; # breaks firefox apparently
         })
 
-        (mkIf ((desktop == "wayland") && (device.gpu == "hybrid-nvidia")) {
+        (mkIf ((backend == "wayland") && (device.gpu == "hybrid-nvidia") && (config.host.feature.graphics.enable)) {
           __NV_PRIME_RENDER_OFFLOAD = "1";
           WLR_DRM_DEVICES = mkDefault "/dev/dri/card1:/dev/dri/card0";
         })
       ];
-      systemPackages = with pkgs; [
+      systemPackages = with pkgs; mkIf (config.host.feature.graphics.enable) [
         libva
         libva-utils
         vulkan-loader

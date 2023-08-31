@@ -1,4 +1,4 @@
-{ inputs, pkgs, ...}: {
+{ config, inputs, pkgs, ...}: {
 
   imports = [
     inputs.nur.nixosModules.nur
@@ -33,9 +33,6 @@
 
   host = {
     feature = {
-      displayManager = {
-        server = "x";
-      };
       gaming = {
         enable = true;
         steam = {
@@ -43,16 +40,17 @@
           protonGE = true;
         };
       };
+      graphics = {
+        enable = true;
+        backend = "x";
+      };
     };
     filesystem = {
       encryption.enable = true;
     };
     hardware = {
       cpu = "amd";
-      graphics = {
-        displayServer = "x";
-        gpu = "integrated-amd";
-      };
+      gpu = "integrated-amd";
       sound = {
         server = "pulseaudio";
       };

@@ -1,7 +1,7 @@
 { config, lib, pkgs, ... }:
 with lib;
 let
-  device = config.host.hardware.graphics ;
+  device = config.host.hardware ;
 in {
   config = mkIf (device.gpu == "amd" || device.gpu == "hybrid-amd" || device.gpu == "integrated-amd")  {
     boot = lib.mkMerge [

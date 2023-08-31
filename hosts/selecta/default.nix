@@ -11,16 +11,15 @@
   ];
 
   host = {
-    graphics = {
-      displayServer = "x";
+    feature = {
+      graphics = {
+        enable = true;
+        backend = "x";
+      };
     };
     hardware = {
       cpu = "amd";
-      graphics = {
-        enable = true;
-        acceleration = true;
-        gpu = "nvidia";
-      }
+      gpu = "nvidia";
       sound = {
         server = "pulseaudio";
       };

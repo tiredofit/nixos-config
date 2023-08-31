@@ -32,17 +32,15 @@ imports = [
 
   host = {
     feature = {
-      boot-efi.enable = false;
+      graphics = {
+        enable = true;
+        backend = "x";
+      };
+    };
     filesystem = {
       btrfs.enable = false;
     };
-    hardware = {
-      graphics = {
-        enable = true;
-        displayServer = "x";
-      };
-      role = "kiosk";
-    };
+    role = "kiosk";
   };
 
   networking = {

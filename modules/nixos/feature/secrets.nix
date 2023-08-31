@@ -44,6 +44,14 @@ in
           sopsFile = ../../../hosts/common/secrets/secrets.yaml;
         };
       };
+      templates = {
+        example = {
+          name = "example.cfg";
+          content = ''
+            example_info = "${config.sops.placeholder.common}"
+          '';
+        };
+      };
     };
   };
 }

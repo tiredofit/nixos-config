@@ -3,7 +3,7 @@
   imports = [
     inputs.disko.nixosModules.disko
     ../../templates/disko/efi-btrfs-swap.nix
-    ../../templates/hardware/vm-qemu.nix
+    ../../templates/machine/virtd-vm.nix
     inputs.nur.nixosModules.nur
 
     #./hardware-configuration.nix
@@ -14,29 +14,24 @@
 
   host = {
     feature = {
-      boot = {
-        efi.enable = true;
+      graphics = {
+        enable = false;
       };
-      powermanagement.enable = true;
     };
     filesystem = {
       btrfs.enable = true;
-      encryption.enable = true;
-      impermanence.enable = true;
+      encryption.enable = false;
+      impermanence.enable = false;
     };
     hardware = {
       cpu = "vm-amd";
-      graphics = {
-        enable = true;
-        displayServer = "x";
-      };
       raid.enable = true;
       sound = {
-        enable = true;
+        enable = false;
         server = "pulseaudio";
       };
     };
-    role = "lite";
+    role = "vm";
   };
 
   networking = {
