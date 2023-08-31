@@ -1,4 +1,5 @@
 {
+host-feature-authentication-ldap = import ./feature/authentication-ldap.nix;
 host-feature-authentication-sssd = import ./feature/authentication-sssd.nix;
 host-feature-boot-efi = import ./feature/boot-efi.nix;
 host-feature-boot-graphical = import ./feature/boot-graphical.nix;

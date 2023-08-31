@@ -51,14 +51,14 @@ in
         };
         filter = {
           access = {
-            default = null
+            default = null;
             type = with types; string;
             description = "Filter to allow user access";
           };
         };
         objectclass = {
           user = {
-            default = "inetOrgPerson"
+            default = "inetOrgPerson";
             type = with types; string;
             description = "User Object Class";
           };
@@ -114,7 +114,6 @@ in
   config = mkIf cfg.enable {
     services = {
       sssd = {
-        sshAuthorizedKeysIntegration = true;
         enable = true;
         config = ''
 [domain/${domain}]
@@ -165,6 +164,7 @@ debug_level = ${cfg.loglevel.sudo}
 debug_level = ${cfg.loglevel.ssh}
 
         '';
+        sshAuthorizedKeysIntegration = true;
       };
       nscd.config = ''
         enable-cache hosts yes
