@@ -1057,20 +1057,20 @@ install_q_disk() {
         fi
     done
     COLUMNS=$oldcolumns
-    export deploy_disk=${opt}
+    export deploy_disk_template=${opt}
 
-    echo "DEPLOY DISK IS: ${deploy_disk}"
+    echo "DEPLOY DISK IS: ${deploy_disk_template}"
     ## Need to do something about this and ask for LUKS password
 }
 
 task_install_host() {
     print_info "Commencing install to Host: ${deploy_host} (${remote_host_ip_address})"
-    #nix run github:numtide/nixos-anywhere -- \
-    #                                            --ssh-port ${SSH_PORT} ${ssh_private_key_prefix} \
-    #                                            --no-reboot \
-    #                                            ${feature_luks} --extra-files ${_dir_remote_rootfs}" \
-    #                                            --flake "${_dir_flake}"/#${deploy_host} \
-    #                                            root@${remote_host_ip_address}
+    nix run github:numtide/nixos-anywhere -- \
+                                                --ssh-port ${SSH_PORT} ${ssh_private_key_prefix} \
+                                                --no-reboot \
+                                                ${feature_luks} --extra-files ${_dir_remote_rootfs}" \
+                                                --flake "${_dir_flake}"/#${deploy_host} \
+                                                ${REMOTE_USER}@${remote_host_ip_address}
 }
 
 task_update_host() {

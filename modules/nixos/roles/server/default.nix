@@ -46,11 +46,15 @@ in
       filesystem = {
         btrfs.enable = mkDefault true;
         encryption.enable = mkDefault true;
-        impermanence.enable = mkDefault true;
+        impermanence = {
+          enable = mkDefault true;
+          directories = [
+            "/mnt/"
+          ];
+        };
       };
       hardware = {
         bluetooth.enable = mkDefault false;
-
         printing.enable = mkDefault false;            # My use case never involves a print server
         sound.enable = mkDefault false;
         webcam.enable = mkDefault false;
