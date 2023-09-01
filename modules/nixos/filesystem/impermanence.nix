@@ -133,10 +133,8 @@ in
         persistence."/persist" = {
             hideMounts = true ;
             directories = [
-              "/etc/NetworkManager"              # NetworkManager TODO should be seperated
               "/root"                            # Root
-              "/var/lib/NetworkManager"          # NetworkManager
-            ] ++ cfg_impermanence.directories;
+              ]  ++ cfg_impermanence.directories;
             files = [
               "/etc/machine-id"
             ] ++ cfg_impermanence.files;
@@ -152,6 +150,11 @@ in
         options = [ "subvol=persist/snapshots" "compress=zstd" "noatime"  ];
       };
     };
+
+    host.filesystem.impermanence.directories = mkIf ((config.host.filesystem.impermanence.enable) && (config.networking.networkmanager.enable)) [
+       "/etc/NetworkManager"              # NetworkManager TODO Potentially should be its own module but at least it is limited in this config
+      "/var/lib/NetworkManager"           # NetworkManager
+    ];
 
     services = mkIf cfg_impermanence.enable {
       btrbk = {
