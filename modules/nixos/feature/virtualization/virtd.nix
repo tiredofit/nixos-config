@@ -1,5 +1,4 @@
 {config, lib, pkgs, ...}:
-
 let
   cfg_daemon = config.host.feature.virtualization.virtd.daemon;
   cfg_client = config.host.feature.virtualization.virtd.client;
@@ -26,30 +25,30 @@ in
     };
   };
 
-  config = lib.mkMerge [
+  config = mkMerge [
   {
-    environment.systemPackages = lib.mkIf cfg_client.enable [
+    environment.systemPackages = mkIf cfg_client.enable [
       spice-gtk
       swtpm
       virt-manager
     ];
 
-    virtualisation = lib.mkIf cfg_daemon.enable {
+    virtualisation = mkIf cfg_daemon.enable {
       libvirtd = {
         enable = true;
       };
       spiceUSBRedirection.enable = true;
     };
 
-    programs.dconf = lib.mkIf cfg_daemon.enable {
+    programs.dconf = mkIf cfg_daemon.enable {
       enable = true;
     };
 
-    security = lib.mkIf cfg_daemon.enable {
+    security = mkIf cfg_daemon.enable {
       polkit.enable = true;
     };
 
-    host.filesystem.impermanence.directories = lib.mkIf config.host.filesystem.impermanence.enable [
+    host.filesystem.impermanence.directories = mkIf ((config.host.filesystem.impermanence.enable) && (cfg.client.enable)) [
       "/var/lib/libvirt"                 # Libvirt
     ];
 
