@@ -34,6 +34,10 @@ in
 
     host = {
       feature = {
+        boot = {
+          efi.enable = mkDefault true;
+          graphical.enable = mkDefault false;
+        };
         graphics = {
           enable = mkDefault false;                   # Maybe if we were doing openCL
         };
@@ -56,6 +60,7 @@ in
       hardware = {
         bluetooth.enable = mkDefault false;
         printing.enable = mkDefault false;            # My use case never involves a print server
+        raid.enable = mkDefault false;
         sound.enable = mkDefault false;
         webcam.enable = mkDefault false;
         wireless.enable = mkDefault false;            # Most servers are ethernet?

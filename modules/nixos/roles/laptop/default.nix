@@ -12,6 +12,10 @@ in
   config = mkIf (role == "laptop" || role == "hybrid") {
     host = {
       feature = {
+        boot = {
+          efi.enable = mkDefault true;
+          graphical.enable = mkDefault true;
+        };
         graphics = {
           enable = mkDefault true;            # We're working with a GUI here
           acceleration = mkDefault true;      # Since we have a GUI, we want openGL
@@ -28,7 +32,7 @@ in
       };
       hardware = {
         bluetooth.enable = mkDefault true;    # Most wireless cards have bluetooth radios
-
+        raid.enable = mkDefault false;        #
         printing.enable = mkDefault true;     # If we don't have access to a physical printer we should be able to remotely print
         sound.enable = mkDefault true;        #
         touchpad.enable = mkDefault true;     # We want this most of the time

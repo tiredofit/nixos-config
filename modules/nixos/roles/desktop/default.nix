@@ -38,16 +38,19 @@ in
       };
       filesystem = {
         btrfs.enable = mkDefault true;
+        encryption.enable = mkDefault false;
         impermanence = {
           enable = mkDefault true;
           directories = [
             "/mnt/"
           ];
         };
+
       };
       hardware = {
         bluetooth.enable = mkDefault true;    # Most wireless cards have bluetooth radios
         printing.enable = mkDefault true;     # If we don't have access to a physical printer we should be able to remotely print
+        raid.enable = mkDefault false;
         sound.enable = mkDefault true;        #
         webcam.enable = mkDefault true;       # Age of video conferencing
         wireless.enable = mkDefault true;     # Most systems have some sort of 802.11
