@@ -10,6 +10,7 @@
 
     ../common/global
     ../../users/dave
+    ../../users/root
   ];
 
   host = {
