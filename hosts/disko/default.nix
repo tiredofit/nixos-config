@@ -6,8 +6,6 @@
     ../../templates/machine/virtd-vm.nix
     inputs.nur.nixosModules.nur
 
-    #./hardware-configuration.nix
-
     ../common/global
     ../../users/dave
     ../../users/root
