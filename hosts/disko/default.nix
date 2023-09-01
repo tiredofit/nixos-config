@@ -2,7 +2,7 @@
 
   imports = [
     inputs.disko.nixosModules.disko
-    ../../templates/disko/efi-btrfs-swap.nix
+    ../../templates/disko/efi-btrfs-impermanence-swap.nix
     ../../templates/machine/virtd-vm.nix
     inputs.nur.nixosModules.nur
 
@@ -21,7 +21,7 @@
     filesystem = {
       btrfs.enable = true;
       encryption.enable = false;
-      impermanence.enable = false;
+      impermanence.enable = true;
     };
     hardware = {
       cpu = "vm-amd";

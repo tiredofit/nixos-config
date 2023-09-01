@@ -1,4 +1,4 @@
-{ config, lib, outputs, ... }:
+{ config, lib, pkgs, outputs, ... }:
 let
   inherit (config.networking) hostName;
   hosts = outputs.nixosConfigurations;
@@ -119,6 +119,37 @@ in
             (lib.optional (name == hostName) "localhost");
         })
         hosts;
+    };
+
+    system = {
+      activationScripts.ssh-validate_permissions = ''
+        ## This is in here when doing a remote install and rsyncing keys over as a regular user the permissions can get wonky.
+        if [ -d "/persist/etc/ssh/" ]; then
+            path_prefix=/persist/
+        fi
+
+        pri=$(stat -c "%a %U %G" "$path_prefix"/etc/ssh/ssh_host_ed25519_key)
+        pub=$(stat -c "%a %U %G" "$path_prefix"/etc/ssh/ssh_host_ed25519_key.pub)
+
+        if [ $(echo "$pri" | ${pkgs.gawk}/bin/awk '{print $1}') != 600 ]; then
+            echo "Resetting Permissions on SSH Host Private Key"
+            chmod 600 "$path_prefix"/etc/ssh/ssh_host_ed25519_key
+        fi
+
+        if [ $(echo "$pri" | ${pkgs.gawk}/bin/awk '{print $2}') != "root" ]; then
+            chown root:root "$path_prefix"/etc/ssh/ssh_host_ed25519_key
+        fi
+
+        if [ $(echo "$pub" | ${pkgs.gawk}/bin/awk '{print $1}') != 640 ]; then
+            echo "Resetting Permissions on SSH Host Public Key"
+            chmod 640 "$path_prefix"/etc/ssh/ssh_host_ed25519_key.pub
+        fi
+
+        if [ $(echo "$pub" | ${pkgs.gawk}/bin/awk '{print $2}') != "root root" ]; then
+            echo "Resetting ownership on SSH Host Public Key"
+            chown -R root:root "$path_prefix"/etc/ssh/ssh_host_ed25519_key.pub
+        fi
+      '';
     };
   };
 }
