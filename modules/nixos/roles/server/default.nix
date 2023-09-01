@@ -11,11 +11,11 @@ in
 
   config = mkIf (role == "server") {
     boot = {
-      initrd = {
+      initrd = mkDefault {
         checkJournalingFS = false;                      # Get the server up as fast as possible
       };
 
-      kernel.sysctl = {
+      kernel.sysctl =  mkDefault {
         "net.core.default_qdisc" = "fq";
         "net.ipv4.tcp_congestion_control" = "bbr";    # use TCP BBR has significantly increased throughput and reduced latency for connections
       };
@@ -30,7 +30,7 @@ in
 
     environment.variables.BROWSER = "echo";           # Print the URL instead on servers
 
-    fonts.fontconfig.enable = lib.mkDefault false;    # No GUI
+    fonts.fontconfig.enable = mkDefault false;        # No GUI
 
     host = {
       feature = {
@@ -80,8 +80,8 @@ in
     };
 
     systemd = {
-      enableEmergencyMode = false;                    # Allow system to continue booting in headless mode.
-      watchdog = {                                    # See https://0pointer.de/blog/projects/watchdog.html
+      enableEmergencyMode = mkDefault false;          # Allow system to continue booting in headless mode.
+      watchdog = mkDefault {                          # See https://0pointer.de/blog/projects/watchdog.html
         runtimeTime = "20s";                          # Hardware watchdog reboot after 20s
         rebootTime = "30s";                           # Force reboot when hangs after 30s. See https://utcc.utoronto.ca/~cks/space/blog/linux/SystemdShutdownWatchdog
       };
