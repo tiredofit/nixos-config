@@ -2,9 +2,9 @@
   with lib;
 {
   imports = [
-    ./gpu/amd.nix
-    ./gpu/intel.nix
-    ./gpu/nvidia.nix
+    ./amd.nix
+    ./intel.nix
+    ./nvidia.nix
   ];
 
   options = {

@@ -46,8 +46,8 @@ in
     };
   };
 
-  config = mkMerge
-    # Don't use BTRFS subvolume if RAID is involved.[
+  config = mkMerge [
+    # Don't use BTRFS subvolume if RAID is involved.
     (mkIf ((cfg.enable) && (!config.host.hardware.raid.enable) && (cfg.type == "file")) {
       fileSystems = mkIf (config.host.filesystem.btrfs.enable) {
         "/swap".options = [ "subvol=swap" "nodatacow" "noatime" ];

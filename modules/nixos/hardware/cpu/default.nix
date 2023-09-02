@@ -2,8 +2,8 @@
 with lib;
 {
   imports = [
-    ./cpu/amd.nix
-    ./cpu/intel.nix
+    ./amd.nix
+    ./intel.nix
   ];
 
   options = {

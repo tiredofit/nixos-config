@@ -4,8 +4,8 @@ with lib;
 {
   imports = [
     ./bluetooth.nix
-    ./cpu.nix
-    ./gpu.nix
+    ./cpu
+    ./gpu
     ./monitors.nix
     ./printing.nix
     ./raid.nix
