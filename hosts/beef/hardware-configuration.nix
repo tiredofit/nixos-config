@@ -26,11 +26,11 @@
       options = [ "subvol=home/snapshots" ];
     };
 
-#  fileSystems."/mnt/data" =
-#    { device = "/dev/disk/by-uuid/412946e6-1d5b-44df-ba8e-06b60d3a0804";
-#      fsType = "btrfs";
-#      options = [ "subvol=data" ];
-#    };
+  fileSystems."/mnt/data" =
+    { device = "/dev/disk/by-uuid/412946e6-1d5b-44df-ba8e-06b60d3a0804";
+      fsType = "btrfs";
+      options = [ "subvol=__active" ];
+    };
 
   fileSystems."/nix" =
     { device = "/dev/disk/by-uuid/2116df83-e8d7-4dfb-85ba-0c3d602c7d90";
@@ -73,9 +73,9 @@
       fsType = "vfat";
     };
 
-  swapDevices =
-    [ { device = "/dev/disk/by-uuid/0839e935-d57b-4384-9d48-f557d0250ec1"; }
-    ];
+  #swapDevices =
+  #  [ { device = "/dev/disk/by-uuid/0839e935-d57b-4384-9d48-f557d0250ec1"; }
+  #  ];
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
 }
