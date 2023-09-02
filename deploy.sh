@@ -1063,6 +1063,56 @@ install_q_disk() {
     ## Need to do something about this and ask for LUKS password
 }
 
+parse_disk_config() {
+    system_role = $(grep "role = .*;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix | cut -d '"' -f2)
+
+    if grep -qF "btrfs.enable = mkDefault true;" "${_dir_flake}"/modules/nixos/roles/"${system_role}"/default.nix; then
+        disk_btrfs=true
+    fi
+    if grep -qF "encryption.enable = mkDefault true;"  "${_dir_flake}"/modules/nixos/roles/"${system_role}"/default.nix; then
+        disk_encryption=true
+    fi
+    if grep -qF "impermanence.enable = mkDefault true;"  "${_dir_flake}"/modules/nixos/roles/"${system_role}"/default.nix || grep -Pzo -m 1 "(?s)impermanence = {\n.*enable = mkDefault true;"  "${_dir_flake}"/modules/nixos/roles/"${system_role}"/default.nix; then ; then
+        disk_impermanence=true
+    fi
+    if grep -qF "raid.enable = mkDefault true;"  "${_dir_flake}"/modules/nixos/roles/"${system_role}"/default.nix; then
+        disk_raid=true
+    fi
+    if grep -qF "swap_file.enable = mkDefault true;"  "${_dir_flake}"/modules/nixos/roles/"${system_role}"/default.nix; then
+        disk_swapfile=true
+    fi
+
+    #"${_dir_flake}"/hosts/"${deploy_host}"/default.nix
+
+    if grep -qF "btrfs.enable = true;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
+        disk_btrfs=true
+    elif grep -qF "btrfs.enable = false;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
+        disk_btrfs=false
+    fi
+    if grep -qF "encryption.enable = true;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
+        disk_encryption=true
+    elif grep -qF "encryption.enable = false;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
+        disk_encryption=false
+    fi
+    if grep -qF "impermanence.enable = true;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix || grep -Pzo -m 1 "(?s)impermanence = {\n.*enable = true;" ; then
+        disk_impermanence=true
+    elif grep -qF "impermanence.enable = false;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix || grep -Pzo -m 1 "(?s)impermanence = {\n.*enable = false;" ; then
+        disk_impermanence=false
+    fi
+    if grep -qF "raid.enable = true;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
+        disk_raid=true
+    elif grep -qF "raid.enable = false;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
+    fi
+    if grep -qF "swap_file.enable = true;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
+        disk_swapfile=true
+    elif
+        grep -qF "swap_file.enable = false;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
+    fi
+
+
+
+}
+
 task_install_host() {
     print_info "Commencing install to Host: ${deploy_host} (${remote_host_ip_address})"
     nix run github:numtide/nixos-anywhere -- \

@@ -45,7 +45,10 @@ in
             "/mnt/"
           ];
         };
-
+        swap = {
+          enable = mkDefault true;
+          type = mkDefault "partition";
+        };
       };
       hardware = {
         bluetooth.enable = mkDefault true;    # Most wireless cards have bluetooth radios

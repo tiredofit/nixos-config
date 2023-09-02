@@ -56,6 +56,10 @@ in
             "/mnt/"
           ];
         };
+        swap = {
+          enable = mkDefault true;
+          type = mkDefault "partition";
+        };
       };
       hardware = {
         bluetooth.enable = mkDefault false;

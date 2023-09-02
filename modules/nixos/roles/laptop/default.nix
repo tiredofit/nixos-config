@@ -29,6 +29,11 @@ in
         btrfs.enable = mkDefault true;
         encryption.enable = mkDefault true;
         impermanence.enable = mkDefault true;
+        swap = {
+          enable = mkDefault false;
+          type = mkDefault "file";
+        };
+
       };
       hardware = {
         bluetooth.enable = mkDefault true;    # Most wireless cards have bluetooth radios

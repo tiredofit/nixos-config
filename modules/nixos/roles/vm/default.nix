@@ -30,6 +30,20 @@ in
           enable = mkDefault true;
         };
       };
+      filesystem = {
+        btrfs.enable = mkDefault true;
+        encryption.enable = mkDefault false;
+        impermanence = {
+          enable = mkDefault true;
+          directories = [
+            "/mnt/"
+          ];
+        };
+        swap = {
+          enable = mkDefault true;
+          type = mkDefault "partition";
+        };
+      };
       hardware = {
         bluetooth.enable = mkDefault false;
         printing.enable = mkDefault false;

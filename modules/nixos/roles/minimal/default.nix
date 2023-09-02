@@ -29,6 +29,9 @@ in
             "/mnt/"
           ];
         };
+        swap = {
+          enable = mkDefault false;
+        };
       };
       hardware = {
         bluetooth.enable = mkDefault false;
