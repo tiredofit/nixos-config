@@ -45,7 +45,7 @@ in
         };
         openFirewall = mkDefault true;
         package = mkDefault pkgs.zabbix.agent2;
-        server = mkDefault cfg.server";
+        server = mkDefault cfg.server;
         settings = {
           BufferSend = mkDefault 5;
           BufferSize = mkDefault 100;
@@ -57,7 +57,7 @@ in
           LogType = mkForce "file";
           RefreshActiveChecks = mkDefault 120;
           Server = mkDefault cfg.server;
-          ServerActive = mkDefault cfg.serverActive";
+          ServerActive = mkDefault cfg.serverActive;
         };
 
       logrotate.settings."/var/log/zabbix/zabbix_agentd.log" = {
@@ -65,14 +65,14 @@ in
       };
     };
 
-    systemd.services.zabbix-agent = {
-      serviceConfig = {
-        LogsDirectory = "zabbix";
-        LogsDirectoryMode = "0750";
-        RuntimeDirectory = "zabbix_agent";
-        RuntimeDirectoryMode = "0750";
+      systemd.services.zabbix-agent = {
+        serviceConfig = {
+          LogsDirectory = "zabbix";
+          LogsDirectoryMode = "0750";
+          RuntimeDirectory = "zabbix_agent";
+          RuntimeDirectoryMode = "0750";
+        };
       };
     };
   };
 }
-
