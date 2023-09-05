@@ -59,19 +59,17 @@ in
           Server = mkDefault cfg.server;
           ServerActive = mkDefault cfg.serverActive;
         };
-
+      };
       logrotate.settings."/var/log/zabbix/zabbix_agentd.log" = {
-
       };
     };
 
-      systemd.services.zabbix-agent = {
-        serviceConfig = {
-          LogsDirectory = "zabbix";
-          LogsDirectoryMode = "0750";
-          RuntimeDirectory = "zabbix_agent";
-          RuntimeDirectoryMode = "0750";
-        };
+    systemd.services.zabbix-agent = {
+      serviceConfig = {
+        LogsDirectory = "zabbix";
+        LogsDirectoryMode = "0750";
+        RuntimeDirectory = "zabbix_agent";
+        RuntimeDirectoryMode = "0750";
       };
     };
   };
