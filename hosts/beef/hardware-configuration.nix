@@ -73,9 +73,5 @@
       fsType = "vfat";
     };
 
-  #swapDevices =
-  #  [ { device = "/dev/disk/by-uuid/0839e935-d57b-4384-9d48-f557d0250ec1"; }
-  #  ];
-
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
 }
