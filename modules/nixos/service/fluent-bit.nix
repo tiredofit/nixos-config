@@ -13,7 +13,7 @@ let
     then "@INCLUDE ${config.host.custom.path}/*.conf"
     else " ";
 
-  fluentConfig = pkgs.writeText "fluent-bit.conf" ''
+  fluentConfig = pkgs.writeText "/etc/fluent-bit/fluent-bit.conf" ''
     @INCLUDE conf.d/*.conf
     ${customConfPath}
 
@@ -90,6 +90,71 @@ in
         default = "/var/log/fluentbit";
         description = "Log Path";
       };
+      output.forward.enable = mkOption {
+        type = with types; bool;
+        default = "false";
+        description = "Output to a FluentD/Fluent-bit forwarder";
+      };
+      output.forward.host = mkOption {
+        type = with types; str;
+        default = "null";
+        description = "Host or IP Address of FluentD host";
+      };
+      output.forward.port = mkOption {
+        type = with types; port;
+        default = 24224;
+        description = "Port of remote forwarder";
+      };
+      output.forward.tls.enable = mkOption {
+        type = with types; bool;
+        default = "false";
+        description = "Use TLS to connect to remote forwarder";
+      };
+      output.forward.tls.verify = mkOption {
+        type = with types; bool;
+        default = "false";
+        description = "Verify TLS when connecting to remote forwarder";
+      };
+      output.loki.enable = mkOption {
+        type = with types; bool;
+        default = "false";
+        description = "Output to a Loki server";
+      };
+      output.loki.host = mkOption {
+        type = with types; str;
+        default = "null";
+        description = "Host or IP Address of Loki host";
+      };
+      output.loki.port = mkOption {
+        type = with types; port;
+        default = 3100;
+        description = "Port of Loki host";
+      };
+      output.loki.tls.enable = mkOption {
+        type = with types; bool;
+        default = "false";
+        description = "Use TLS to access Loki host";
+      };
+      output.loki.tls.verify = mkOption {
+        type = with types; bool;
+        default = "false";
+        description = "Verify TLS";
+      };
+      output.loki.user = mkOption {
+        type = with types; str;
+        default = "null";
+        description = "Username to access remote Loki Host";
+      };
+      output.loki.pass = mkOption {
+        type = with types; str;
+        default = "null";
+        description = "Password to access remote Loki Host";  ## TODO TEST TO SEE IF WE CAN USE A SECRET
+      };
+      output.loki.tenant_id = mkOption {
+        type = with types; str;
+        default = "null";
+        description = "Tenant ID to advertise to Loki Host";
+      };
       storage.backlog_memory_limit = mkOption {
         type = with types; str;
         default = "5M";
@@ -138,6 +203,59 @@ in
           LogsDirectory = "fluentbit";
           LogsDirectoryMode = "0750";
         };
+      };
+    };
+
+    environment.etc = {
+      "fluent-bit/conf.d/do_not_delete.conf" = {
+         text = ''
+           # Don't delete this configuration file otherwise execution of fluent-bit will fail. It will not affect operation of your system or impact resources
+           [INPUT]
+               Name   dummy
+               Tag    ignore
+
+           [FILTER]
+               Name grep
+               Match ignore
+               regex ignore ignore
+
+           [OUTPUT]
+               Name   NULL
+               Match  ignore
+         '';
+         mode = "0440";
+      };
+
+      "fluent-bit/conf.d/out_forward.conf" = (mkIf cfg.output.forward.enable) {
+         text = ''
+                [OUTPUT]
+                     Name          forward
+                     Match         *
+                     Host          ${cfg.output.forward.host}
+                     Port          ${cfg.output.forward.port}
+                     Self_Hostname ${config.networking.hostName}
+                     tls           ${BoolOnOff cfg.output.forward.tls.enable}
+                     tls.verify    ${BoolOnOff cfg.output.forward.tls.verify}
+
+         '';
+         mode = "0440";
+      };
+
+      "fluent-bit/conf.d/out_loki.conf" = (mkIf cfg.output.loki.enable) {
+         text = ''
+                [OUTPUT]
+                    name                   loki
+                    match                  *
+                    host                   ${cfg.output.loki.tls.host}
+                    port                   ${cfg.output.loki.port}
+                    tls                    ${cfg.output.loki.tls.enable}
+                    tls.verify             ${cfg.output.loki.tls.verify}
+                    labels                 logshipper=${config.networking.hostName}
+                    Label_keys             $hostname,$container_name,$product
+                    http_user              ${cfg.output.loki.user}
+                    http_passwd            ${cfg.output.loki.pass}
+                '';
+         mode = "0440";
       };
     };
   };
