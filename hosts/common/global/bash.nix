@@ -80,7 +80,7 @@
               fi
 
               if command -v "rsync" &>/dev/null; then
-                  alias rsync="rsync -aXxv"                                       # Better copying with Rsync
+                  alias rsync="rsync -aXxtv"                                # Better copying with Rsync
               fi
 
               if [ -d "$HOME/.bashrc.d" ] ; then
