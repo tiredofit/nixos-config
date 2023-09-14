@@ -20,7 +20,7 @@
     role = "server";
     service = {
       vscode_server.enable = true;
-    }
+    };
   };
 
   networking = {
