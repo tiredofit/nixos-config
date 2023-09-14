@@ -75,6 +75,21 @@ in
         default = 2020;
         description = "Port to listen for HTTP server";
       };
+      input.docker.enable = mkOption {
+        type = with types; bool;
+        default = "false";
+        description = "Enable Docker log collection";
+      };
+      input.kernel.enable = mkOption {
+        type = with types; bool;
+        default = "false";
+        description = "Enable Kernel log collection";
+      };
+      input.systemd.enable = mkOption {
+        type = with types; bool;
+        default = "false";
+        description = "Enable SystemD log collection";
+      };
       log.file = mkOption {
         type = with types; str;
         default = "fluentbit.log";
@@ -226,7 +241,65 @@ in
          mode = "0440";
       };
 
-      "fluent-bit/conf.d/out_forward.conf" = (mkIf cfg.output.forward.enable) {
+        ## TODO This could be better modularized for the docker socket
+      "fluent-bit/conf.d/in_docker.conf" = mkIf ((cfg.input.docker.enable) && (config.host.feature.virtualization.docker.enable)) {
+         text = ''
+                  [INPUT]
+                      Name   docker_events
+                      Unix_Path /var/run/docker.sock
+                      Tag docker-events
+
+                 [FILTER]
+                      Name parser
+                      Match docker-events
+                      Key_Name data
+                      Parser docker
+
+                 [FILTER]
+                      Name record_modifier
+                      Match docker-events
+                      Record hostname ${config.networking.hostName}
+                      Record container_name ${config.networking.hostName}
+                      Record product docker-events
+                '';
+         mode = "0440";
+      };
+
+      "fluent-bit/conf.d/in_kernel.conf" = mkIf (cfg.input.kernel.enable) {
+         text = ''
+                  [INPUT]
+                      Name   kmsg
+                      Tag    kernel
+
+                  [FILTER]
+                      Name record_modifier
+                      Match kernel
+                      Record hostname ${config.networking.hostName}
+                      Record container_name ${config.networking.hostName}
+                      Record product kernel
+                '';
+         mode = "0440";
+      };
+
+      "fluent-bit/conf.d/in_systemd.conf" = mkIf (cfg.input.systemd.enable) {
+         text = ''
+                  [INPUT]
+                      Name            systemd
+                      Tag             host.*
+                      Strip_Underscores On
+                      Read_From_Tail On
+
+                  [FILTER]
+                      Name record_modifier
+                      Match host.*
+                      Record hostname ${config.networking.HostName}
+                      Record container_name ${config.networking.HostName}
+                      Record product systemd
+         '';
+         mode = "0440";
+      };
+
+      "fluent-bit/conf.d/out_forward.conf" = mkIf (cfg.output.forward.enable) {
          text = ''
                 [OUTPUT]
                      Name          forward
@@ -241,7 +314,7 @@ in
          mode = "0440";
       };
 
-      "fluent-bit/conf.d/out_loki.conf" = (mkIf cfg.output.loki.enable) {
+      "fluent-bit/conf.d/out_loki.conf" = mkIf (cfg.output.loki.enable) {
          text = ''
                 [OUTPUT]
                     name                   loki

@@ -44,7 +44,7 @@ in
         impermanence = {
           enable = mkDefault false;
           directories = [
-            "/mnt/"
+
           ];
         };
         swap = {

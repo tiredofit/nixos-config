@@ -47,7 +47,7 @@ in
       (lib.mkIf (cfg_impermanence.enable && !cfg_encrypt.enable) {
         postDeviceCommands = pkgs.lib.mkBefore ''
           mkdir -p /mnt
-          mount -o subvol=/ /dev/disk/by-partlabel/pool0_0 /mnt
+          mount -o subvol=/ /dev/disk/by-partlabel/${cfg.host.filesystem.encryption.encrypted-partition} /mnt
           btrfs subvolume list -o /mnt/${cfg_impermanence.root-subvol} | cut -f9 -d' ' |
           while read subvolume; do
               echo "Deleting /$subvolume subvolume"
@@ -57,6 +57,7 @@ in
           btrfs subvolume delete /mnt/${cfg_impermanence.root-subvol}
           echo "Restoring blank /${cfg_impermanence.root-subvol} subvolume"
           btrfs subvolume snapshot /mnt/${cfg_impermanence.blank-root-subvol} /mnt/${cfg_impermanence.root-subvol}
+          mkdir -p /mnt/${cfg_impermanence.root-subvol}/mnt
           umount /mnt
         '';
       })
@@ -89,6 +90,7 @@ in
               btrfs subvolume delete /mnt/${cfg_impermanence.root-subvol}
               echo "Restoring blank /${cfg_impermanence.root-subvol} subvolume"
               btrfs subvolume snapshot /mnt/${cfg_impermanence.blank-root-subvol} /mnt/${cfg_impermanence.root-subvol}
+              mkdir -p /mnt/${cfg_impermanence.root-subvol}/mnt
               umount /mnt
             '';
           };
