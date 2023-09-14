@@ -1,8 +1,9 @@
-{ config, lib, ... }:
-with lib;
+{ config, lib, pkgs, ... }:
 let
   device = config.host.hardware ;
-in {
+in 
+  with lib;
+{
   config = mkIf (device.cpu == "intel" || device.cpu == "vm-intel") {
     hardware.cpu.intel.updateMicrocode = true;
 
@@ -11,6 +12,7 @@ in {
       kernelParams = ["i915.fastboot=1" "enable_gvt=1"];
     };
 
-    environment.systemPackages = with pkgs; [intel-gpu-tools];
+    environment.systemPackages = with pkgs; 
+      [intel-gpu-tools];
   };
 }
