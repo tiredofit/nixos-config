@@ -8,7 +8,6 @@ let
     else "/dev/"+cfg.partition;
 in
   with lib;
-
 {
   options = {
     host.filesystem.swap = {
