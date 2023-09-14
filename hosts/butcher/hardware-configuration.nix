@@ -70,7 +70,5 @@
       fsType = "btrfs";
     };
 
-  swapDevices = [ { device = "/dev/disk/by-partlabel/swap"; } ];
-
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
 }

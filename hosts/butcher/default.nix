@@ -13,6 +13,9 @@
   host = {
     filesystem = {
       encryption.enable = false;
+      swap = {
+        partition = "disk/by-uuid/c49b427e-53a4-4224-9c3a-d0d9daf2ba72";
+      };
     };
     hardware = {
       cpu = "vm-intel";
