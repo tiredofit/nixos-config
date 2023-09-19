@@ -25,7 +25,7 @@ in
     ];
 
     openssh.authorizedKeys.keys = [ (builtins.readFile ./ssh.pub) ];
-    passwordFile = config.sops.secrets.dave-password.path;
+    hashedPasswordFile = config.sops.secrets.dave-password.path;
     packages = [ pkgs.home-manager ];
   };
 

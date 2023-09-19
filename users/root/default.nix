@@ -2,7 +2,7 @@
 {
   users.users.root = {
     shell = pkgs.bashInteractive;
-    passwordFile = config.sops.secrets.root-password.path;
+    hashedPasswordFile = config.sops.secrets.root-password.path;
     packages = [ pkgs.home-manager ];
   };
 
