@@ -59,6 +59,7 @@
       };
     };
     role = "desktop";
+    service.fluentbit.enable = true;
   };
 
   networking = {
