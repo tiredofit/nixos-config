@@ -133,16 +133,6 @@ in
         default = false;
         description = "Verify TLS";
       };
-      output.loki.user = mkOption {
-        type = with types; str;
-        default = "null";
-        description = "Username to access remote Loki Host";
-      };
-      output.loki.pass = mkOption {
-        type = with types; str;
-        default = "null";
-        description = "Password to access remote Loki Host";  ## TODO TEST TO SEE IF WE CAN USE A SECRET
-      };
       output.loki.tenant_id = mkOption {
         type = with types; str;
         default = "null";
@@ -176,8 +166,14 @@ in
     };
   };
 
-
   config = mkIf cfg.enable {
+    assertions = mkIf (! config.host.feature.secrets.enable) [
+      {
+        assertion = (cfg.output.loki.enable);
+        message = "You need to enable secrets before using the Loki Output plugin due to it passing credentials";
+      }
+    ];
+
     environment.systemPackages = with pkgs; [
       fluent-bit
     ];
@@ -186,18 +182,16 @@ in
       logrotate.settings."${cfg.log.path}/${cfg.log.file}" = { };
     };
 
-    #systemd.services.fluent-bit = {
-    #  wantedBy = [ "multi-user.target" ];
-    #  after = [ "network.target" ];
-    #  description = "Log processor and forwarder";
-    #  serviceConfig = {
-    #    ExecStart = "${pkgs.fluent-bit}/bin/fluent-bit --config=${fluentConfig}";
-    #    serviceConfig = {
-    #      LogsDirectory = "fluentbit";
-    #      LogsDirectoryMode = "0750";
-    #    };
-    #  };
-    #};
+    systemd.services.fluent-bit = {
+      enable = true;
+      description = "Log processor and forwarder";
+      after = [ "network.target" ];
+      serviceConfig = {
+        ExecStart = "${pkgs.fluent-bit}/bin/fluent-bit --config=/etc/fluent-bit/fluent-bit.conf";
+        LogsDirectory = "fluentbit";
+        LogsDirectoryMode = "0750";
+      };
+    };
 
     environment.etc = {
       "fluent-bit/fluent-bit.conf" = {
@@ -216,7 +210,7 @@ in
             http_server  ${BoolOnOff cfg.httpserver.enable}
             http_listen  ${cfg.httpserver.listenIP}
             http_port    ${toString cfg.httpserver.listenPort}
-            storage.metrics ''${BoolOnOff cfg.storage.metrics} ## TODO These dont work 'error: value is a set while a Boolean was expected'
+            storage.metrics ${BoolOnOff cfg.storage.metrics} ## TODO These dont work 'error: value is a set while a Boolean was expected'
             storage.path ''${toString cfg.storage.path} ## TODO These don't work 'error: cannot coerce a set to a string'
             storage.sync ${cfg.storage.sync}
             storage.checksum ${BoolOnOff cfg.storage.checksum}
@@ -244,7 +238,7 @@ in
          mode = "0440";
       };
 
-        ## TODO This could be better modularized for the docker socket
+      ## TODO This could be better modularized for the docker socket
       "fluent-bit/conf.d/in_docker.conf" = mkIf ((cfg.input.docker.enable) && (config.host.feature.virtualization.docker.enable)) {
          text = ''
                   [INPUT]
@@ -312,53 +306,49 @@ in
                      Self_Hostname ${config.networking.hostName}
                      tls           ${BoolOnOff cfg.output.forward.tls.enable}
                      tls.verify    ${BoolOnOff cfg.output.forward.tls.verify}
-
          '';
          mode = "0440";
       };
 
-      #"fluent-bit/conf.d/out_loki.conf" = mkIf (cfg.output.loki.enable) {
-      "fluent-bit/conf.d/out_loki.conf" = {
+      "fluent-bit/conf.d/out_loki.conf" = mkIf (cfg.output.loki.enable) {
          text = ''
-                [OUTPUT]
-                    name                   loki
-                    match                  *
-                    host                   ${cfg.output.loki.host}
-                    port                   ${toString cfg.output.loki.port}
-                    tls                    ${BoolOnOff cfg.output.loki.tls.enable}
-                    tls.verify             ${BoolOnOff cfg.output.loki.tls.verify}
-                    labels                 logshipper=${config.networking.hostName}
-                    Label_keys             $hostname,$container_name,$product
-                    http_user              ${cfg.output.loki.user}
-                    http_passwd            ${cfg.output.loki.pass}
-                    test                   ${config.sops.placeholder.common} ## THIS DOES NOT WORK
-                '';
+           [OUTPUT]
+               name                   loki
+               match                  *
+               host                   ${cfg.output.loki.host}
+               port                   ${toString cfg.output.loki.port}
+               tls                    ${BoolOnOff cfg.output.loki.tls.enable}
+               tls.verify             ${BoolOnOff cfg.output.loki.tls.verify}
+               labels                 logshipper=${config.networking.hostName}
+               Label_keys             $hostname,$container_name,$product
+               http_user              ${config.sops.fluentbut.output.loki.http_user}
+               http_passwd            ${config.sops.fluentbut.output.loki.http_pass}
+         '';
          mode = "0440";
       };
     };
 
-    ### This is here to prove that templates work and you can symlink them
-    #sops = {
-    #    templates = {
-    #      fluent_bit = {
-    #        name = "fluent-bit/conf.d/out_loki.conf";
-    #        path = "/etc/fluent-bit/conf.d/loki.conf";
-    #        content = ''
-    #
-    #            [OUTPUT]
-    #                name                   loki
-    #                match                  *
-    #                host                   ${cfg.output.loki.tls.host}
-    #                port                   ${cfg.output.loki.port}
-    #                tls                    ${cfg.output.loki.tls.enable}
-    #                tls.verify             ${cfg.output.loki.tls.verify}
-    #                labels                 logshipper=${config.networking.hostName}
-    #                Label_keys             $hostname,$container_name,$product
-    #                http_user              ${config.sops.placeholder.common}
-    #                http_passwd            ${config.sops.placeholder.common}
-    #        '';
-    #      };
-    #    };
-    #};
+    ### We switch to SOPS declarations here because we have credentials that need to be secrets
+    sops = {
+      templates = {
+        fluent_bit_output_loki = mkIf (cfg.output.loki.enable) {
+          name = "fluent-bit/conf.d/out_loki.conf";
+          path = "/etc/fluent-bit/conf.d/loki.conf";
+          content = ''
+            [OUTPUT]
+              name                   loki
+              match                  *
+              host                   ${cfg.output.loki.host}
+              port                   ${toString cfg.output.loki.port}
+              tls                    ${BoolOnOff cfg.output.loki.tls.enable}
+              tls.verify             ${BoolOnOff cfg.output.loki.tls.verify}
+              labels                 logshipper=${config.networking.hostName}
+              Label_keys             $hostname,$container_name,$product
+              http_user              ${config.sops.fluentbut.output.loki.http_user}
+              http_passwd            ${config.sops.fluentbut.output.loki.http_pass}
+          '';
+        };
+      };
+    };
   };
 }
