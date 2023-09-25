@@ -19,6 +19,7 @@ in
       "git"
       "input"
       "libvirtd"
+      "lp"
       "mysql"
       "network"
       "podman"

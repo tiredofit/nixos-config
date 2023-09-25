@@ -48,6 +48,7 @@ in
         bluetooth.enable = mkDefault false;
         printing.enable = mkDefault false;
         raid.enable = mkDefault false;
+        scanning.enable = mkDefault false;
         sound.enable = mkDefault true;
         webcam.enable = mkDefault false;
         wireless.enable = mkDefault false;

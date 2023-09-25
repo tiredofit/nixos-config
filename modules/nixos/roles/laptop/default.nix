@@ -33,12 +33,12 @@ in
           enable = mkDefault false;
           type = mkDefault "file";
         };
-
       };
       hardware = {
         bluetooth.enable = mkDefault true;    # Most wireless cards have bluetooth radios
         raid.enable = mkDefault false;        #
         printing.enable = mkDefault true;     # If we don't have access to a physical printer we should be able to remotely print
+        scanning.enable = mkDefault true;
         sound.enable = mkDefault true;        #
         touchpad.enable = mkDefault true;     # We want this most of the time
         webcam.enable = mkDefault true;       # Age of video conferencing
