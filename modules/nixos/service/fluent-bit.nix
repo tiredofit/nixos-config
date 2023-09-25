@@ -22,7 +22,6 @@ in
         type = with types; bool;
         description = "Enables daemon for shipping logs and metrics";
       };
-      ## TODO Fix this path
       custom.path = mkOption {
         type = with types; str;
         default = "null";
@@ -148,12 +147,12 @@ in
         default = false;
         description = "Create CRC32 checksum for filesystem RW functions";
       };
-      storage.metrics = {
+      storage.metrics = mkOption {
         type = with types; bool;
         default = true;
         description = "Export storage metrics";
       };
-      storage.path = {
+      storage.path = mkOption {
         type = with types; str;
         default = "/tmp/fluentbit/storage";
         description = "Absolute file system path to store filesystem data buffers";
@@ -197,7 +196,7 @@ in
       "fluent-bit/fluent-bit.conf" = {
          text = ''
            @INCLUDE conf.d/*.conf
-           ''${customConfPath}
+           ${customConfPath}
 
            [SERVICE]
             flush        ${toString cfg.flush}
@@ -210,8 +209,8 @@ in
             http_server  ${BoolOnOff cfg.httpserver.enable}
             http_listen  ${cfg.httpserver.listenIP}
             http_port    ${toString cfg.httpserver.listenPort}
-            storage.metrics ${BoolOnOff cfg.storage.metrics} ## TODO These dont work 'error: value is a set while a Boolean was expected'
-            storage.path ''${toString cfg.storage.path} ## TODO These don't work 'error: cannot coerce a set to a string'
+            storage.metrics ${BoolOnOff cfg.storage.metrics}
+            storage.path ${toString cfg.storage.path}
             storage.sync ${cfg.storage.sync}
             storage.checksum ${BoolOnOff cfg.storage.checksum}
             storage.backlog.mem_limit ${cfg.storage.backlog_memory_limit}
