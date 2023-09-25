@@ -2,6 +2,11 @@
 
 let
   cfg = config.host.feature.virtualization.docker;
+
+  docker_storage_driver =
+    if config.host.filesystem.btrfs.enable
+    then "btrfs"
+    else "overlay2";
 in
   with lib;
 {
@@ -487,7 +492,7 @@ in
         enable = true;
         enableOnBoot = false;
         logDriver = "local";
-        storageDriver = "btrfs";
+        storageDriver = docker_storage_driver;
       };
     };
   };
