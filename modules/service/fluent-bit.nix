@@ -320,8 +320,8 @@ in
                tls.verify             ${BoolOnOff cfg.output.loki.tls.verify}
                labels                 logshipper=${config.networking.hostName}
                Label_keys             $hostname,$container_name,$product
-               http_user              ${config.sops.fluentbut.output.loki.http_user}
-               http_passwd            ${config.sops.fluentbut.output.loki.http_pass}
+               http_user              ${config.sops.fluentbit.output.loki.http_user}
+               http_passwd            ${config.sops.fluentbit.output.loki.http_pass}
          '';
          mode = "0440";
       };
@@ -343,8 +343,8 @@ in
               tls.verify             ${BoolOnOff cfg.output.loki.tls.verify}
               labels                 logshipper=${config.networking.hostName}
               Label_keys             $hostname,$container_name,$product
-              http_user              ${config.sops.fluentbut.output.loki.http_user}
-              http_passwd            ${config.sops.fluentbut.output.loki.http_pass}
+              http_user              ${config.sops.fluentbit.output.loki.http_user}
+              http_passwd            ${config.sops.fluentbit.output.loki.http_pass}
           '';
         };
       };
