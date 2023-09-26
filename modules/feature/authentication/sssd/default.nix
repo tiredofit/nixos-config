@@ -82,7 +82,7 @@ in
         };
         tls = {
           requestCert = mkOption {
-            default = "try";
+            default = "never";
             type = with types; enum ["never" "allow" "try" "demand" "hard"];
             description = "Requtest TLS Certificate";
           };
