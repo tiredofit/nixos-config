@@ -1,6 +1,8 @@
 {config, lib, pkgs, ...}:
 
 let
+  inherit (config.networking) hostName;
+  hostsecrets = ../../../../hosts/${hostName}/secrets/sssd.yaml;
   cfg = config.host.feature.authentication.sssd;
   BoolTrueFalse = x:
     if x
@@ -26,11 +28,11 @@ in
         type = with types; bool;
         description = "Enumerate users in /etc/passwd and /etc/group";
       };
-      domain = mkOption {
-        type = with types; str;
-        default = "null";
-        description = "Domain Name";
-      };
+      #SECRET domain = mkOption {
+      #SECRET   type = with types; str;
+      #SECRET   default = "null";
+      #SECRET   description = "Domain Name";
+      #SECRET };
       ldap = {
         attribute = {
           sshPublicKey = mkOption {
@@ -39,28 +41,28 @@ in
             description = "SSH Public Key Attribute";
           };
         };
-        baseDN = mkOption {
-          default = "null";
-          type = with types; str;
-          description = "Base Distinguished Name";
-        };
-        bindDN = mkOption {
-          default = "null";
-          type = with types; str;
-          description = "Bind DN";
-        };
-        bindPass = mkOption {
-          default = "null";
-          type = with types; str;
-          description = "Bind Password";
-        };
-        filter = {
-          access = mkOption {
-            default = null;
-            type = with types; str;
-            description = "Filter to allow user access";
-          };
-        };
+        #SECRET baseDN = mkOption {
+        #SECRET   default = "null";
+        #SECRET   type = with types; str;
+        #SECRET   description = "Base Distinguished Name";
+        #SECRET };
+        #SECRET bindDN = mkOption {
+        #SECRET   default = "null";
+        #SECRET   type = with types; str;
+        #SECRET   description = "Bind DN";
+        #SECRET };
+        #SECRET bindPass = mkOption {
+        #SECRET   default = "null";
+        #SECRET   type = with types; str;
+        #SECRET   description = "Bind Password";
+        #SECRET };
+        #SECRET filter = {
+        #SECRET   access = mkOption {
+        #SECRET     default = null;
+        #SECRET     type = with types; str;
+        #SECRET     description = "Filter to allow user access";
+        #SECRET   };
+        #SECRET };
         objectclass = {
           user = mkOption {
             default = "inetOrgPerson";
@@ -73,18 +75,18 @@ in
           type = types.enum ["nis" "rfc2307bis"];
           description = "Schema Type";
         };
-        sudo = {
-          searchBase = mkOption {
-            default = null;
-            type = with types; str;
-            description = "Sudo Search Base";
-          };
-        };
+        #SECRET sudo = {
+        #SECRET   searchBase = mkOption {
+        #SECRET     default = null;
+        #SECRET     type = with types; str;
+        #SECRET     description = "Sudo Search Base";
+        #SECRET   };
+        #SECRET };
         tls = {
           requestCert = mkOption {
             default = "never";
             type = with types; enum ["never" "allow" "try" "demand" "hard"];
-            description = "Requtest TLS Certificate";
+            description = "Request TLS Certificate";
           };
           useStartTLS = mkOption {
             default = false;
@@ -133,52 +135,7 @@ in
       sssd = {
         enable = true;
         config = ''
-[domain/${cfg.domain}]
-id_provider = ldap
-auth_provider = ldap
-
-ldap_schema = ${cfg.ldap.schema}
-
-ldap_uri = ${cfg.ldap.uri}
-
-ldap_default_bind_dn = ${cfg.ldap.bindDN}
-ldap_default_authtok = ${cfg.ldap.bindPass}
-ldap_default_authtok_type = password
-
-ldap_search_base = ${cfg.ldap.baseDN}
-ldap_user_object_class = ${cfg.ldap.objectclass.user}
-
-ldap_tls_reqcert = ${cfg.ldap.tls.requestCert}
-ldap_id_use_start_tls = ${BoolTrueFalse cfg.ldap.tls.useStartTLS}
-
-cache_credentials = ${BoolTrueFalse cfg.cacheCredentials}
-enumerate = ${BoolTrueFalse cfg.enumerate}
-
-access_provider = ldap
-ldap_access_filter = ${cfg.ldap.filter.access}
-
-sudo_provider = ldap
-ldap_sudo_search_base = ${cfg.ldap.sudo.searchBase}
-
-ldap_user_ssh_public_key = ${cfg.ldap.attribute.sshPublicKey}
-
-[sssd]
-config_file_version = 2
-services = nss, pam, sudo, ssh
-domains = ${cfg.domain}
-debug_level = ${toString cfg.loglevel.sssd}
-
-[nss]
-debug_level = ${toString cfg.loglevel.nss}
-
-[pam]
-debug_level = ${toString cfg.loglevel.pam}
-
-[sudo]
-debug_level = ${toString cfg.loglevel.sudo}
-
-[ssh]
-debug_level = ${toString cfg.loglevel.ssh}
+          # This file intentionally blank - See conf.d
         '';
         sshAuthorizedKeysIntegration = true;
       };
@@ -196,8 +153,80 @@ debug_level = ${toString cfg.loglevel.ssh}
       pam.services.systemd-user.makeHomeDir = true;
     };
 
+    ### We switch to SOPS declarations here because we have credentials that need to be secrets
+    sops = {
+      templates = {
+        sssd_confd_sssd_conf = {
+          name = "sssd/conf.d/sssd.conf";
+          path = "/etc/sssd/conf.d/sssd.conf";
+          content = ''
+            [domain/${config.sops.placeholder.sssd_domain}]
+            id_provider = ldap
+            auth_provider = ldap
+
+            ldap_schema = ${cfg.ldap.schema}
+
+            ldap_uri = ${config.sops.placeholder.sssd_ldap_uri}
+
+            ldap_default_bind_dn = ${config.sops.placeholder.sssd_ldap_bindDN}
+            ldap_default_authtok = ${config.sops.placeholder.sssd_ldap_bindPass}
+            ldap_default_authtok_type = password
+
+            ldap_search_base = ${config.sops.placeholder.sssd_ldap_baseDN}
+            ldap_user_object_class = ${cfg.ldap.objectclass.user}
+
+            ldap_tls_reqcert = ${cfg.ldap.tls.requestCert}
+            ldap_id_use_start_tls = ${BoolTrueFalse cfg.ldap.tls.useStartTLS}
+
+            cache_credentials = ${BoolTrueFalse cfg.cacheCredentials}
+            enumerate = ${BoolTrueFalse cfg.enumerate}
+
+            access_provider = ldap
+            ldap_access_filter = ${config.sops.placeholder.sssd_ldap_filter_access}
+
+            sudo_provider = ldap
+            ldap_sudo_search_base = ${config.sops.placeholder.sssd_ldap_sudo_searchBase}
+
+            ldap_user_ssh_public_key = ${cfg.ldap.attribute.sshPublicKey}
+
+            [sssd]
+            config_file_version = 2
+            services = nss, pam, sudo, ssh
+            domains = ${config.sops.placeholder.sssd_domain}
+            debug_level = ${toString cfg.loglevel.sssd}
+
+            [nss]
+            debug_level = ${toString cfg.loglevel.nss}
+
+            [pam]
+            debug_level = ${toString cfg.loglevel.pam}
+
+            [sudo]
+            debug_level = ${toString cfg.loglevel.sudo}
+
+            [ssh]
+            debug_level = ${toString cfg.loglevel.ssh}
+          '';
+        };
+      };
+    };
+
+    sops.secrets = {
+      "sssd_domain" = { sopsFile = ../../../../hosts/common/secrets/sssd.yaml ; restartUnits = [ "sssd.service" ]; };
+      "sssd_ldap_baseDN" = { sopsFile = ../../../../hosts/common/secrets/sssd.yaml ; restartUnits = [ "sssd.service" ]; };
+      "sssd_ldap_sudo_searchBase" = { sopsFile = ../../../../hosts/common/secrets/sssd.yaml ; restartUnits = [ "sssd.service" ];};
+      "sssd_ldap_uri" = { sopsFile = ../../../../hosts/common/secrets/sssd.yaml ; restartUnits = [ "sssd.service" ];};
+      #
+      "sssd_ldap_bindDN" = { sopsFile = hostsecrets; restartUnits = [ "sssd.service" ];};
+      "sssd_ldap_bindPass" = { sopsFile = hostsecrets; restartUnits = [ "sssd.service" ];};
+      "sssd_ldap_filter_access" = { sopsFile = hostsecrets; restartUnits = [ "sssd.service" ];};
+
+    };
+
     systemd.tmpfiles.rules = [
       "L /bin/bash - - - - /run/current-system/sw/bin/bash"  # This is here as a hack for remote systems
     ];
+
+    systemd.services.sssd.after = [ "sops-nix.service" ];
   };
 }
