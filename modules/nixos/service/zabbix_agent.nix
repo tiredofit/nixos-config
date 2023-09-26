@@ -12,24 +12,29 @@ in
         type = with types; bool;
         description = "Enables metrics reporting";
       };
+      controlSocket = mkOption {
+        type = with types; str;
+        default = "/run/zabbix_agent/zabbix.sock";
+        description = "Path to Socket";
+      };
       listenIP = mkOption {
-        type = types.str;
+        type = with types; str;
         default = "127.0.0.1";
         description = "IP Address to accept connections from servers";
       };
       listenPort = mkOption {
-        type = types.port;
+        type = with types; port;
         default = 10050;
         description = "IP Address to accept connections from servers";
       };
       server = mkOption {
-        type = types.str;
+        type = with types; str;
         default = "0.0.0.0/0";
         description = "IP Address to accept connections from servers";
       };
       serverActive = mkOption {
-        type = types.str;
-        default = null;
+        type = with types; str;
+        default = "null";
         description = "Server to send Active checks";
       };
     };
@@ -49,9 +54,9 @@ in
         settings = {
           BufferSend = mkDefault 5;
           BufferSize = mkDefault 100;
-          ControlSocket = mkDefault "/run/zabbix_agent/zabbix.sock";
+          ControlSocket = cfg.controlSocket;
           DebugLevel = mkDefault 2;
-          Hostname = mkDefault config.networking.hostName + "." + config.networking.domain ;
+          Hostname = mkDefault config.networking.fqdn ;
           LogFile = mkDefault "/var/log/zabbix/zabbix_agentd.log";
           LogFileSize = mkDefault 0;
           LogType = mkForce "file";
