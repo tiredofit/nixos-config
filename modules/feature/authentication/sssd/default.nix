@@ -19,7 +19,7 @@ in
         description = "Enables ability to authenticate against LDAP servers and control sudo privileges";
       };
       cacheCredentials = mkOption {
-        default = false;
+        default = true;
         type = with types; bool;
         description = "Cache Credentials";
       };
@@ -187,6 +187,7 @@ in
             sudo_provider = ldap
             ldap_sudo_search_base = ${config.sops.placeholder.sssd_ldap_sudo_searchBase}
 
+            ssh_provider = ldap
             ldap_user_ssh_public_key = ${cfg.ldap.attribute.sshPublicKey}
 
             [sssd]
