@@ -16,7 +16,7 @@ If you would like to base your own configuration from this, you will need to be 
 - Some real interesting **bash scripts** for automating common tasks
 - **Declarative** **themes** and **wallpapers** with **nix-colors**
 
-- I sort of blew the summer of 2023 moving into this configuration after waving a fond farewell to near 2 decades of running Arch Linux. This, as with life, is still WIP. I documented the process on the [Tired of IT! NixOS](https://notes.tiredofit.ca/books/linux/chapter/nixos) chapter on my website.
+- I ~sort of blew~spent the summer of 2023 moving into this configuration after waving a fond farewell to near 2 decades of running Arch Linux. This, as with life, is still WIP. I documented the process on the [Tired of IT! NixOS](https://notes.tiredofit.ca/books/linux/chapter/nixos) chapter on my website.
 
 ## Tree Structure
 

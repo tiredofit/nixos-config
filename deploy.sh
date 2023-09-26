@@ -1066,19 +1066,19 @@ install_q_disk() {
 parse_disk_config() {
     system_role = $(grep "role = .*;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix | cut -d '"' -f2)
 
-    if grep -qF "btrfs.enable = mkDefault true;" "${_dir_flake}"/modules/nixos/roles/"${system_role}"/default.nix; then
+    if grep -qF "btrfs.enable = mkDefault true;" "${_dir_flake}"/modules/roles/"${system_role}"/default.nix; then
         disk_btrfs=true
     fi
-    if grep -qF "encryption.enable = mkDefault true;"  "${_dir_flake}"/modules/nixos/roles/"${system_role}"/default.nix; then
+    if grep -qF "encryption.enable = mkDefault true;"  "${_dir_flake}"/modules/roles/"${system_role}"/default.nix; then
         disk_encryption=true
     fi
-    if grep -qF "impermanence.enable = mkDefault true;"  "${_dir_flake}"/modules/nixos/roles/"${system_role}"/default.nix || grep -Pzo -m 1 "(?s)impermanence = {\n.*enable = mkDefault true;"  "${_dir_flake}"/modules/nixos/roles/"${system_role}"/default.nix; then ; then
+    if grep -qF "impermanence.enable = mkDefault true;"  "${_dir_flake}"/modules/roles/"${system_role}"/default.nix || grep -Pzo -m 1 "(?s)impermanence = {\n.*enable = mkDefault true;"  "${_dir_flake}"/modules/roles/"${system_role}"/default.nix; then ; then
         disk_impermanence=true
     fi
-    if grep -qF "raid.enable = mkDefault true;"  "${_dir_flake}"/modules/nixos/roles/"${system_role}"/default.nix; then
+    if grep -qF "raid.enable = mkDefault true;"  "${_dir_flake}"/modules/roles/"${system_role}"/default.nix; then
         disk_raid=true
     fi
-    if grep -qF "swap_file.enable = mkDefault true;"  "${_dir_flake}"/modules/nixos/roles/"${system_role}"/default.nix; then
+    if grep -qF "swap_file.enable = mkDefault true;"  "${_dir_flake}"/modules/roles/"${system_role}"/default.nix; then
         disk_swapfile=true
     fi
 

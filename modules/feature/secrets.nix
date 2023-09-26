@@ -2,7 +2,7 @@
 
 let
   inherit (config.networking) hostName;
-  hostsecrets = ../../../hosts/${hostName}/secrets/secrets.yaml;
+  hostsecrets = ../../hosts/${hostName}/secrets/secrets.yaml;
   isEd25519 = k: k.type == "ed25519";
   getKeyPath = k: k.path;
   keys = builtins.filter isEd25519 config.services.openssh.hostKeys;
@@ -41,7 +41,7 @@ in
           sopsFile = hostsecrets;
         };
         common = {
-          sopsFile = ../../../hosts/common/secrets/secrets.yaml;
+          sopsFile = ../../hosts/common/secrets/secrets.yaml;
         };
       };
       templates = {
