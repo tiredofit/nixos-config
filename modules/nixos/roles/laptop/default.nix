@@ -16,6 +16,9 @@ in
           efi.enable = mkDefault true;
           graphical.enable = mkDefault true;
         };
+        fonts = {
+          enable = mkDefault true;
+        };
         graphics = {
           enable = mkDefault true;            # We're working with a GUI here
           acceleration = mkDefault true;      # Since we have a GUI, we want openGL

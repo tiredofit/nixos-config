@@ -10,6 +10,7 @@ with lib;
     ./powermanagement
     ./virtualization
     ./cross_compilation.nix
+    ./fonts.nix
     ./s3ql.nix
     ./secrets.nix
     ./security.nix

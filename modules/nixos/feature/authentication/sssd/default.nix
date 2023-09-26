@@ -2,6 +2,10 @@
 
 let
   cfg = config.host.feature.authentication.sssd;
+  BoolTrueFalse = x:
+    if x
+    then "true"
+    else "false";
 in
   with lib;
 {
@@ -13,7 +17,7 @@ in
         description = "Enables ability to authenticate against LDAP servers and control sudo privileges";
       };
       cacheCredentials = mkOption {
-        default = true;
+        default = false;
         type = with types; bool;
         description = "Cache Credentials";
       };
@@ -22,68 +26,81 @@ in
         type = with types; bool;
         description = "Enumerate users in /etc/passwd and /etc/group";
       };
-      ldap ={
+      domain = mkOption {
+        type = with types; str;
+        default = "null";
+        description = "Domain Name";
+      };
+      ldap = {
         attribute = {
-          sshPublicKey = {
+          sshPublicKey = mkOption {
             default = "sshPublicKey";
-            type = with types; string;
+            type = with types; str;
             description = "SSH Public Key Attribute";
           };
         };
-        baseDN = {
-          default = null;
-          type = with types; string;
+        baseDN = mkOption {
+          default = "null";
+          type = with types; str;
           description = "Base Distinguished Name";
         };
-        bindDN = {
-          default = null;
-          type = with types; string;
+        bindDN = mkOption {
+          default = "null";
+          type = with types; str;
           description = "Bind DN";
         };
-        bindPass = {
-          default = null;
-          type = with types; string;
+        bindPass = mkOption {
+          default = "null";
+          type = with types; str;
           description = "Bind Password";
         };
-        domain = {
-          type = with types; string;
-          description = "Domain Name";
-        };
         filter = {
-          access = {
+          access = mkOption {
             default = null;
-            type = with types; string;
+            type = with types; str;
             description = "Filter to allow user access";
           };
         };
         objectclass = {
-          user = {
+          user = mkOption {
             default = "inetOrgPerson";
-            type = with types; string;
+            type = with types; str;
             description = "User Object Class";
           };
         };
-        schema = {
+        schema = mkOption {
           default = "rfc2307bis";
           type = types.enum ["nis" "rfc2307bis"];
           description = "Schema Type";
         };
         sudo = {
-          searchBase = {
+          searchBase = mkOption {
             default = null;
-            type = with types; string;
+            type = with types; str;
             description = "Sudo Search Base";
           };
         };
-        uri = {
-          type = with types; string;
+        tls = {
+          requestCert = mkOption {
+            default = "try";
+            type = with types; enum ["never" "allow" "try" "demand" "hard"];
+            description = "Requtest TLS Certificate";
+          };
+          useStartTLS = mkOption {
+            default = false;
+            type = with types; bool;
+            description = "Use StartTLS";
+          };
+        };
+        uri = mkOption {
+          type = with types; str;
           description = "URI of LDAP Host";
         };
       };
 
       loglevel = {
         sssd = mkOption {
-          default = false;
+          default = 2;
           type = with types; int;
           description = "SSSD Log Level 0-9";
         };
@@ -93,7 +110,7 @@ in
           description = "NSS Log Level 0-9";
         };
         pam = mkOption {
-          default = cfg.loglevel.pam;
+          default = cfg.loglevel.sssd;
           type = with types; int;
           description = "PAM Log Level 0-9";
         };
@@ -116,7 +133,7 @@ in
       sssd = {
         enable = true;
         config = ''
-[domain/${domain}]
+[domain/${cfg.domain}]
 id_provider = ldap
 auth_provider = ldap
 
@@ -131,11 +148,11 @@ ldap_default_authtok_type = password
 ldap_search_base = ${cfg.ldap.baseDN}
 ldap_user_object_class = ${cfg.ldap.objectclass.user}
 
-ldap_tls_reqcert = never
-ldap_id_use_start_tls = false
+ldap_tls_reqcert = ${cfg.ldap.tls.requestCert}
+ldap_id_use_start_tls = ${BoolTrueFalse cfg.ldap.tls.useStartTLS}
 
-cache_credentials = ${cfg.cacheCredentials}
-enumerate = ${cfg.enumerate}
+cache_credentials = ${BoolTrueFalse cfg.cacheCredentials}
+enumerate = ${BoolTrueFalse cfg.enumerate}
 
 access_provider = ldap
 ldap_access_filter = ${cfg.ldap.filter.access}
@@ -143,26 +160,25 @@ ldap_access_filter = ${cfg.ldap.filter.access}
 sudo_provider = ldap
 ldap_sudo_search_base = ${cfg.ldap.sudo.searchBase}
 
-ldap_user_ssh_public_key = ${cfg.ldap.sshPublicKey}
+ldap_user_ssh_public_key = ${cfg.ldap.attribute.sshPublicKey}
 
 [sssd]
 config_file_version = 2
 services = nss, pam, sudo, ssh
 domains = ${cfg.domain}
-debug_level = ${cfg.loglevel.sssd}
+debug_level = ${toString cfg.loglevel.sssd}
 
 [nss]
-debug_level = ${cfg.loglevel.nss}
+debug_level = ${toString cfg.loglevel.nss}
 
 [pam]
-debug_level = ${cfg.loglevel.pam}
+debug_level = ${toString cfg.loglevel.pam}
 
 [sudo]
-debug_level = ${cfg.loglevel.sudo}
+debug_level = ${toString cfg.loglevel.sudo}
 
 [ssh]
-debug_level = ${cfg.loglevel.ssh}
-
+debug_level = ${toString cfg.loglevel.ssh}
         '';
         sshAuthorizedKeysIntegration = true;
       };

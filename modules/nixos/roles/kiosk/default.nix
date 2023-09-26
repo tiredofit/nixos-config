@@ -30,6 +30,9 @@ in
           efi.enable = mkDefault false;
           graphical.enable = mkDefault false;
         };
+        fonts = {
+          enable = mkDefault true;
+        };
         graphics = {
           enable = mkDefault true;
           acceleration = mkDefault true;

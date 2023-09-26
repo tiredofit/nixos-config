@@ -5,7 +5,6 @@
     inputs.home-manager.nixosModules.home-manager
     ./bash.nix
     ./diceware.nix
-    ../fonts.nix
     ./less.nix
     ./locale.nix
     ./nix.nix
@@ -23,7 +22,7 @@
     kernel.sysctl = {
       "vm.dirty_ratio" = mkDefault 6;                         # sync disk when buffer reach 6% of memory
     };
-    kernelPackages = pkgs.linuxPackages_latest;     # Latest kernel
+    kernelPackages = pkgs.linuxPackages_latest;               # Latest kernel
   };
 
   environment = {
