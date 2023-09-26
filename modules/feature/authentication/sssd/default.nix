@@ -191,10 +191,13 @@ debug_level = ${toString cfg.loglevel.ssh}
       '';
     };
 
+    security = {
+      sudo.package = pkgs.sudo.override { withSssd = true; };
+      pam.services.systemd-user.makeHomeDir = true;
+    };
+
     systemd.tmpfiles.rules = [
       "L /bin/bash - - - - /run/current-system/sw/bin/bash"  # This is here as a hack for remote systems
     ];
-
-    security.pam.services.systemd-user.makeHomeDir = true;
   };
 }
