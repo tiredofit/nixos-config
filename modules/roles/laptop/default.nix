@@ -48,6 +48,13 @@ in
         wireless.enable = mkDefault true;     # Most systems have some sort of 802.11
         yubikey.enable = mkDefault true;      #
       };
+      service = {
+        logrotate.enable = mkDefault true;
+        ssh = {
+          enable = mkDefault true;
+          harden = mkDefault true;
+        };
+      };
     };
 
     networking = {

@@ -46,6 +46,13 @@ in
         wireless.enable = mkDefault false;
         yubikey.enable = mkDefault false;
       };
+      service = {
+        logrotate.enable = mkDefault false;
+        ssh = {
+          enable = mkDefault true;
+          harden = mkDefault true;
+        };
+      };
     };
   };
 }

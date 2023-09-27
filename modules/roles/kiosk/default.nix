@@ -64,6 +64,13 @@ in
         wireless.enable = mkDefault true;
         yubikey.enable = mkDefault true;
       };
+      service = {
+        logrotate.enable = mkDefault true;
+        ssh = {
+          enable = mkDefault true;
+          harden = mkDefault true;
+        };
+      };
     };
 
     powerManagement.cpuFreqGovernor = lib.mkDefault "ondemand";
