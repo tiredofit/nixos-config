@@ -69,13 +69,9 @@ in
         openFirewall = mkDefault true ;
         startWhenNeeded = mkDefault false;
         settings = {
-          GatewayPorts = "clientspecified";
-          KbdInteractiveAuthentication = mkDefault true;
-          LogLevel = mkDefault logLevel;
-          PasswordAuthentication = mkDefault true;
-          PermitRootLogin = mkDefault "no" ;
-          StreamLocalBindUnlink = "yes";
-          X11Forwarding = mkDefault true;
+          AuthenticationMethods = mkIf cfg.harden "publickey,password publickey,keyboard-interactive";
+          AcceptEnv = "LANG LC_*";
+          ChallengeResponseAuthentication = mkDefault true;
           Ciphers = mkIf cfg.harden [
             "aes256-ctr"
             "aes192-ctr"
@@ -84,6 +80,8 @@ in
             "aes128-gcm@openssh.com"
             "chacha20-poly1305@openssh.com"
           ];
+          GatewayPorts = mkDefault "clientspecified";
+          KbdInteractiveAuthentication = mkDefault true;
           KexAlgorithms = mkIf cfg.harden [
             "curve25519-sha256@libssh.org"
             "diffie-hellman-group-exchange-sha256"
@@ -91,6 +89,9 @@ in
             "ecdh-sha2-nistp384"
             "ecdh-sha2-nistp521"
           ];
+          LoginGraceTime = mkDefault "45s";
+          LogLevel = mkDefault logLevel;
+          MaxAuthTries = mkDefault 4;
           Macs = mkIf cfg.harden [
             "hmac-sha2-512-etm@openssh.com"
             "hmac-sha2-256-etm@openssh.com"
@@ -99,7 +100,21 @@ in
             "umac-128@openssh.com"
             "umac-128-etm@openssh.com"
           ];
+          PasswordAuthentication = mkDefault true;
+          PermitRootLogin = mkDefault "no" ;
+          PermitTunnel = mkDefault true;
+          PermitTTY = mkDefault true;
+          PrintLastLog = mkDefault true;
+          PubkeyAuthentication = mkDefault true;
+          RekeyLimit = mkDefault "default 1d";
+          StreamLocalBindUnlink = mkDefault true;
+          TCPKeepAlive = mkDefault true;
+          X11Forwarding = mkDefault true;
+          X11UseLocalHost = mkDefault true;
+          X11DisplayOffset = mkDefault 10;
         };
+        extraConfig = ''
+        '';
       };
 
       fail2ban.jails = mkIf config.host.network.firewall.fail2ban.enable {
