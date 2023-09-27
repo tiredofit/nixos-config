@@ -71,6 +71,13 @@ in
         wireless.enable = mkDefault false;            # Most servers are ethernet?
         yubikey.enable = mkDefault false;
       };
+      service = {
+        logrotate.enable = mkDefault true;
+        ssh = {
+          enable = mkDefault true;
+          harden = mkDefault true;
+        };
+      };
     };
 
     networking = {
