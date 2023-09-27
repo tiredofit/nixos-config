@@ -46,6 +46,9 @@ in
         wireless.enable = mkDefault false;
         yubikey.enable = mkDefault false;
       };
+      network = {
+        firewall.fail2ban.enable = mkDefault false;
+      };
       service = {
         logrotate.enable = mkDefault false;
         ssh = {

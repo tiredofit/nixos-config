@@ -71,6 +71,9 @@ in
         wireless.enable = mkDefault false;            # Most servers are ethernet?
         yubikey.enable = mkDefault false;
       };
+      network = {
+        firewall.fail2ban.enable = mkDefault true;
+      };
       service = {
         logrotate.enable = mkDefault true;
         ssh = {
