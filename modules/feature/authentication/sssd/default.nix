@@ -8,6 +8,31 @@ let
     if x
     then "true"
     else "false";
+
+    sssdlog =
+    if cfg.loglevel.sssd > 0
+    then "debug_level = ${toString cfg.loglevel.sssd}"
+    else " ";
+
+    nsslog =
+    if cfg.loglevel.nss > 0
+    then "debug_level = ${toString cfg.loglevel.nss}"
+    else " ";
+
+    pamlog =
+    if cfg.loglevel.pam > 0
+    then "debug_level = ${toString cfg.loglevel.pam}"
+    else " ";
+
+    sudolog =
+    if cfg.loglevel.sudo > 0
+    then "debug_level = ${toString cfg.loglevel.sudo}"
+    else " ";
+
+    sshlog =
+    if cfg.loglevel.ssh > 0
+    then "debug_level = ${toString cfg.loglevel.ssh}"
+    else " ";
 in
   with lib;
 {
@@ -160,6 +185,24 @@ in
           name = "sssd/conf.d/sssd.conf";
           path = "/etc/sssd/conf.d/sssd.conf";
           content = ''
+            [sssd]
+            config_file_version = 2
+            services = nss, pam, sudo, ssh
+            domains = ${config.sops.placeholder.sssd_domain}
+            ${sssdlog}
+
+            [nss]
+            ${nsslog}
+
+            [pam]
+            ${pamlog}
+
+            [sudo]
+            ${sudolog}
+
+            [ssh]
+            ${sshlog}
+
             [domain/${config.sops.placeholder.sssd_domain}]
             id_provider = ldap
             auth_provider = ldap
@@ -190,23 +233,7 @@ in
             ssh_provider = ldap
             ldap_user_ssh_public_key = ${cfg.ldap.attribute.sshPublicKey}
 
-            [sssd]
-            config_file_version = 2
-            services = nss, pam, sudo, ssh
-            domains = ${config.sops.placeholder.sssd_domain}
-            debug_level = ${toString cfg.loglevel.sssd}
 
-            [nss]
-            debug_level = ${toString cfg.loglevel.nss}
-
-            [pam]
-            debug_level = ${toString cfg.loglevel.pam}
-
-            [sudo]
-            debug_level = ${toString cfg.loglevel.sudo}
-
-            [ssh]
-            debug_level = ${toString cfg.loglevel.ssh}
           '';
         };
       };
