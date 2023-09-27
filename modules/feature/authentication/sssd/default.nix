@@ -156,6 +156,25 @@ in
   };
 
   config = mkIf cfg.enable {
+    environment.etc."nsswitch.conf".text = lib.mkForce ''
+      passwd:    files sss systemd
+      group:     files sss [success=merge] systemd
+      shadow:    files sss
+      sudoers:   files sss
+
+      hosts:     mymachines resolve [!UNAVAIL=return] files myhostname dns
+      networks:  files
+
+      ethers:    files
+      services:  files sss
+      protocols: files
+      rpc:       files
+    '';
+
+    host.filesystem.impermanence.directories = mkIf config.host.filesystem.impermanence.enable [
+      "/var/lib/sss"               # SSSD
+    ];
+
     services = {
       sssd = {
         enable = true;
@@ -164,13 +183,16 @@ in
         '';
         sshAuthorizedKeysIntegration = true;
       };
-      nscd.config = ''
-        enable-cache hosts yes
-        enable-cache passwd no
-        enable-cache group no
-        enable-cache netgroup no
-        enable-cache services no
-      '';
+      nscd = {
+        config = ''
+          enable-cache hosts no
+          enable-cache passwd no
+          enable-cache group no
+          enable-cache netgroup no
+          enable-cache services no
+        '';
+        enable = true;
+      };
     };
 
     security = {
@@ -180,6 +202,16 @@ in
 
     ### We switch to SOPS declarations here because we have credentials that need to be secrets
     sops = {
+      secrets = {
+        "sssd_domain" = { sopsFile = ../../../../hosts/common/secrets/sssd.yaml ; restartUnits = [ "sssd.service" ]; };
+        "sssd_ldap_baseDN" = { sopsFile = ../../../../hosts/common/secrets/sssd.yaml ; restartUnits = [ "sssd.service" ]; };
+        "sssd_ldap_sudo_searchBase" = { sopsFile = ../../../../hosts/common/secrets/sssd.yaml ; restartUnits = [ "sssd.service" ];};
+        "sssd_ldap_uri" = { sopsFile = ../../../../hosts/common/secrets/sssd.yaml ; restartUnits = [ "sssd.service" ];};
+        #
+        "sssd_ldap_bindDN" = { sopsFile = hostsecrets; restartUnits = [ "sssd.service" ];};
+        "sssd_ldap_bindPass" = { sopsFile = hostsecrets; restartUnits = [ "sssd.service" ];};
+        "sssd_ldap_filter_access" = { sopsFile = hostsecrets; restartUnits = [ "sssd.service" ];};
+      };
       templates = {
         sssd_confd_sssd_conf = {
           name = "sssd/conf.d/sssd.conf";
@@ -232,29 +264,16 @@ in
 
             ssh_provider = ldap
             ldap_user_ssh_public_key = ${cfg.ldap.attribute.sshPublicKey}
-
-
           '';
         };
       };
     };
 
-    sops.secrets = {
-      "sssd_domain" = { sopsFile = ../../../../hosts/common/secrets/sssd.yaml ; restartUnits = [ "sssd.service" ]; };
-      "sssd_ldap_baseDN" = { sopsFile = ../../../../hosts/common/secrets/sssd.yaml ; restartUnits = [ "sssd.service" ]; };
-      "sssd_ldap_sudo_searchBase" = { sopsFile = ../../../../hosts/common/secrets/sssd.yaml ; restartUnits = [ "sssd.service" ];};
-      "sssd_ldap_uri" = { sopsFile = ../../../../hosts/common/secrets/sssd.yaml ; restartUnits = [ "sssd.service" ];};
-      #
-      "sssd_ldap_bindDN" = { sopsFile = hostsecrets; restartUnits = [ "sssd.service" ];};
-      "sssd_ldap_bindPass" = { sopsFile = hostsecrets; restartUnits = [ "sssd.service" ];};
-      "sssd_ldap_filter_access" = { sopsFile = hostsecrets; restartUnits = [ "sssd.service" ];};
-
+    systemd = {
+      services.sssd.after = [ "sops-nix.service" ];
+      tmpfiles.rules = [
+        "L /bin/bash - - - - /run/current-system/sw/bin/bash"  # This is here as a hack for remote systems
+      ];
     };
-
-    systemd.tmpfiles.rules = [
-      "L /bin/bash - - - - /run/current-system/sw/bin/bash"  # This is here as a hack for remote systems
-    ];
-
-    systemd.services.sssd.after = [ "sops-nix.service" ];
   };
 }
