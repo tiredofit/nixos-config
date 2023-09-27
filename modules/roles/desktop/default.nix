@@ -73,6 +73,11 @@ in
         };
       };
       service = {
+        logrotate.enable = mkDefault true;
+        ssh = {
+          enable = mkDefault true;
+          harden = mkDefault true;
+        };
         vscode_server.enable = true;
       };
     };
