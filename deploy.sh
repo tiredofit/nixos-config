@@ -575,7 +575,8 @@ menu_secrets() {
 | Secrets Additions |
 ---------------------
 
-Edit Global SOPS secrets configuration here.
+Edit Global SOPS configuration here.
+Edit hosts/common/secrets/secrets.yaml.
 Rekey existing secrets after adding any new keys or configurations.
 
 EOF
@@ -584,6 +585,10 @@ EOF
     case "${q_menu_secrets,,}" in
         "e" | "edit" )
             secret_tools edit
+            menu_secrets
+        ;;
+        "c" | "common" )
+            secret_tools common
             menu_secrets
         ;;
         "r" | "rekey" )
@@ -917,6 +922,9 @@ EOF
 
 secret_tools() {
     case "${1}" in
+        "common" )
+            sops "${_dir_flake}"/hosts/common/secrets/secrets.yaml
+        ;;
         "edit" )
             $EDITOR "${_dir_flake}"/.sops.yaml
         ;;
