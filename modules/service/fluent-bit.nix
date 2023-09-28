@@ -112,6 +112,11 @@ in
         default = false;
         description = "Output to a Loki server";
       };
+      output.loki.compress_gzip = mkOption {
+        type = with types; bool;
+        default = true;
+        description = "Compress output with gzip before sending to loki host";
+      };
       output.loki.host = mkOption {
         type = with types; str;
         default = "null";
@@ -318,6 +323,7 @@ in
                port                   ${toString cfg.output.loki.port}
                tls                    ${BoolOnOff cfg.output.loki.tls.enable}
                tls.verify             ${BoolOnOff cfg.output.loki.tls.verify}
+               compress_gzip          ${BoolOnOff cfg.output.loki.compress_gzip}
                labels                 logshipper=${config.networking.hostName}
                Label_keys             $hostname,$container_name,$product
                http_user              ${config.sops.fluentbit.output.loki.http_user}
