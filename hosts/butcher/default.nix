@@ -22,21 +22,15 @@
     service = {
       vscode_server.enable = true;
     };
+    network = {
+      hostname = "butcher";
+      ip = "192.168.137.5/24";
+      gateway = "192.168.137.1";
+      mac = "2A:BE:78:89:51:A5";
+    };
     user = {
       dave.enable = true;
       root.enable = false;
     };
   };
-
-  networking = {
-    hostName = "butcher";
-    interfaces.enp6s18.ipv4.addresses = [{
-      address = "192.168.137.5";
-      prefixLength = 24;
-    }];
-    defaultGateway = "192.168.137.1";
-    nameservers = [ "1.1.1.1" "8.8.8.8" ];
-  };
-
-  services.qemuGuest.enable = true;
 }

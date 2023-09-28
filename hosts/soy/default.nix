@@ -38,15 +38,13 @@
     };
     network = {
       hostname = "soy";
+      type = "dynamic";
+    };
     };
     role = "vm";
     user = {
       dave.enable = true;
       root.enable = false;
     };
-  };
-
-  networking = {
-    hostName = "soy";
   };
 }

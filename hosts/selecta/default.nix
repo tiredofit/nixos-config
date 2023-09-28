@@ -33,8 +33,4 @@
       root.enable = true;
     };
   };
-
-  networking = {
-    hostName = "selecta";
-  };
 }
