@@ -210,21 +210,15 @@ silent() {
 }
 
 valid_ip() {
-    local  ip=$1
-    local  stat=1
-
-    if [[ $ip =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
-        OIFS=$IFS
-        IFS='.'
-        ip=("$ip")
-        IFS=$OIFS
-        [[ ${ip[0]} -le 255 && ${ip[1]} -le 255 \
-            && ${ip[2]} -le 255 && ${ip[3]} -le 255 ]]
-        stat=$?
+    data="$1"
+    if grep -oP '(?=^.{4,253}$)(^(?:[a-zA-Z0-9](?:(?:[a-zA-Z0-9\-]){0,61}[a-zA-Z0-9])?\.)+([a-zA-Z]{2,}|xn--[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])$)' <<<"${data}" >/dev/null 2>&1; then
+      return 0
+    else
+      host "${data}" >/dev/null 2>&1
+      retval=$?
+      return "${retval}"
     fi
-    return $stat
 }
-
 
 ## Timesaver for if statements
 ## Usage: if var_false $VARNAME ; then ... fi
@@ -512,7 +506,7 @@ menu_host() {
 | Host Menu |
 -------------
 
-You can change your selected host configuration and IP Address here if you made a mistake.
+You can change your selected host configuration and Hostname.tld/IP Address here if you made a mistake.
 
 You have the capabilities of editing the hosts configuration, the main repository flake, and the hosts secrets.
 EOF
