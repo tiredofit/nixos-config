@@ -99,14 +99,23 @@ in
       cryptsetup          # Manipulate LUKS containers
     ];
 
-    boot.initrd = mkIf cfg.ssh.enable {
-      availableKernelModules = [ cfg.ssh.networkModule ];
-      luks.forceLuksSupportInInitrd = mkForce true;
-      network = {
+    ## TODO This is Dirty - Here's something from the NixOS Matrix room:
+    ## "I'll make my own option like elvishjerricco.luks.devices where I create the abstract options I want to actual deal with, and then I'll implement it by doing something like boot.initrd.luks.devices = lib.mapAttrs someProcess config.elvishjerricco.luks.devices;, and someProcess can do things like set allowDiscards = true;"
+
+    boot.initrd =  {
+      availableKernelModules = mkIf cfg.ssh.enable [ cfg.ssh.networkModule ];
+      luks.forceLuksSupportInInitrd = mkIf cfg.ssh.enable mkForce true;
+      luks.devices = {
+          "pool0_0" = {
+             allowDiscards = true;
+             bypassWorkqueues = true;
+          };
+      };
+      network = mkIf cfg.ssh.enable {
         enable = mkForce true;
         ssh = {
           enable = mkForce true;
-          port = cfg.ssh.port;
+          port = mkDefault cfg.ssh.port;
           authorizedKeys = [ cfg.ssh.authorizedKeys ];
           hostKeys = [ cfg.ssh.hostKeys ];
         };
