@@ -11,17 +11,6 @@
   ];
 
   boot = {
-    initrd.luks.devices = {
-      "pool0_0" = {
-         allowDiscards = true;
-         bypassWorkqueues = true;
-      };
-      "pool0_1" = {
-         allowDiscards = true;
-         bypassWorkqueues = true;
-      };
-    };
-
     kernelParams = [
       "quiet"
       "video=DP-3:2560x1440@120"

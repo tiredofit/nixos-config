@@ -20,5 +20,16 @@ in
       dmraid
       gptfdisk
     ];
+
+    boot = mkIf config.host.filesystem.encryption.enable {
+      initrd = {
+        luks.devices = {
+          "pool0_1" = {
+             allowDiscards = true;
+             bypassWorkqueues = true;
+          };
+        };
+      };
+    };
   };
 }
