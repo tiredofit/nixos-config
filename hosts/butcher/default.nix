@@ -5,8 +5,6 @@
 
     ./hardware-configuration.nix
     ../common/global
-
-    ../../users/dave
   ];
 
 
@@ -23,6 +21,10 @@
     role = "server";
     service = {
       vscode_server.enable = true;
+    };
+    user = {
+      dave.enable = true;
+      root.enable = false;
     };
   };
 

@@ -5,9 +5,6 @@
     ./hardware-configuration.nix
 
     ../common/global
-
-    ../../users/dave
-    ../../users/root
   ];
 
   boot = {
@@ -43,12 +40,16 @@
     hardware = {
       cpu = "amd";
       gpu = "integrated-amd";
+      raid.enable = true;
       sound = {
         server = "pulseaudio";
       };
     };
     role = "desktop";
-    service.fluentbit.enable = true;
+    user = {
+      dave.enable = true;
+      root.enable = true;
+    };
   };
 
   networking = {

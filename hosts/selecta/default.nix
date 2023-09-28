@@ -25,6 +25,10 @@
       };
     };
     role = "desktop";
+    user = {
+      dave.enable = true;
+      root.enable = true;
+    };
   };
 
   networking = {

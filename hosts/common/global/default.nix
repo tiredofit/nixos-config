@@ -8,6 +8,7 @@
     ./less.nix
     ./locale.nix
     ./nix.nix
+    ../../../users
   ] ++ (builtins.attrValues outputs.nixosModules);
 
   boot = {
@@ -96,4 +97,5 @@
   security.sudo.wheelNeedsPassword = mkDefault false ;
 
   services.fstrim.enable = mkDefault true;
+  users.mutableUsers = mkDefault false;
 }

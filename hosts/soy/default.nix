@@ -3,10 +3,7 @@
   imports = [
     inputs.nur.nixosModules.nur
     ./hardware-configuration.nix
-
     ../common/global
-
-    ../../users/dave
   ];
 
 
@@ -40,6 +37,10 @@
       };
     };
     role = "vm";
+    user = {
+      dave.enable = true;
+      root.enable = false;
+    };
   };
 
   networking = {
