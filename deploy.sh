@@ -32,12 +32,12 @@ case "$1" in
 **
 **
 ** - Usage:
-**   '$(basename $0)'                      - Interative Mode (Default)
-**   '$(basename $0)' --help               - Yer lookin at it
-**   '$(basename $0)' --debug              - Shows Output of commands behind the scenes
-**   '$(basename $0)' --changelog          - Shows this tools Changelog
-**   '$(basename $0)' --version            - Shows this tools version
-**   '$(basename $0)' --(arguments)        - Pass any arguments to alter default behaviour
+**   '$(basename "$0")'                      - Interative Mode (Default)
+**   '$(basename "$0")' --help               - Yer lookin at it
+**   '$(basename "$0")' --debug              - Shows Output of commands behind the scenes
+**   '$(basename "$0")' --changelog          - Shows this tools Changelog
+**   '$(basename "$0")' --version            - Shows this tools version
+**   '$(basename "$0")' --(arguments)        - Pass any arguments to alter default behaviour
 **
 **
 ****************************************************************************************************************************
@@ -216,7 +216,7 @@ valid_ip() {
     if [[ $ip =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
         OIFS=$IFS
         IFS='.'
-        ip=($ip)
+        ip=("$ip")
         IFS=$OIFS
         [[ ${ip[0]} -le 255 && ${ip[1]} -le 255 \
             && ${ip[2]} -le 255 && ${ip[3]} -le 255 ]]
@@ -1000,7 +1000,7 @@ deploy_q_username() {
 }
 
 deploy_q_sshkey() {
-    q_ssh_private_key" "
+    q_ssh_private_key=" "
     while [[ $q_ssh_private_key = *" "* ]];  do
         if [ $counter -gt 1 ] ; then print_error "SSH Key paths cannot have spaces in them" ; fi ;
         read -e -p "$(echo -e ${clg}** ${cdgy}Enter the path and filename of your SSH Private key:\ ${coff})" q_ssh_private_key
@@ -1064,21 +1064,21 @@ install_q_disk() {
 }
 
 parse_disk_config() {
-    system_role = $(grep "role = .*;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix | cut -d '"' -f2)
+    system_role=$(grep "role = .*;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix | cut -d '"' -f2)
 
     if grep -qF "btrfs.enable = mkDefault true;" "${_dir_flake}"/modules/roles/"${system_role}"/default.nix; then
         disk_btrfs=true
     fi
-    if grep -qF "encryption.enable = mkDefault true;"  "${_dir_flake}"/modules/roles/"${system_role}"/default.nix; then
+    if grep -qF "encryption.enable = mkDefault true;" "${_dir_flake}"/modules/roles/"${system_role}"/default.nix; then
         disk_encryption=true
     fi
-    if grep -qF "impermanence.enable = mkDefault true;"  "${_dir_flake}"/modules/roles/"${system_role}"/default.nix || grep -Pzo -m 1 "(?s)impermanence = {\n.*enable = mkDefault true;"  "${_dir_flake}"/modules/roles/"${system_role}"/default.nix; then ; then
+    if grep -qF "impermanence.enable = mkDefault true;" "${_dir_flake}"/modules/roles/"${system_role}"/default.nix || grep -Pzo -m 1 "(?s)impermanence = {\n.*enable = mkDefault true;"  "${_dir_flake}"/modules/roles/"${system_role}"/default.nix; then
         disk_impermanence=true
     fi
-    if grep -qF "raid.enable = mkDefault true;"  "${_dir_flake}"/modules/roles/"${system_role}"/default.nix; then
+    if grep -qF "raid.enable = mkDefault true;" "${_dir_flake}"/modules/roles/"${system_role}"/default.nix; then
         disk_raid=true
     fi
-    if grep -qF "swap_file.enable = mkDefault true;"  "${_dir_flake}"/modules/roles/"${system_role}"/default.nix; then
+    if grep -qF "swap_file.enable = mkDefault true;" "${_dir_flake}"/modules/roles/"${system_role}"/default.nix; then
         disk_swapfile=true
     fi
 
@@ -1102,15 +1102,13 @@ parse_disk_config() {
     if grep -qF "raid.enable = true;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
         disk_raid=true
     elif grep -qF "raid.enable = false;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
+        disk_raid=false
     fi
     if grep -qF "swap_file.enable = true;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
         disk_swapfile=true
-    elif
-        grep -qF "swap_file.enable = false;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
+    elif grep -qF "swap_file.enable = false;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
+        disk_swapfile=false
     fi
-
-
-
 }
 
 task_install_host() {
@@ -1118,7 +1116,7 @@ task_install_host() {
     nix run github:numtide/nixos-anywhere -- \
                                                 --ssh-port ${SSH_PORT} ${ssh_private_key_prefix} \
                                                 --no-reboot \
-                                                ${feature_luks} --extra-files ${_dir_remote_rootfs}" \
+                                                ${feature_luks} --extra-files "${_dir_remote_rootfs}" \
                                                 --flake "${_dir_flake}"/#${deploy_host} \
                                                 ${REMOTE_USER}@${remote_host_ip_address}
 }
