@@ -28,6 +28,9 @@
         server = "pulseaudio";
       };
     };
+    network = {
+      hostname = "disko";
+    };
     role = "vm";
     user = {
       dave.enable = true;

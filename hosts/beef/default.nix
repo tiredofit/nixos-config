@@ -45,14 +45,13 @@
         server = "pulseaudio";
       };
     };
+    network = {
+      hostname = "beef";
+    };
     role = "desktop";
     user = {
       dave.enable = true;
       root.enable = true;
     };
-  };
-
-  networking = {
-    hostName = "beef";
   };
 }

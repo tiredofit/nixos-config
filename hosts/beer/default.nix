@@ -38,6 +38,9 @@ imports = [
     filesystem = {
       btrfs.enable = false;
     };
+    network = {
+      hostname = "beer";
+    };
     role = "kiosk";
     user = {
       dave.enable = true;

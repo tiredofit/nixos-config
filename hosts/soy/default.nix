@@ -36,6 +36,9 @@
         server = "pulseaudio";
       };
     };
+    network = {
+      hostname = "soy";
+    };
     role = "vm";
     user = {
       dave.enable = true;

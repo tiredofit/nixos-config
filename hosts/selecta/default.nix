@@ -25,6 +25,9 @@
       };
     };
     role = "desktop";
+    network = {
+      hostname = "selekta";
+    };
     user = {
       dave.enable = true;
       root.enable = true;

@@ -73,6 +73,7 @@ in
       };
       network = {
         firewall.fail2ban.enable = mkDefault true;
+        wired.enabled = mkDefault true;
       };
       service = {
         logrotate.enable = mkDefault true;
