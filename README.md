@@ -2,7 +2,7 @@
 
 Here are my [NixOS](https://nixos.org/) configurations.
 
-These allows for system portability and configuration from machine to machine with a small amount of changes (usually disks, partitions, or hardware changes) once and enjoy a many times forward. The configurations allow for a base system to be installed, with a core amount of applications to operate. They shine when you add something like [Home Manager](https://nix-community.github.io/home-manager/) is installed to allow for discrete per-user configuration of the environment. If you are looking for that configuration head on over to my [Nix Home Manager | Dotfiles Repository](https://github.com/tiredofit/dotfiles).
+These allows for system portability and configuration from machine to machine with a small amount of changes (usually disks, partitions, or hardware changes) once and enjoy a many times forward. The configurations allow for a base system to be installed, with a core amount of applications to operate. They shine when you add something like [Home Manager](https://nix-community.github.io/home-manager/) is installed to allow for discrete per-user configuration of the environment. If you are looking for that configuration head on over to my [Nix Home Manager | Dotfiles Repository](https://github.com/tiredofit/home).
 
 If you would like to base your own configuration from this, you will need to be able to use [Nix flakes](https://nixos.wiki/wiki/Flakes).
 
