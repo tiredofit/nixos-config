@@ -678,45 +678,7 @@ menu_host_secrets_global() {
 | Secrets Additions |
 ---------------------
 
-    In this first release, we are doing manual edits to files.
-
-    GLOBAL SECRETS
-    You must add the following to the global file:
-
-       - Copy this line and place it underneath the 'keys:' section
-###
-
-  - &host_${deploy_host} ${_age_key_pub}
-
-###
-       - Make sure that under the creation rules that it says something like this:
-
-###
-    - path_regex: hosts/common/secrets/.*
-    key_groups:
-    - age:
-      - *host_${deploy_host}
-      - *host_host1
-      - *host_host2
-      - *host_host3
-      - *user_$(whoami)
-  - path_regex: users/secrets.yaml
-    key_groups:
-    - age:
-      - *host_${deploy_host}
-      - *host_host1
-      - *host_host2
-      - *host_host3
-      - *user_$(whoami)
-
-    Finally - Make sure there is a section for the host defined that looks similar to this:
-
-  - path_regex: hosts/soy/secrets/.*
-    key_groups:
-    - age:
-      - *host_${deploy_host}
-      - *user_$(whoami)
-###
+    See help for what we are actually doing here..
 
 EOF
 
@@ -756,6 +718,47 @@ EOF
             echo -e "${clm}"
             echo -e "${cwh}Edit${cdgy} - Edit the secrets file"
             echo -e ""
+            cat <<EOF
+    In this first release, we are doing manual edits to files.
+
+    GLOBAL SECRETS
+    You must add the following to the global file:
+
+       - Copy this line and place it underneath the 'keys:' section
+###
+
+  - &host_${deploy_host} ${_age_key_pub}
+
+###
+       - Make sure that under the creation rules that it says something like this:
+
+###
+    - path_regex: hosts/common/secrets/.*
+    key_groups:
+    - age:
+      - *host_${deploy_host}
+      - *host_host1
+      - *host_host2
+      - *host_host3
+      - *user_$(whoami)
+  - path_regex: users/secrets.yaml
+    key_groups:
+    - age:
+      - *host_${deploy_host}
+      - *host_host1
+      - *host_host2
+      - *host_host3
+      - *user_$(whoami)
+
+    Finally - Make sure there is a section for the host defined that looks similar to this:
+
+  - path_regex: hosts/soy/secrets/.*
+    key_groups:
+    - age:
+      - *host_${deploy_host}
+      - *user_$(whoami)
+###
+EOF
         ;;
         * )
             menu_host_secrets_global
@@ -1113,8 +1116,6 @@ parse_disk_config() {
     if grep -qF "swap_file.enable = mkDefault true;" "${_dir_flake}"/modules/roles/"${system_role}"/default.nix; then
         disk_swapfile=true
     fi
-
-    #"${_dir_flake}"/hosts/"${deploy_host}"/default.nix
 
     if grep -qF "btrfs.enable = true;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
         disk_btrfs=true
