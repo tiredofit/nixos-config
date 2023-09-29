@@ -210,14 +210,20 @@ silent() {
 }
 
 valid_ip() {
-    data="$1"
-    if grep -oP '(?=^.{4,253}$)(^(?:[a-zA-Z0-9](?:(?:[a-zA-Z0-9\-]){0,61}[a-zA-Z0-9])?\.)+([a-zA-Z]{2,}|xn--[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])$)' <<<"${data}" >/dev/null 2>&1; then
-      return 0
-    else
-      host "${data}" >/dev/null 2>&1
-      retval=$?
-      return "${retval}"
+    ip=$(getent ahosts "${1}" | grep STREAM | sed "/:/d" | awk '{print $1}')
+    stat=1
+    echo "IP IS $ip"
+    sleep 5
+    if [[ $ip =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
+        OIFS=$IFS
+        IFS='.'
+        ip=($ip)
+        IFS=$OIFS
+        [[ ${ip[0]} -le 255 && ${ip[1]} -le 255 \
+            && ${ip[2]} -le 255 && ${ip[3]} -le 255 ]]
+        stat=$?
     fi
+    return $stat
 }
 
 ## Timesaver for if statements
@@ -349,11 +355,13 @@ check_for_repository() {
 }
 
 check_host_availability() {
-    remote_ip_tmp=$(getent hosts ${deploy_host} | awk '{print $1}')
-    if [ "$?" = 0 ]; then
+    getent ahosts ${deploy_host} | grep STREAM | sed "/:/d" | awk '{print $1}' > /dev/null
+    host_available_exit=$?
+    remote_ip_tmp=$(getent ahosts ${deploy_host} | grep STREAM | sed "/:/d" | awk '{print $1}')
+    if [ "${host_available_exit}" = 0 ]; then
         REMOTE_IP=${remote_ip_tmp}
     else
-        print_warn "Couldn't resolve hostname, please enter in an IP Address"
+        print_warn "Couldn't resolve hostname, please enter in a new hostname or ip address"
         install_and_deploy_q_ipaddress
     fi
 }
@@ -396,7 +404,7 @@ Perform a new installation or update an existing installation remotely.
 
 EOF
     echo -e "${coff}"
-    read -p "$(echo -e ${cdgy}\(${cwh}N${cdgy}\) New Install for Host: ${deploy_host}\\n\(${cwh}E${cdgy}\) Update Existing Host: ${deploy_host} \\n\\n${cwh}CHANGE:\\n${cdgy}\(${cwh}S${cdgy}\) Regenerate SSH Keys for: ${deploy_host}\\n\(${cwh}A${cdgy}\) Regenerate AGE Secret Keys for ${deploy_host}\\n${cwh}${coff}\\n${cdgy}\(${cwh}B${cdgy}\) Back to host menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_deploy
+    read -p "$(echo -e ${cdgy}\(${cwh}N${cdgy}\) New Install for Host: ${deploy_host}\\n\(${cwh}E${cdgy}\) Update Existing Host: ${deploy_host} \\n\\n${cwh}CHANGE **DANGER!!**:\\n${cdgy}\(${cwh}S${cdgy}\) Regenerate SSH Keys for: ${deploy_host}\\n\(${cwh}A${cdgy}\) Regenerate AGE Secret Keys for ${deploy_host}\\n${cwh}${coff}\\n${cdgy}\(${cwh}B${cdgy}\) Back to host menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_deploy
     case "${q_menu_deploy,,}" in
         "n" | "new" )
             install_q_disk
@@ -713,10 +721,28 @@ menu_host_secrets_global() {
 EOF
 
     echo -e "${coff}"
-    read -p "$(echo -e \\n$\(${cwh}E${cdgy}\) Edit .sops.yaml\\n${cwh}${coff}\\n${cdgy}\(${cwh}B${cdgy}\) Back to host secrets menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_host_secrets_global
+    read -p "$(echo -e \\n${cdgy}\(${cwh}A${cdgy}\) Apply auto modifications to .sops.yaml\\n\\n$\(${cwh}E${cdgy}\) Edit .sops.yaml\\n${cwh}${coff}\\n${cdgy}\(${cwh}B${cdgy}\) Back to host secrets menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_host_secrets_global
     case "${q_menu_host_secrets_global,,}" in
+        "a" | "apply" )
+            ## TODO Add -i to the yq commands after verifying they are working
+            yq eval ".keys += [ \"&host_${deploy_host} ${_age_key_pub}\" ]" "${_dir_flake}"/.sops.yaml
+            echo "Add the age key at the top"
+            read -n 1 -s -r -p "Press any key to continue"
+
+            yq eval ".creation_rules += [{\"path_regex\": \"hosts/${deploy_host}/secrets/.*\", \"key_groups\": [{\"age\": [\"*host_${deploy_host}\", \"*user_dave\"]}]}]" "${_dir_flake}"/.sops.yaml
+            print_debug "Add the new path_regex for the host along with the host and user"
+            read -n 1 -s -r -p "Press any key to continue"
+
+            yq eval ".creation_rules |= map(select(.path_regex == \"hosts/common/secrets/.*\").key_groups[0].age += [\"*host_${deploy_host}\"] // .)" "${_dir_flake}"/.sops.yaml
+            print_debug "Add the host to hosts/common/secrets"
+            read -n 1 -s -r -p "Press any key to continue"
+
+            yq eval ".creation_rules |= map(select(.path_regex == \"users/secrets.yaml\").key_groups[0].age += [\"*host_${deploy_host}\"] // .)" "${_dir_flake}"/.sops.yaml
+            print_debug "Add the host to the users_secrets"
+            read -n 1 -s -r -p "Press any key to continue"
+        ;;
         "e" | "edit" )
-            $EDITOR ${_dir_flake}/.sops.yaml
+            $EDITOR "${_dir_flake}"/.sops.yaml
             menu_host_secrets_global
         ;;
         "b" | "back" )
@@ -980,6 +1006,7 @@ install_and_deploy_q_host() {
 }
 
 install_and_deploy_q_ipaddress() {
+set -x
         counter=1
         _remote_ip_tmp=256.256.256.256
         until ( valid_ip $remote_ip_tmp ) ; do
@@ -987,7 +1014,10 @@ install_and_deploy_q_ipaddress() {
                 read -e -p "$(echo -e ${clg}** ${cdgy}Remote Host IP Address: \ ${coff})" remote_ip_tmp
             (( counter+=1 ))
         done
+        sleep 10
         REMOTE_IP=$remote_ip_tmp
+        sleep 10
+set +x
 }
 
 deploy_q_username() {
