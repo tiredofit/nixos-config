@@ -2,9 +2,11 @@ keys:
   - &host_beef age1wq5xj5mwv9xk4tp26cxc4xqjq9xd9hwqv0zeemawl2cc8sarmqesw366dh
   - &host_butcher age1nleq0q2kzh2zn4pyr0dcy0zjnsr6sx8c5ttjahhfttkltsr2s3ksahhpkx
   - &host_disko age16remqlrkz2s9yurru0sk3vxscs2t9l745el3asapatmpl0fh4f8sk98xj0
+  - &host_nakulaptop age1x9g34v7aqcppeuj2e9nddv4am47245k6c4q0ktzpwmuve6e2zfcqnsf5fv
   - &host_selecta age148dmxhvqa2mrc43qhvu4qs963e4vcwdqr5kt0glrymh0sv62xp0qhgj0re
   - &host_soy age1wq5xj5mwv9xk4tp26cxc4xqjq9xd9hwqv0zeemawl2cc8sarmqesw366dh
   - &user_dave age1upzm9um3qljxlmxcg8vl35d7eyeqtnsfcnqlh3wtnj46dhfzwyrqa80avw
+  - &user_ireen age1477n5xa2cr4tgdy80vxg24tsdcrcmzarn4ad99tjvrsjedq6sqpqsxyrms
   - &user_media age1zsws94zmm5axrtpswg2pwcfcn04zuwxtm8gm3z75frwvqtquz9rqgugv7f
 creation_rules:
   - path_regex: hosts/common/secrets/.*
@@ -13,15 +15,19 @@ creation_rules:
       - *host_beef
       - *host_butcher
       - *host_disko
+      - *host_nakulaptop
       - *host_selecta
       - *host_soy
       - *user_dave
+      - *user_ireen
+      - *user_media
   - path_regex: users/secrets.yaml
     key_groups:
     - age:
       - *host_beef
       - *host_butcher
       - *host_disko
+      - *host_nakulaptop
       - *host_selecta
       - *host_soy
       - *user_dave
@@ -40,6 +46,12 @@ creation_rules:
     - age:
       - *host_disko
       - *user_dave
+  - path_regex: hosts/nakulaptop/secrets/.*
+    key_groups:
+    - age:
+      - *host_nakulaptop
+      - *user_dave
+      - *user_ireen
   - path_regex: hosts/selecta/secrets/.*
     key_groups:
     - age:

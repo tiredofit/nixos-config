@@ -87,6 +87,11 @@
           system = "x86_64-linux";
         };
 
+        nakulaptop = lib.nixosSystem { # Laptop
+          modules = [ ./hosts/laptop ];
+          specialArgs = { inherit inputs outputs; };
+        };
+
         selecta = lib.nixosSystem { # Production Station
           modules = [ ./hosts/selecta ];
           specialArgs = { inherit inputs outputs; };
