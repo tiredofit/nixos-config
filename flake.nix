@@ -88,7 +88,7 @@
         };
 
         nakulaptop = lib.nixosSystem { # Laptop
-          modules = [ ./hosts/laptop ];
+          modules = [ ./hosts/nakulaptop ];
           specialArgs = { inherit inputs outputs; };
         };
 
