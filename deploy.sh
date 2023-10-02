@@ -212,8 +212,6 @@ silent() {
 valid_ip() {
     ip=$(getent ahosts "${1}" | grep STREAM | sed "/:/d" | awk '{print $1}')
     stat=1
-    echo "IP IS $ip"
-    sleep 5
     if [[ $ip =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
         OIFS=$IFS
         IFS='.'
@@ -355,9 +353,9 @@ check_for_repository() {
 }
 
 check_host_availability() {
-    getent ahosts ${deploy_host} | grep STREAM | sed "/:/d" | awk '{print $1}' > /dev/null
+    getent ahosts ${1} | grep STREAM | sed "/:/d" | awk '{print $1}' > /dev/null
     host_available_exit=$?
-    remote_ip_tmp=$(getent ahosts ${deploy_host} | grep STREAM | sed "/:/d" | awk '{print $1}')
+    remote_ip_tmp=$(getent ahosts ${1} | grep STREAM | sed "/:/d" | awk '{print $1}')
     if [ "${host_available_exit}" = 0 ]; then
         REMOTE_IP=${remote_ip_tmp}
     else
@@ -530,7 +528,7 @@ EOF
             ;;
         "i" | "ip" )
             install_and_deploy_q_ipaddress
-            check_host_availability
+            check_host_availability "${REMOTE_IP}"
             menu_host
         ;;
         "e" | "edit" )
@@ -843,7 +841,7 @@ EOF
         "d" | "deploy" )
             MODE=DEPLOY
             install_and_deploy_q_host
-            check_host_availability
+            check_host_availability ${deploy_host}
             menu_host
         ;;
         "s" | "secrets" )
@@ -1009,7 +1007,6 @@ install_and_deploy_q_host() {
 }
 
 install_and_deploy_q_ipaddress() {
-set -x
         counter=1
         _remote_ip_tmp=256.256.256.256
         until ( valid_ip $remote_ip_tmp ) ; do
@@ -1017,10 +1014,7 @@ set -x
                 read -e -p "$(echo -e ${clg}** ${cdgy}Remote Host IP Address: \ ${coff})" remote_ip_tmp
             (( counter+=1 ))
         done
-        sleep 10
-        REMOTE_IP=$remote_ip_tmp
-        sleep 10
-set +x
+        export REMOTE_IP=$remote_ip_tmp
 }
 
 deploy_q_username() {
