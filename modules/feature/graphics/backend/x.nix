@@ -24,7 +24,10 @@ in {
 
     security = mkIf (config.host.role != "kiosk") {
       pam = {
-        services.gdm.enableGnomeKeyring = true;
+        services = {
+          gdm.enableGnomeKeyring = true;
+          cinnamon-screensaver = {};
+        };
       };
       polkit = {
         enable = true;
@@ -67,8 +70,8 @@ in {
           };
 
         layout = "us";
-          libinput.enable = true;
-
+        libinput.enable = true;
+        updateDbusEnvironment = true;
         })
 
         (lib.mkIf (config.host.role == "kiosk") {
