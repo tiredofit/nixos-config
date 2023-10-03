@@ -7,8 +7,10 @@
     ../common/global
   ];
 
+
   boot = {
     kernelParams = [
+      "quiet"
     ];
   };
 
