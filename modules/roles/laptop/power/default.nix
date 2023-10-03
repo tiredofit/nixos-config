@@ -49,13 +49,13 @@ in
         };
       };
 
-      udev.extraRules = let
-        inherit (import ./plug_state.nix args) plugged unplugged;
-      in ''
-        # start/stop services on power (un)plug
-        SUBSYSTEM=="power_supply", ATTR{online}=="1", RUN+="${plugged}"
-        SUBSYSTEM=="power_supply", ATTR{online}=="0", RUN+="${unplugged}"
-      '';
+      #udev.extraRules = let
+      #  inherit (import ./plug_state.nix args) plugged unplugged;
+      #in ''
+      #  # start/stop services on power (un)plug
+      #  SUBSYSTEM=="power_supply", ATTR{online}=="1", RUN+="${plugged}"
+      #  SUBSYSTEM=="power_supply", ATTR{online}=="0", RUN+="${unplugged}"
+      #'';
       # DBus service that provides power management support to applications.
       upower = {
         enable = true;
