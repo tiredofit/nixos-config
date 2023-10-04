@@ -46,10 +46,10 @@ in {
 
       xserver = lib.mkMerge [
         (lib.mkIf (config.host.role != "kiosk") {
-          enable = true;
+          enable = mkDefault true;
           desktopManager = {
-            xterm.enable = false;
-            session = [
+            xterm.enable = mkDefault false;
+            session = mkDefault [
               {
                 name = "home-manager";
                 start = ''
@@ -61,28 +61,28 @@ in {
           };
 
           displayManager = {
-            startx.enable = true;
+            startx.enable = mkDefault true;
             lightdm = {
-              enable = false;
+              enable = mkDefault false;
               greeters = {
                 slick = {
-                  enable = true;
+                  enable = mkDefault true;
                   theme = {
-                    name = "Adwaita-Dark";
+                    name = mkDefault "Adwaita-Dark";
                   };
                   cursorTheme = {
-                    name = "Quintom_Snow";
-                    package = pkgs.quintom-cursor-theme;
+                    name = mkDefault "Quintom_Snow";
+                    package = mkDefault pkgs.quintom-cursor-theme;
                   };
                 };
                 gtk = {
-                    enable = false;
+                    enable = mkDefault false;
                 };
               };
             };
             gdm = {
-              enable = true;
-              wayland = false;
+              enable = mkDefault true;
+              wayland = mkDefault false;
             };
           };
 
