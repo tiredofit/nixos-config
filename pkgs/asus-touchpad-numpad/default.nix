@@ -8,7 +8,6 @@ buildPythonApplication rec {
   src = fetchFromGitHub {
     owner = "mohamed-badaoui";
     repo = pname;
-    # These needs to be updated from time to time
     rev = "a2bada610ebb3fc002fceb53ddf93bc799241867";
     sha256 = "sha256-qanPTmP2Sctq4ybiUFzIiADP2gZH8HhajBORUSIXb04=";
   };

@@ -38,11 +38,8 @@
       sound = {
         server = "pulseaudio";
       };
-      touchpad.enable = true;
-      asus-touchpad-numpad = {
-        enable = true;
-        package = pkgs.asus-touchpad-numpad-driver;
-        model = "ux433fa";
+      touchpad = {
+        asus-touchpad-numpad.enable = true;
       };
     };
     network = {

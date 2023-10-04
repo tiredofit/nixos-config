@@ -62,10 +62,27 @@ in {
 
           displayManager = {
             startx.enable = true;
-            lightdm.enable = false;
+            lightdm = {
+              enable = false;
+              greeters = {
+                slick = {
+                  enable = true;
+                  theme = {
+                    name = "Adwaita-Dark";
+                  };
+                  cursorTheme = {
+                    name = "Quintom_Snow";
+                    package = pkgs.quintom-cursor-theme;
+                  };
+                };
+                gtk = {
+                    enable = false;
+                };
+              };
+            };
             gdm = {
-              enable = true ;
-              wayland = false ;
+              enable = true;
+              wayland = false;
             };
           };
 
