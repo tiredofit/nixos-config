@@ -24,10 +24,7 @@ in {
 
     security = mkIf (config.host.role != "kiosk") {
       pam = {
-        services = {
-          gdm.enableGnomeKeyring = true;
-          cinnamon-screensaver = {};
-        };
+        services.gdm.enableGnomeKeyring = true;
       };
       polkit = {
         enable = true;
@@ -46,10 +43,10 @@ in {
 
       xserver = lib.mkMerge [
         (lib.mkIf (config.host.role != "kiosk") {
-          enable = mkDefault true;
+          enable = true;
           desktopManager = {
-            xterm.enable = mkDefault false;
-            session = mkDefault [
+            xterm.enable = false;
+            session = [
               {
                 name = "home-manager";
                 start = ''
@@ -84,11 +81,12 @@ in {
               enable = mkDefault true;
               wayland = mkDefault false;
             };
+            sddm.enable = mkDefault false;
           };
 
         layout = "us";
-        libinput.enable = true;
-        updateDbusEnvironment = true;
+          libinput.enable = true;
+
         })
 
         (lib.mkIf (config.host.role == "kiosk") {
