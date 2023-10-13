@@ -38,17 +38,23 @@ in
           battery = {
             governor = "powersave";
             scaling_min_freq = mkDefault (MHz 1200);
-          scaling_max_freq = mkDefault (MHz 1800);
-          turbo = "never";
+            scaling_max_freq = mkDefault (MHz 1800);
+            turbo = "never";
+          };
+          charger = {
+            governor = "performance";
+            scaling_min_freq = mkDefault (MHz 1800);
+            scaling_max_freq = mkDefault (MHz 3000);
+            turbo = "auto";
+          };
         };
-        charger = {
-          governor = "performance";
-          scaling_min_freq = mkDefault (MHz 1800);
-          scaling_max_freq = mkDefault (MHz 3000);
-          turbo = "auto";
-        };
-      };
 
+        udev.extraRules = ''
+          SUBSYSTEM=="power_supply",ENV{POWER_SUPPLY_ONLINE}=="0",RUN+="${pkgs.power-profiles-daemon}/bin/powerprofilesctl set power-saver"
+          SUBSYSTEM=="power_supply",ENV{POWER_SUPPLY_ONLINE}=="1",RUN+="${pkgs.power-profiles-daemon}/bin/powerprofilesctl set performance"
+          SUBSYSTEM=="power_supply", ATTR{online}=="1", RUN+="${pkgs.tlp}/bin/tlp ac"
+          SUBSYSTEM=="power_supply", ATTR{online}=="0", RUN+="${pkgs.tlp}/bin/tlp bat"
+        '';
       #udev.extraRules = let
       #  inherit (import ./plug_state.nix args) plugged unplugged;
       #in ''

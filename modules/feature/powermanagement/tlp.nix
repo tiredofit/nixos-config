@@ -79,13 +79,13 @@ in
         # PLATFORM_PROFILE_ON_BAT = "low-power";
 
         # <https://www.kernel.org/doc/html/latest/admin-guide/pm/cpufreq.html>
-        CPU_SCALING_GOVERNOR_ON_AC = "schedutil";
-        CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
+        #CPU_SCALING_GOVERNOR_ON_AC = "schedutil";
+        #CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
 
-        CPU_SCALING_MIN_FREQ_ON_AC = MHz 1400;
-        CPU_SCALING_MAX_FREQ_ON_AC = MHz 1700;
-        CPU_SCALING_MIN_FREQ_ON_BAT = MHz 1400;
-        CPU_SCALING_MAX_FREQ_ON_BAT = MHz 1600;
+        #CPU_SCALING_MIN_FREQ_ON_AC = MHz 1400;
+        #CPU_SCALING_MAX_FREQ_ON_AC = MHz 1700;
+        #CPU_SCALING_MIN_FREQ_ON_BAT = MHz 1400;
+        #CPU_SCALING_MAX_FREQ_ON_BAT = MHz 1600;
 
         CPU_BOOST_ON_AC = 1;
         CPU_BOOST_ON_BAT = 0;
