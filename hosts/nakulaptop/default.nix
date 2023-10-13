@@ -3,7 +3,6 @@
   imports = [
     inputs.nur.nixosModules.nur
     ./hardware-configuration.nix
-
     ../common/global
   ];
 
