@@ -38,6 +38,7 @@ in
         };
       };
       hardware = {
+        backlight.enable = mkDefault true;    # Most laptops have a backlight
         bluetooth.enable = mkDefault true;    # Most wireless cards have bluetooth radios
         raid.enable = mkDefault false;        #
         printing.enable = mkDefault true;     # If we don't have access to a physical printer we should be able to remotely print
@@ -59,49 +60,6 @@ in
         };
       };
     };
-
-### TODO Keyboard Brightness
-    environment.systemPackages = with pkgs; [
-      brightnessctl
-    ];
-
-### TODO Pick One
-  programs.light.enable = true;
-  services.actkbd = {
-    enable = true;
-    bindings = [
-      { keys = [ 233 ]; events = [ "key" ]; command = "/run/current-system/sw/bin/light -A 10"; }
-      { keys = [ 232 ]; events = [ "key" ]; command = "/run/current-system/sw/bin/light -U 10"; }
-    ];
-  };
-
-### TODO Deal with suspend properly
-services = {
-    # Power management.
-    logind = {
-      lidSwitch = "ignore";
-      extraConfig = ''
-          HandlePowerKey=ignore
-      '';
-    };
-    acpid = {
-      enable = true;
-      lidEventCommands =
-        ''
-          export PATH=$PATH:/run/current-system/sw/bin
-
-          lid_state=$(cat /proc/acpi/button/lid/LID0/state | awk '{print $NF}')
-          if [ $lid_state = "closed" ]; then
-              systemctl suspend
-          fi
-        '';
-
-      powerEventCommands =
-        ''
-          systemctl suspend
-        '';
-    };
-};
 
     networking = {
       networkmanager= {
