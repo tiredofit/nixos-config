@@ -3,6 +3,7 @@
 with lib;
 {
   imports = [
+    ./backlight.nix
     ./bluetooth.nix
     ./cpu
     ./gpu
