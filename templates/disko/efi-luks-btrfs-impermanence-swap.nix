@@ -1,42 +1,51 @@
 let
   disk1 = "/dev/vda";
-  disk2 = "/dev/vdb";
 in
 {
-  disko.devices = {
-    disk = {
-      ${disk1} = {
-        device = "${disk1}";
-        type = "disk";
-        content = {
-          type = "gpt";
-          partitions = {
-            ESP = {
-              label = "EFI";
-              name = "ESP";
-              size = "512M";
-              type = "EF00" ;
-              content = {
-                type = "filesystem";
-                format = "vfat";
-                mountpoint = "/boot";
-              };
+  disk = {
+    ${disk1} = {
+      device = "${disk1}";
+      type = "disk";
+      content = {
+        type = "gpt";
+        partitions = {
+          ESP = {
+            label = "EFI";
+            name = "ESP";
+            size = "512M";
+            type = "EF00";
+            content = {
+              type = "filesystem";
+              format = "vfat";
+              mountpoint = "/boot";
             };
-            swap = {
-              label = "swap";
-              size = "4G"; # SWAP - Do not Delete this comment
-              content = {
-                type = "swap";
-                randomEncryption = true;
-                resumeDevice = true;
+          };
+          swap = {
+            label = "swap";
+            size = "4G"; # SWAP - Do not Delete this comment
+            content = {
+              type = "swap";
+              randomEncryption = true;
+              resumeDevice = true;
             };
-            root = {
-              label = "data";
-              name = "btrfs";
-              size = "100%";
+          };
+          luks = {
+            label = "encrypted" ;
+            size = "100%";
+            content = {
+              type = "luks";
+              name = "pool0_0";
+              extraOpenArgs = [ "--allow-discards" ];
+              # if you want to use the key for interactive login be sure there is no trailing newline
+              # for example use `echo -n "password" > /tmp/secret.key`
+              keyFile = "/tmp/secret.key"; # Interactive
+              # or file based
+              #settings.keyFile = "/tmp/secret.key";
+              #additionalKeyFiles = ["/tmp/additionalSecret.key"];
+              keyFile = "/tmp/secret.key";
               content = {
                 type = "btrfs";
-                extraArgs = [ "-f" "-m raid1 -d raid1" "${disk2}" ];
+                extraArgs = [ "-f" ];
                 subvolumes = {
                   "/root" = {
                     mountpoint = "/";
@@ -65,7 +74,7 @@ in
                     mountOptions = [ "compress=zstd" "noatime" ];
                   };
                   "/persist/snapshots" = {
-                    mountpoint = "/persist/.snapshots";
+                    mountpoint = "/persist";
                     mountOptions = [ "compress=zstd" "noatime" ];
                   };
                   "/var_local" = {

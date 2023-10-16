@@ -25,7 +25,7 @@ in {
             };
             swap = {
               label = "swap";
-              size = "4G";
+              size = "4G"; # SWAP - Do not Delete this comment
               content = {
                 type = "swap";
                 randomEncryption = true;
@@ -39,7 +39,12 @@ in {
                 type = "luks";
                 name = "${cryptdisk1}";
                 extraOpenArgs = [ "--allow-discards" ];
+                # if you want to use the key for interactive login be sure there is no trailing newline
+                # for example use `echo -n "password" > /tmp/secret.key`
                 keyFile = "/tmp/secret.key"; # Interactive
+                # or file based
+                #settings.keyFile = "/tmp/secret.key";
+                #additionalKeyFiles = ["/tmp/additionalSecret.key"];
               };
             };
           };
@@ -58,7 +63,12 @@ in {
                 type = "luks";
                 name = "${cryptdisk2}";
                 extraOpenArgs = [ "--allow-discards" ];
+                # if you want to use the key for interactive login be sure there is no trailing newline
+                # for example use `echo -n "password" > /tmp/secret.key`
                 keyFile = "/tmp/secret.key"; # Interactive
+                # or file based
+                #settings.keyFile = "/tmp/secret.key";
+                #additionalKeyFiles = ["/tmp/additionalSecret.key"];
                 content = {
                   type = "btrfs";
                   extraArgs = [
@@ -88,7 +98,6 @@ in {
                       mountOptions = [ "compress=zstd" "noatime" ];
                     };
                     "/persist" = {
-                      mountpoint = "/persist";
                       mountOptions = [ "compress=zstd" "noatime" ];
                     };
                     "/persist/active" = {
@@ -100,7 +109,6 @@ in {
                       mountOptions = [ "compress=zstd" "noatime" ];
                     };
                     "/var_local" = {
-                      mountpoint = "/var/local";
                       mountOptions = [ "compress=zstd" "noatime" ];
                     };
                     "/var_local/active" = {

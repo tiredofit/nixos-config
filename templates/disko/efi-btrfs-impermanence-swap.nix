@@ -23,7 +23,7 @@ in
             };
             swap = {
               label = "swap";
-              size = "4G"; # Do not delete this comment
+              size = "4G"; # SWAP - Do not Delete this comment
               content = {
                 type = "swap";
                 randomEncryption = true;
@@ -69,7 +69,6 @@ in
                     mountOptions = [ "compress=zstd" "noatime" ];
                   };
                   "/var_local" = {
-                    mountpoint = "/var/local";
                     mountOptions = [ "compress=zstd" "noatime" ];
                   };
                   "/var_local/active" = {
