@@ -527,6 +527,7 @@ EOF
             menu_host
             ;;
         "i" | "ip" )
+            unset REMOTE_IP
             install_and_deploy_q_ipaddress
             check_host_availability "${REMOTE_IP}"
             menu_host
@@ -1007,14 +1008,15 @@ install_and_deploy_q_host() {
 }
 
 install_and_deploy_q_ipaddress() {
-        counter=1
-        _remote_ip_tmp=256.256.256.256
-        until ( valid_ip $remote_ip_tmp ) ; do
-            if [ $counter -gt 1 ] ; then print_error "IP is bad, please reenter" ; fi ;
-                read -e -p "$(echo -e ${clg}** ${cdgy}Remote Host IP Address: \ ${coff})" remote_ip_tmp
-            (( counter+=1 ))
-        done
-        export REMOTE_IP=$remote_ip_tmp
+    counter=1
+    local _remote_ip_tmp
+    _remote_ip_tmp=256.256.256.256
+    until ( valid_ip $_remote_ip_tmp ) ; do
+        if [ $counter -gt 1 ] ; then print_error "IP or Hostname is bad, please reenter" ; fi ;
+            read -e -p "$(echo -e ${clg}** ${cdgy}Remote Host IP Address: \ ${coff})" _remote_ip_tmp
+        (( counter+=1 ))
+    done
+    export REMOTE_IP=$_remote_ip_tmp
 }
 
 deploy_q_username() {
