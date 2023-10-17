@@ -391,6 +391,10 @@ menu_deploy() {
         option_secrets="(${cwh}S${cdgy}) Host secrets.yaml \n"
     fi
 
+    if [ -f "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix ] ; then
+        m_diskconfig="${cdgy}(${cwh}D${cdgy}) Edit Disk Config\\n"
+    fi
+
     printf "\033c"
     echo -e "${clm}"
     cat << EOF
@@ -402,10 +406,11 @@ Perform a new installation or update an existing installation remotely.
 
 EOF
     echo -e "${coff}"
-    read -p "$(echo -e ${cdgy}\(${cwh}N${cdgy}\) New Install for Host: ${deploy_host}\\n\(${cwh}E${cdgy}\) Update Existing Host: ${deploy_host} \\n\\n${cwh}CHANGE **DANGER!!**:\\n${cdgy}\(${cwh}S${cdgy}\) Regenerate SSH Keys for: ${deploy_host}\\n\(${cwh}A${cdgy}\) Regenerate AGE Secret Keys for ${deploy_host}\\n${cwh}${coff}\\n${cdgy}\(${cwh}B${cdgy}\) Back to host menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_deploy
+    read -p "$(echo -e ${cdgy}\(${cwh}N${cdgy}\) New Install for Host: ${deploy_host}\\n\(${cwh}E${cdgy}\) Update Existing Host: ${deploy_host} \\n\\n${cwh}CHANGE **DANGER!!**:\\n\\n${m_diskconfig}${cdgy}\(${cwh}S${cdgy}\) Regenerate SSH Keys for: ${deploy_host}\\n\(${cwh}A${cdgy}\) Regenerate AGE Secret Keys for ${deploy_host}\\n${cwh}${coff}\\n${cdgy}\(${cwh}B${cdgy}\) Back to host menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_deploy
     case "${q_menu_deploy,,}" in
         "n" | "new" )
-            install_q_disk
+            parse_disk_config
+            task_generate_encryption_password
             task_generate_ssh_key
             task_generate_age_secrets
             menu_deploy
@@ -413,6 +418,9 @@ EOF
         "e" | "existing" )
             task_update_host
             menu_deploy
+        ;;
+        "d" | "disk" )
+            menu_diskconfig
         ;;
         "s" | "ssh" )
             task_generate_ssh_key
@@ -438,6 +446,65 @@ EOF
         ;;
         * )
             menu_deploy
+        ;;
+
+    esac
+}
+
+menu_diskconfig() {
+    if var_true "${disk_encryption}"; then
+        m_deploy_password="${cdgy}(${cwh}P${cdgy}) Update Encryption Password\\n"
+    fi
+
+    printf "\033c"
+    echo -e "${clm}"
+    cat << EOF
+---------------------------
+| Disk Configuration Menu |
+---------------------------
+
+You can change settings related to your disk configuration for new installs here.
+
+You also have the capabilities of editing the hosts disk configuration
+EOF
+    echo -e "${coff}"
+    read -p "$(echo -e ${cwh}CHANGE:${cdgy}\\n\\n\(${cwh}D${cdgy}\) Disk Template: ${deploy_disk_template}\\n${m_deploy_password}\(${cwh}S${cdgy}\) Swap Size \\n\\n${cwh}EDIT:${cdgy}\\n\\n\(${cwh}E${cdgy}\) Disk Template \\n${cdgy}\(${cwh}B${cdgy}\) Back to deploy menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_host
+    case "${q_menu_host,,}" in
+        "d" | "disk" )
+            install_q_disk
+            if [ -z "${PASSWORD_ENCRYPTION}" ] ; then task_generate_encryption_password ; fi
+            menu_diskconfig
+            ;;
+        "e" | "edit" )
+            if [ -f "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix ] ; then
+                $EDITOR "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix
+            else
+                print_error "Can't edit Disk Template as it hasn't been selected yet"
+                sleep 5
+            fi
+            menu_diskconfig
+        ;;
+        "p" | "password" )
+            task_generate_encryption_password
+            menu_diskconfig
+        ;;
+        "s" | "swap" )
+            task_update_swap_size
+            menu_diskconfig
+        ;;
+        "b" | "back" )
+            menu_deploy
+        ;;
+        "q" | "exit" )
+            print_info "Quitting Script"
+            exit 1
+        ;;
+        "?" |  "help" )
+            echo -e "${clm}"
+            echo -e ""
+        ;;
+        * )
+            menu_host
         ;;
 
     esac
@@ -1064,12 +1131,39 @@ task_generate_age_secrets() {
     #yq -i '.creation_rules[] | select(.path_regex=="users/secrets.yaml") | ."key_groups" += [{"age": ["*host_'$(echo $deploy_host)'"]}] ' .sops.playground.yaml
 }
 
+task_generate_encryption_password() {
+    if var_true "${disk_encryption}"; then
+        # Encryption
+        password_encryption_1=$RANDOM
+        password_encryption_2=$RANDOM
+        counter=1
+
+        print_notice "Enter an encryption password to be entered on every system boot"
+        while [ "$password_encryption_1" != "$password_encryption_2" ]; do
+            if [ $counter -gt 1 ] ; then print_error "Passwords don't match, please reenter" ; fi ;
+            read -s -e -p "$(echo -e ${cdgy}${cwh}Disk Encryption Password: \ ${coff})" password_encryption_1
+            echo ""
+            read -s -e -p "$(echo -e ${cdgy}${cwh}Confirm Disk Encryption Password: \ ${coff})" password_encryption_2
+            echo ""
+            (( counter+=1 ))
+        done
+        PASSWORD_ENCRYPTION=${password_encryption_2}
+    fi
+}
+
 task_generate_ssh_key() {
     _dir_remote_rootfs=$(mktemp -d)
     mkdir -p "${_dir_remote_rootfs}"/${feature_impermanence}/etc/ssh/
     ssh-keygen -q -N "" -t ed25519 -C "${deploy_host}" -f "${_dir_remote_rootfs}"/"${feature_impermanence}"/etc/ssh/ssh_host_ed25519_key
     mkdir -p hosts/"${deploy_host}"/secrets
     cp -R "${_dir_remote_rootfs}"/"${feature_impermanence}"/etc/ssh/ssh_host_ed25519_key.pub hosts/"${deploy_host}"/secrets/
+}
+
+task_update_swap_size() {
+    if [ -f "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix ] ; then
+        read -e -i "$DISK_SWAP_SIZE_GB" -p "$(echo -e ${cdgy}${cwh}** ${cdgy}Disk Swap Size in GB\: \ ${coff}) " DISK_SWAP_SIZE_GB
+        sed -i "s|size = ".*"; # SWAP - Do not Delete this comment|size = "${DISK_SWAP_SIZE_GB}G"; # SWAP - Do not Delete this comment|g" "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix
+    fi
 }
 
 install_q_disk() {
@@ -1089,9 +1183,6 @@ install_q_disk() {
     done
     COLUMNS=$oldcolumns
     export deploy_disk_template=${opt}
-
-    echo "DEPLOY DISK IS: ${deploy_disk_template}"
-    ## Need to do something about this and ask for LUKS password
 }
 
 parse_disk_config() {
@@ -1103,7 +1194,7 @@ parse_disk_config() {
     if grep -qF "encryption.enable = mkDefault true;" "${_dir_flake}"/modules/roles/"${system_role}"/default.nix; then
         disk_encryption=true
     fi
-    if grep -qF "impermanence.enable = mkDefault true;" "${_dir_flake}"/modules/roles/"${system_role}"/default.nix || grep -Pzo -m 1 "(?s)impermanence = {\n.*enable = mkDefault true;"  "${_dir_flake}"/modules/roles/"${system_role}"/default.nix; then
+    if grep -qF "impermanence.enable = mkDefault true;" "${_dir_flake}"/modules/roles/"${system_role}"/default.nix || grep -qPzo -m 1 "(?s)impermanence = {\n.*enable = mkDefault true;"  "${_dir_flake}"/modules/roles/"${system_role}"/default.nix; then
         disk_impermanence=true
     fi
     if grep -qF "raid.enable = mkDefault true;" "${_dir_flake}"/modules/roles/"${system_role}"/default.nix; then
@@ -1123,9 +1214,10 @@ parse_disk_config() {
     elif grep -qF "encryption.enable = false;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
         disk_encryption=false
     fi
-    if grep -qF "impermanence.enable = true;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix || grep -Pzo -m 1 "(?s)impermanence = {\n.*enable = true;" ; then
+
+    if grep -qF "impermanence.enable = true;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix || grep -qPzo -m 1 "(?s)impermanence = {\n.*enable = true;" "${_dir_flake}"/modules/roles/"${system_role}"/default.nix ; then
         disk_impermanence=true
-    elif grep -qF "impermanence.enable = false;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix || grep -Pzo -m 1 "(?s)impermanence = {\n.*enable = false;" ; then
+    elif grep -qF "impermanence.enable = false;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix || grep -qPzo -m 1 "(?s)impermanence = {\n.*enable = false;" "${_dir_flake}"/modules/roles/"${system_role}"/default.nix ; then
         disk_impermanence=false
     fi
     if grep -qF "raid.enable = true;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
@@ -1138,6 +1230,61 @@ parse_disk_config() {
     elif grep -qF "swap_file.enable = false;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
         disk_swapfile=false
     fi
+
+    _template_chooser=$(mktemp)
+
+    find "${_dir_flake}"/templates/disko/*.nix -maxdepth 0 -type f | rev | cut -d / -f 1 | rev > "${_template_chooser}"
+
+    if var_false "${disk_btrfs}" ; then
+        sed -i "/btrfs/d" "${_template_chooser}"
+    else
+        sed -i -n "/btrfs/p" "${_template_chooser}"
+    fi
+
+    if var_false "${disk_encryption}" ; then
+        sed -i "/luks/d" "${_template_chooser}"
+    else
+        sed -i -n "/luks/p" "${_template_chooser}"
+    fi
+
+    if var_false "${disk_impermanence}" ; then
+        sed -i "/impermanence/d" "${_template_chooser}"
+    else
+        sed -i -n "/impermanence/p" "${_template_chooser}"
+    fi
+
+    if var_false "${disk_raid}" ; then
+        sed -i "/raid/d" "${_template_chooser}"
+    else
+        sed -i -n "/raid/p" "${_template_chooser}"
+    fi
+
+    if var_false "${disk_swapfile}" ; then
+        sed -i "/swapfile/d" "${_template_chooser}"
+    fi
+
+    if [[ "$(wc -l "${_template_chooser}" | awk '{print $1}')" -lt 1 ]]; then
+        print_warn "No Disk Template found with the settings in the hosts configuration file"
+        print_warn "Please choose a template manually.."
+        sleep 5
+        install_q_disk
+        cp -i "${_dir_flake}"/templates/disko/${deploy_disk_template} "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix
+    fi
+
+    if [[ "$(wc -l "${_template_chooser}" | awk '{print $1}')" -gt 1 ]]; then
+        print_warn "More than two disk templates found based on the settings in the hosts configuration file"
+        print_warn "Please choose a template manually.."
+        sleep 5
+        install_q_disk
+        cp -i "${_dir_flake}"/templates/disko/${deploy_disk_template} "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix
+    fi
+
+    if [ -z "${deploy_disk_template}" ] ; then
+        deploy_disk_template="$(cat "${_template_chooser}")"
+        cp -i "${_dir_flake}"/templates/disko/${deploy_disk_template} "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix
+    fi
+
+    rm -rf "${_template_chooser}"
 }
 
 task_install_host() {
