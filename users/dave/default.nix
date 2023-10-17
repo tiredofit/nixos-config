@@ -38,13 +38,13 @@ in
       ];
 
       openssh.authorizedKeys.keys = [ (builtins.readFile ./ssh.pub) ];
-      hashedPasswordFile = config.sops.secrets.dave-password.path;
+      hashedPasswordFile = mkDefault config.sops.secrets.dave-password.path;
       packages = [ pkgs.home-manager ];
     };
 
     sops.secrets.dave-password = {
-      sopsFile = ../secrets.yaml;
-      neededForUsers = true;
+      sopsFile = mkDefault ../secrets.yaml;
+      neededForUsers = mkDefault true;
     };
   };
 }
