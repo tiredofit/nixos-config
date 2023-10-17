@@ -1297,17 +1297,26 @@ parse_disk_config() {
     fi
 
     rm -rf "${_template_chooser}"
-
 }
 
 task_install_host() {
     print_info "Commencing install to Host: ${deploy_host} (${remote_host_ip_address})"
+    if [ -n "${PASSWORD_ENCRYPTION}" ]; then
+        luks_key=$(mktemp)
+        echo -n "${PASSWORD_ENCRYPTION}" > "${luks_key}"
+        feature_luks="--disk-encryption-keys ${luks_key} /tmp/luks-key"
+    fi
+
     nix run github:numtide/nixos-anywhere -- \
                                                 --ssh-port ${SSH_PORT} ${ssh_private_key_prefix} \
                                                 --no-reboot \
                                                 ${feature_luks} --extra-files "${_dir_remote_rootfs}" \
                                                 --flake "${_dir_flake}"/#${deploy_host} \
                                                 ${REMOTE_USER}@${remote_host_ip_address}
+
+    if [ -n "${PASSWORD_ENCRYPTION}"
+        rm -rf "${luks_key}"
+    fi
 }
 
 task_update_host() {
