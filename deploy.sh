@@ -575,8 +575,8 @@ menu_host_management() {
 | Hosts Management Menu |
 -------------------------
 
-Create a new template for a new never before installed host
-Delete a host from filesystem
+Create a new template for a new never before installed host - Please edit flake with new details manually
+Delete a host from filesystem - Please edit flake with new details manually
 Choose a host to perform work on
 
 EOF
@@ -630,12 +630,12 @@ menu_host() {
 | Host Menu |
 -------------
 
-You can change your selected host configuration and Hostname.tld/IP Address here if you made a mistake.
+IP Address can be autodetected if found in DNS, otherwise, please enter hostname or IP of host.
 
 You have the capabilities of editing the hosts configuration, the main repository flake, and the hosts secrets.
 EOF
     echo -e "${coff}"
-    read -p "$(echo -e ${cwh}CHANGE:${cdgy}\\n\\nHost: ${deploy_host}\\n${cwh}CHANGE:${cdgy}\\n\\n\(${cwh}I${cdgy}\) IP Address: ${REMOTE_IP} \\n${cdgy}\\n\(${cwh}R${cdgy}\) SSH Options\\n\\n${cwh}DEPLOY:${cdgy}\\n\\n\(${cwh}D${cdgy}\) Deploy Configuration \\n\\n${cwh}EDIT:${cdgy}\\n\\n\(${cwh}E${cdgy}\) Host Configuration \\n\(${cwh}F${cdgy}\) Flake \\n${option_secrets}${cwh}${coff}\\n${cdgy}\(${cwh}B${cdgy}\) Back to main menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_host
+    read -p "$(echo -e ${cdgy}Host: ${cwh}${deploy_host}${cdgy}\\n\\n${cwh}CHANGE:${cdgy}\\n\\n\(${cwh}I${cdgy}\) IP Address: ${cwh}${REMOTE_IP}${cdgy}\\n${cdgy}\(${cwh}R${cdgy}\) SSH Options\\n\\n${cwh}DEPLOY:${cdgy}\\n\\n\(${cwh}D${cdgy}\) Deploy Configuration \\n\\n${cwh}EDIT:${cdgy}\\n\\n\(${cwh}E${cdgy}\) Host Configuration \\n\(${cwh}F${cdgy}\) Flake \\n${option_secrets}${cwh}${coff}\\n${cdgy}\(${cwh}B${cdgy}\) Back to host management menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_host
     case "${q_menu_host,,}" in
         "d" | "deploy" )
             menu_deploy
@@ -1178,8 +1178,11 @@ task_hostmanagement_create() {
             ;;
             * )
                 if [ ! -f "${_dir_flake}"/hosts/"${deploy_host}"/default.nix ] ; then
-                    cp -R "${_dir_flake}"/templates/host/default.nix "${_dir_flake}"/hosts/"${deploy_host}"
+                    mkdir -p "${_dir_flake}"/hosts/"${deploy_host}"
+                    cp -R "${_dir_flake}"/templates/host/default.nix "${_dir_flake}"/hosts/"${deploy_host}"/
+                    sed "s|hostname = \".*\";|hostname = \"${deploy_host}\";|g" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
                     silent git add "${_dir_flake}"/hosts/"${deploy_host}"
+                    ## TODO Find a way to add details to flake
                     _host_created=true
                 else
                     print_error "Host Configuration already exists! Please choose a new name.."
@@ -1210,6 +1213,7 @@ task_hostmanagement_delete() {
 
     rm -rf -i "${_dir_flake}"/hosts/"${opt}"
     git add .
+    ## TODO Find a way to remove details to flake
 }
 
 task_generate_age_secrets() {
@@ -1251,13 +1255,6 @@ task_generate_ssh_key() {
     cp -R "${_dir_remote_rootfs}"/"${feature_impermanence}"/etc/ssh/ssh_host_ed25519_key.pub hosts/"${deploy_host}"/secrets/
 }
 
-task_update_swap_size() {
-    if [ -f "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix ] ; then
-        read -e -i "$DISK_SWAP_SIZE_GB" -p "$(echo -e ${cdgy}${cwh}** ${cdgy}Disk Swap Size in GB\: \ ${coff}) " DISK_SWAP_SIZE_GB
-        sed -i "s|size = ".*"; # SWAP - Do not Delete this comment|size = "${DISK_SWAP_SIZE_GB}G"; # SWAP - Do not Delete this comment|g" "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix
-    fi
-}
-
 task_update_disk_prefix() {
     if [ -f "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix ] ; then
         read -e -i "$_rawdisk1" -p "$(echo -e ${cdgy}${cwh}** ${cdgy}Enter Disk Device 1 \(eg /dev/nvme0n1\: \)${coff}) " _rawdisk1
@@ -1266,6 +1263,13 @@ task_update_disk_prefix() {
             read -e -i "$_rawdisk2" -p "$(echo -e ${cdgy}${cwh}** ${cdgy}Enter Disk Device 1 \(eg /dev/vda2\: \)${coff}) " _rawdisk2
             sed -i "s|rawdisk2 = .*|rawdisk2 = \"${_rawdisk2}\";|g" "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix
         fi
+    fi
+}
+
+task_update_swap_size() {
+    if [ -f "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix ] ; then
+        read -e -i "$DISK_SWAP_SIZE_GB" -p "$(echo -e ${cdgy}${cwh}** ${cdgy}Disk Swap Size in GB\: \ ${coff}) " DISK_SWAP_SIZE_GB
+        sed -i "s|size = ".*"; # SWAP - Do not Delete this comment|size = "${DISK_SWAP_SIZE_GB}G"; # SWAP - Do not Delete this comment|g" "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix
     fi
 }
 
