@@ -1166,6 +1166,17 @@ task_update_swap_size() {
     fi
 }
 
+task_update_disk_prefix() {
+    if [ -f "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix ] ; then
+        read -e -i "$_rawdisk1" -p "$(echo -e ${cdgy}${cwh}** ${cdgy}Enter Disk Device 1 (eg /dev/nvme0n1\: \ ${coff}) " _rawdisk1
+        sed -i "s|rawdisk1 = .*|rawdisk1 = \"${_rawdisk1}\";|g" "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix
+        if var_true "${disk_raid}" ; then
+            read -e -i "$_rawdisk2" -p "$(echo -e ${cdgy}${cwh}** ${cdgy}Enter Disk Device 1 (eg /dev/vda2\: \ ${coff}) " _rawdisk2
+            sed -i "s|rawdisk2 = .*|rawdisk2 = \"${_rawdisk2}\";|g" "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix
+        fi
+    fi
+}
+
 install_q_disk() {
     COLUMNS=12
     prompt="Which Disk template do you want to deploy?"
@@ -1183,6 +1194,8 @@ install_q_disk() {
     done
     COLUMNS=$oldcolumns
     export deploy_disk_template=${opt}
+    cp -i "${_dir_flake}"/templates/disko/${deploy_disk_template} "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix
+    task_update_disk_prefix
 }
 
 parse_disk_config() {
@@ -1268,7 +1281,6 @@ parse_disk_config() {
         print_warn "Please choose a template manually.."
         sleep 5
         install_q_disk
-        cp -i "${_dir_flake}"/templates/disko/${deploy_disk_template} "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix
     fi
 
     if [[ "$(wc -l "${_template_chooser}" | awk '{print $1}')" -gt 1 ]]; then
@@ -1276,15 +1288,16 @@ parse_disk_config() {
         print_warn "Please choose a template manually.."
         sleep 5
         install_q_disk
-        cp -i "${_dir_flake}"/templates/disko/${deploy_disk_template} "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix
     fi
 
     if [ -z "${deploy_disk_template}" ] ; then
         deploy_disk_template="$(cat "${_template_chooser}")"
         cp -i "${_dir_flake}"/templates/disko/${deploy_disk_template} "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix
+        task_update_disk_prefix
     fi
 
     rm -rf "${_template_chooser}"
+
 }
 
 task_install_host() {
