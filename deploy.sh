@@ -567,6 +567,57 @@ EOF
     esac
 }
 
+menu_host_management() {
+    printf "\033c"
+    echo -e "${clm}"
+    cat << EOF
+-------------------------
+| Hosts Management Menu |
+-------------------------
+
+Create a new template for a new never before installed host
+Delete a host from filesystem
+Choose a host to perform work on
+
+EOF
+    echo -e "${coff}"
+    read -p "$(echo -e ${cdgy}\(${cwh}C${cdgy}\) Create new host configuration\\n\(${cwh}D${cdgy}\) Delete host configuration\\n\\n\(${cwh}H${cdgy}\) Choose Host to configure\\n\(${cwh}F${cdgy}\) Edit Flake \\n\(${cwh}B${cdgy}\) Back to main menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_hostmanagement
+    case "${q_menu_hostmanagement,,}" in
+        "c" | "create" )
+            task_hostmanagement_create
+            menu_host
+        ;;
+        "d" | "delete" )
+            task_hostmanagement_delete
+            menu_host_management
+        ;;
+        "h" | "host" )
+            install_and_deploy_q_host
+            menu_host
+            ;;
+        "f" | "flake" )
+            $EDITOR "${_dir_flake}"/flake.nix
+            menu_host_management
+        ;;
+        "b" | "back" )
+            menu_startup
+        ;;
+        "q" | "exit" )
+            print_info "Quitting Script"
+            exit 1
+        ;;
+        "?" |  "help" )
+            echo -e "${clm}"
+            echo -e ""
+        ;;
+        * )
+            menu_host
+        ;;
+
+    esac
+}
+
+
 menu_host() {
     if [ -f "${_dir_flake}"/hosts/"${deploy_host}"/secrets/secrets.yaml ] ; then
         option_secrets="(${cwh}S${cdgy}) Host secrets.yaml \n"
@@ -584,15 +635,11 @@ You can change your selected host configuration and Hostname.tld/IP Address here
 You have the capabilities of editing the hosts configuration, the main repository flake, and the hosts secrets.
 EOF
     echo -e "${coff}"
-    read -p "$(echo -e ${cwh}CHANGE:${cdgy}\\n\\n\(${cwh}H${cdgy}\) Host: ${deploy_host}\\n\(${cwh}I${cdgy}\) IP Address: ${REMOTE_IP} \\n${cdgy}\\n\(${cwh}R${cdgy}\) SSH Options\\n\\n${cwh}DEPLOY:${cdgy}\\n\\n\(${cwh}D${cdgy}\) Deploy Configuration \\n\\n${cwh}EDIT:${cdgy}\\n\\n\(${cwh}E${cdgy}\) Host Configuration \\n\(${cwh}F${cdgy}\) Flake \\n${option_secrets}${cwh}${coff}\\n${cdgy}\(${cwh}B${cdgy}\) Back to main menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_host
+    read -p "$(echo -e ${cwh}CHANGE:${cdgy}\\n\\nHost: ${deploy_host}\\n${cwh}CHANGE:${cdgy}\\n\\n\(${cwh}I${cdgy}\) IP Address: ${REMOTE_IP} \\n${cdgy}\\n\(${cwh}R${cdgy}\) SSH Options\\n\\n${cwh}DEPLOY:${cdgy}\\n\\n\(${cwh}D${cdgy}\) Deploy Configuration \\n\\n${cwh}EDIT:${cdgy}\\n\\n\(${cwh}E${cdgy}\) Host Configuration \\n\(${cwh}F${cdgy}\) Flake \\n${option_secrets}${cwh}${coff}\\n${cdgy}\(${cwh}B${cdgy}\) Back to main menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_host
     case "${q_menu_host,,}" in
         "d" | "deploy" )
             menu_deploy
         ;;
-        "h" | "host" )
-            install_and_deploy_q_host
-            menu_host
-            ;;
         "i" | "ip" )
             unset REMOTE_IP
             install_and_deploy_q_ipaddress
@@ -615,7 +662,7 @@ EOF
             menu_ssh_options
         ;;
         "b" | "back" )
-            menu_startup
+            menu_host_management
         ;;
         "q" | "exit" )
             print_info "Quitting Script"
@@ -908,9 +955,10 @@ EOF
         ;;
         "d" | "deploy" )
             MODE=DEPLOY
-            install_and_deploy_q_host
-            check_host_availability ${deploy_host}
-            menu_host
+            menu_host_management
+            #install_and_deploy_q_host
+            #check_host_availability ${deploy_host}
+            #menu_host
         ;;
         "s" | "secrets" )
             MODE=SECRETS
@@ -1120,6 +1168,50 @@ deploy_q_sshport() {
     SSH_PORT=${q_ssh_port}
 }
 
+task_hostmanagement_create() {
+    read -e -i "${deploy_host}" -p "$(echo -e ${cdgy}${cwh}** ${cdgy}What is the hostname you are looking to create?\: \ ${coff})" deploy_host
+    local _host_created
+    while [[ ${_host_created,,} != "true" ]];  do
+        case "${deploy_host}" in
+            quit )
+                break
+            ;;
+            * )
+                if [ ! -f "${_dir_flake}"/hosts/"${deploy_host}"/default.nix ] ; then
+                    cp -R "${_dir_flake}"/templates/host/default.nix "${_dir_flake}"/hosts/"${deploy_host}"
+                    silent git add "${_dir_flake}"/hosts/"${deploy_host}"
+                    _host_created=true
+                else
+                    print_error "Host Configuration already exists! Please choose a new name.."
+                    sleep 5
+                fi
+            ;;
+        esac
+    done
+    unset _host_created
+}
+
+task_hostmanagement_delete() {
+    COLUMNS=12
+    prompt="Which host do you want to delete?"
+    options=( $(find ${_dir_flake}/hosts/* -maxdepth 0 -type d | rev | cut -d / -f 1 | rev | sed "/common/d" | xargs -0) )
+    PS3="$prompt "
+    select opt in "${options[@]}" "Quit" ; do
+        if (( REPLY == 1 + ${#options[@]} )) ; then
+            echo "Bye!"
+            exit 2
+        elif (( REPLY > 0 && REPLY <= ${#options[@]} )) ; then
+            break
+        else
+            echo "Invalid option. Try another one."
+        fi
+    done
+    COLUMNS=$oldcolumns
+
+    rm -rf -i "${_dir_flake}"/hosts/"${opt}"
+    git add .
+}
+
 task_generate_age_secrets() {
     mkdir -p "${_dir_remote_rootfs}"/"${feature_impermanence}"/root/.config/sops/age/
     ssh-to-age -private-key -i "${_dir_remote_rootfs}"/etc/ssh/ssh_host_ed25519_key > "${_dir_remote_rootfs}"/"${feature_impermanence}"/root/.config/sops/age/keys.txt
@@ -1168,10 +1260,10 @@ task_update_swap_size() {
 
 task_update_disk_prefix() {
     if [ -f "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix ] ; then
-        read -e -i "$_rawdisk1" -p "$(echo -e ${cdgy}${cwh}** ${cdgy}Enter Disk Device 1 (eg /dev/nvme0n1\: \ ${coff}) " _rawdisk1
+        read -e -i "$_rawdisk1" -p "$(echo -e ${cdgy}${cwh}** ${cdgy}Enter Disk Device 1 \(eg /dev/nvme0n1\: \)${coff}) " _rawdisk1
         sed -i "s|rawdisk1 = .*|rawdisk1 = \"${_rawdisk1}\";|g" "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix
         if var_true "${disk_raid}" ; then
-            read -e -i "$_rawdisk2" -p "$(echo -e ${cdgy}${cwh}** ${cdgy}Enter Disk Device 1 (eg /dev/vda2\: \ ${coff}) " _rawdisk2
+            read -e -i "$_rawdisk2" -p "$(echo -e ${cdgy}${cwh}** ${cdgy}Enter Disk Device 1 \(eg /dev/vda2\: \)${coff}) " _rawdisk2
             sed -i "s|rawdisk2 = .*|rawdisk2 = \"${_rawdisk2}\";|g" "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix
         fi
     fi
@@ -1314,7 +1406,7 @@ task_install_host() {
                                                 --flake "${_dir_flake}"/#${deploy_host} \
                                                 ${REMOTE_USER}@${remote_host_ip_address}
 
-    if [ -n "${PASSWORD_ENCRYPTION}"
+    if [ -n "${PASSWORD_ENCRYPTION}" ]; then
         rm -rf "${luks_key}"
     fi
 }
