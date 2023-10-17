@@ -1180,7 +1180,7 @@ task_hostmanagement_create() {
                 if [ ! -f "${_dir_flake}"/hosts/"${deploy_host}"/default.nix ] ; then
                     mkdir -p "${_dir_flake}"/hosts/"${deploy_host}"
                     cp -R "${_dir_flake}"/templates/host/default.nix "${_dir_flake}"/hosts/"${deploy_host}"/
-                    sed "s|hostname = \".*\";|hostname = \"${deploy_host}\";|g" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
+                    sed -i "s|hostname = \".*\";|hostname = \"${deploy_host}\";|g" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
                     silent git add "${_dir_flake}"/hosts/"${deploy_host}"
                     ## TODO Find a way to add details to flake
                     _host_created=true

@@ -15,7 +15,7 @@
     };
     filesystem = {
       swap = {
-        partition = "disk/by-label/SWAP";
+        partition = "disk/by-label/swap";
       };
     };
     hardware = {
