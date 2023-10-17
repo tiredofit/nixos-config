@@ -1,11 +1,11 @@
 let
-  disk1 = "/dev/vda"; # CHANGE
+  rawdisk1 = "/dev/vda"; # CHANGE
 in
 {
   disko.devices = {
     disk = {
-      ${disk1} = {
-        device = "${disk1}" ;
+      ${rawdisk1} = {
+        device = "${rawdisk1}" ;
         type = "disk";
         content = {
           type = "gpt";

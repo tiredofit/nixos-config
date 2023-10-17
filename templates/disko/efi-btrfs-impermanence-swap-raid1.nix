@@ -1,12 +1,12 @@
 let
-  disk1 = "/dev/vda"; # CHANGE
-  disk2 = "/dev/vdb"; # CHANGE
+  rawdisk1 = "/dev/vda"; # CHANGE
+  rawdisk2 = "/dev/vdb"; # CHANGE
 in
 {
   disko.devices = {
     disk = {
-      ${disk1} = {
-        device = "${disk1}";
+      ${rawdisk1} = {
+        device = "${rawdisk1}";
         type = "disk";
         content = {
           type = "gpt";
@@ -36,7 +36,7 @@ in
               size = "100%";
               content = {
                 type = "btrfs";
-                extraArgs = [ "-f" "-m raid1 -d raid1" "${disk2}" ];
+                extraArgs = [ "-f" "-m raid1 -d raid1" "${rawdisk2}" ];
                 subvolumes = {
                   "/root" = {
                     mountpoint = "/";
