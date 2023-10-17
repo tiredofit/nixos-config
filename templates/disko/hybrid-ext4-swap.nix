@@ -1,5 +1,5 @@
 let
-  disk1 = "/dev/vda";
+  disk1 = "/dev/vda"; # CHANGE
 in
 {
   disko.devices = {
@@ -20,7 +20,7 @@ in
             {
               name = "ESP";
               start = "1M";
-              end = "512M";
+              end = "1024M";
               bootable = true;
               content = {
                 type = "filesystem";
@@ -38,7 +38,7 @@ in
             };
             {
               name = "root";
-              start = "512M";
+              start = "1024M";
               end = "100%";
               content = {
                 type = "filesystem";

@@ -1,6 +1,6 @@
 let
-  disk1 = "/dev/vda";
-  disk2 = "/dev/vdb";
+  disk1 = "/dev/vda"; # CHANGE
+  disk2 = "/dev/vdb"; # CHANGE
 in
 {
   disko.devices = {
@@ -14,7 +14,7 @@ in
             ESP = {
               label = "EFI";
               name = "ESP";
-              size = "512M";
+              size = "1024M";
               type = "EF00" ;
               content = {
                 type = "filesystem";

@@ -1,6 +1,6 @@
 let
-  rawdisk1 = "vda";
-  rawdisk2 = "vdb";
+  rawdisk1 = "vda"; # CHANGE
+  rawdisk2 = "vdb"; # CHANGE
   cryptdisk1 = "pool0_0";
   cryptdisk2 = "pool0_1";
 in {
@@ -15,7 +15,7 @@ in {
             ESP = {
               label = "EFI";
               name = "ESP";
-              size = "512M";
+              size = "1024M";
               type = "EF00";
               content = {
                 type = "filesystem";
