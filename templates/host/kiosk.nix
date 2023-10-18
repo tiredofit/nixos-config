@@ -1,6 +1,7 @@
 { config, inputs, pkgs, ...}: {
 
   imports = [
+    inputs.disko.nixosModules.disko
     inputs.nur.nixosModules.nur
     ./disks.nix
     ../common/global

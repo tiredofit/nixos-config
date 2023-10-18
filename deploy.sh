@@ -414,6 +414,7 @@ EOF
             task_generate_ssh_key
             task_generate_age_secrets
             task_generate_sops_configuration
+            task_install_host
             menu_deploy
         ;;
         "e" | "existing" )
@@ -586,7 +587,7 @@ EOF
     case "${q_menu_hostmanagement,,}" in
         "c" | "create" )
             task_hostmanagement_create
-            menu_host
+            menu_host_management
         ;;
         "d" | "delete" )
             task_hostmanagement_delete
@@ -1252,9 +1253,265 @@ deploy_q_sshport() {
     SSH_PORT=${q_ssh_port}
 }
 
+task_hostmanagement_q_role() {
+    cat << EOF
+-----------------
+| Host Creation |
+-----------------
+
+    A series of questions will be asked in order to create your new host based on templates.
+
+    For role:
+      - Desktop will install a GUI environment with specific desktop optimizations
+      - Laptop is similar to the Desktop role yet includes power management optimizations
+      - Kiosk is a specialized GUI environment meant for displaying content from a GUI application on a display
+      - Minimal is a bare bones environment with minimal customizations and tools useful for very low memory environments
+      - Server assumes zero GUI and assumes encryption, impermanence, and RAID
+      - VM is similar to Desktop yet has specific virtualization optimizations
+
+EOF
+
+    echo -e "${coff}"
+
+    read -p "$(echo -e What is the role of this host?\\n${cdgy}\(${cwh}S${cdgy}\) Server\\n\(${cwh}D${cdgy}\) Desktop\\n\(${cwh}L${cdgy}\) Laptop\\n\(${cwh}K${cdgy}\) Kiosk\\n\(${cwh}M${cdgy}\) Minimal\\n\(${cwh}V${cdgy}\) Virtual Machine\\n${cwh}${coff}\\n${cdgy}\(${cwh}B${cdgy}\) Back to host deploy menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_hostaddition_role
+    case "${q_menu_hostaddition_role,,}" in
+        "d" | "desktop" )
+            template_role="server"
+            task_hostmanagement_q_impermanence
+            task_hostmanagement_q_encryption
+            task_hostmanagement_q_raid
+        ;;
+        "l" | "laptop" )
+            template_role="laptop"
+            task_hostmanagement_q_impermanence
+            task_hostmanagement_q_encryption
+        ;;
+        "k" | "kiosk" )
+            template_role="kiosk"
+        ;;
+        "m" | "minimal" )
+            template_role="minimal"
+        ;;
+        "s" | "server" )
+            template_role="server"
+            task_hostmanagement_q_impermanence
+            task_hostmanagement_q_encryption
+            task_hostmanagement_q_raid
+            task_hostmanagement_q_networking
+        ;;
+        "v" | "vm" )
+            template_role="vm"
+            task_hostmanagement_q_impermanence
+            task_hostmanagement_q_networking
+        ;;
+        "b" | "back" )
+            menu_host_management
+        ;;
+        "q" | "exit" )
+            print_info "Quitting Script"
+            exit 1
+        ;;
+        "?" | "help" )
+            echo -e "${clm}"
+            echo -e ""
+            echo -e ""
+        ;;
+        * )
+            menu_host_secrets_host
+        ;;
+    esac
+}
+
+task_hostmanagement_q_encryption() {
+    while true; do
+        read -p "$(echo -e ${clg}** ${cdgy}Enable Full Disk Encryption? \(${cwh}Y${cdgy}\) Yes \(default\) \| \(${cwh}N${cdgy}\) No  : ${cwh}${coff}) " q_encryption
+        case "${q_encryption,,}" in
+            "y" | "yes" | "" )
+                _template_encryption=true
+                break
+            ;;
+            "n" | "no" )
+                _template_encryption=false
+                break
+            ;;
+            "b" | "back" )
+                menu_host_management
+            ;;
+            "q" | "exit" )
+                print_info "Quitting Script"
+                exit 1
+            ;;
+            "?" | "h" | "help" )
+                echo -e "${clm}"
+                echo -e "${cwh}Yes${cdgy} - Encrypt your disks from outside parties with a passcode"
+                echo -e ""
+                echo -e "${cwh}No${cdgy} - Do nothing"
+                echo -e ""
+            ;;
+        esac
+    done
+}
+
+task_hostmanagement_q_impermanence() {
+    while true; do
+        read -p "$(echo -e ${clg}** ${cdgy}Enable Impermanence? \(${cwh}Y${cdgy}\) Yes \(default\) \| \(${cwh}N${cdgy}\) No  : ${cwh}${coff}) " q_impermanence
+        case "${q_impermanence,,}" in
+            "y" | "yes" | "" )
+                _template_impermanence=true
+                break
+            ;;
+            "n" | "no" )
+                _template_impermanence=false
+                break
+            ;;
+            "b" | "back" )
+                menu_host_management
+            ;;
+            "q" | "exit" )
+                print_info "Quitting Script"
+                exit 1
+            ;;
+            "?" | "h" | "help" )
+                echo -e "${clm}"
+                echo -e "${cwh}Yes${cdgy} - Start with a fresh root filesystem each startup"
+                echo -e ""
+                echo -e "${cwh}No${cdgy} - Do nothing"
+                echo -e ""
+            ;;
+        esac
+    done
+}
+
+task_hostmanagement_q_networking() {
+    while true; do
+        read -p "$(echo -e ${clg}** ${cdgy}Adjust wired network settings? \(${cwh}Y${cdgy}\) Yes \(default\) \| \(${cwh}N${cdgy}\) No  : ${cwh}${coff}) " q_wirednetworking
+        case "${q_wirednetworking,,}" in
+            "y" | "yes" | "" )
+                _template_ip_wired=true
+                while true; do
+                    read -p "$(echo -e ${clg}** ${cdgy}Network IP Type: \? \(${cwh}S${cdgy}\) Static \(default\) \| \(${cwh}D${cdgy}\) DHCP : ${cwh})" q_network_ip_public_type
+                    case "${q_network_ip_public_type,,}" in
+                        "s" | "static" | "" )
+                            _template_ip_type="static"
+                            counter=1
+                            network_ip_public_address_tmp=256.256.256.256
+                            until ( valid_ip $network_ip_public_address_tmp ) ; do
+                                if [ $counter -gt 1 ] ; then print_error "IP is bad, please reenter" ; fi ;
+                                    read -e -i "$_template_network_ip" -p "$(echo -e ${clg}** ${cdgy}Public Network IP Address: \ ${coff})" network_ip_public_address_tmp
+                                (( counter+=1 ))
+                            done
+
+                            _template_network_ip=${network_ip_public_address_tmp}
+                            read -e -i "$_template_network_subnet" -p "$(echo -e ${clg}** ${cdgy}Network IP Subnet Mask \(eg 24\): \ ${coff})" _template_network_subnet
+
+                            counter=1
+
+                            network_ip_public_gateway_tmp=256.256.256.256
+                            until ( valid_ip $network_ip_public_gateway_tmp ) ; do
+                                if [ $counter -gt 1 ] ; then print_error "IP is bad, please reenter" ; fi ;
+                                    read -e -i "$_template_network_gateway" -p "$(echo -e ${clg}** ${cdgy}Network IP Gateway: \ ${coff})" network_ip_public_gateway_tmp
+                                (( counter+=1 ))
+                            done
+                            _template_network_gateway=${network_ip_public_gateway_tmp}
+                            break
+
+                            read -e -i "$_template_network_mac" -p "$(echo -e ${clg}** ${cdgy}Network MAC Address \(eg 00:01:02:03:04:05\): \ ${coff})" _template_network_mac
+                        ;;
+                        "d" | "dhcp" | "dynamic" )
+                            _template_ip_type="dynamic"
+                            break
+                        ;;
+                        "q" | "exit" )
+                            print_info "Quitting Script"
+                            exit 1
+                        ;;
+                        "?" | "h" | "help" )
+                            echo -e "${clm}"
+                            echo -e "${cwh}Static${cdgy} - Enter all the details in regarding your IP Address, Netmask, Gateway"
+                            echo -e ""
+                            echo -e "${cwh}DHCP${cdgy} - Let your Network Provider decide."
+                        ;;
+                        *)
+                            echo -e "${bdr}ERROR:${boff} ${clm}Invalid Input - Please Try again${coff}"
+                        ;;
+                    esac
+                done
+                break
+            ;;
+            "n" | "no" )
+                break
+            ;;
+            "b" | "back" )
+                menu_host_management
+            ;;
+            "q" | "exit" )
+                print_info "Quitting Script"
+                exit 1
+            ;;
+            "?" | "h" | "help" )
+                echo -e "${clm}"
+                echo -e "${cwh}Yes${cdgy} - You want to configure your wired network card"
+                echo -e ""
+                echo -e "${cwh}No${cdgy} - Do nothing"
+                echo -e ""
+            ;;
+        esac
+    done
+}
+
+task_hostmanagement_q_raid() {
+    while true; do
+        read -p "$(echo -e ${clg}** ${cdgy}Do you have a RAID Array? \(${cwh}Y${cdgy}\) Yes \| \(${cwh}N${cdgy}\) No \(default\) : ${cwh}${coff}) " q_encryption
+        case "${q_encryption,,}" in
+            "y" | "yes" )
+                _template_raid=true
+                break
+            ;;
+            "n" | "no" | "" )
+                _template_raid=false
+                break
+            ;;
+            "b" | "back" )
+                menu_host_management
+            ;;
+            "q" | "exit" )
+                print_info "Quitting Script"
+                exit 1
+            ;;
+            "?" | "h" | "help" )
+                echo -e "${clm}"
+                echo -e "${cwh}Yes${cdgy} - Use some sort of Redundant Array of Inexpensive disks"
+                echo -e ""
+                echo -e "${cwh}No${cdgy} - Do nothing"
+                echo -e ""
+            ;;
+        esac
+    done
+}
+
 task_hostmanagement_create() {
-    read -e -i "${deploy_host}" -p "$(echo -e ${cdgy}${cwh}** ${cdgy}What is the hostname you are looking to create?\: \ ${coff})" deploy_host
     local _host_created
+
+    printf "\033c"
+    cat << EOF
+-----------------
+| Host Creation |
+-----------------
+
+    A series of questions will be asked in order to create your new host based on templates.
+
+EOF
+
+    echo -e "${clm}"
+
+    counter=1
+    deploy_host=" "
+    while [[ $deploy_host = *" "* ]];  do
+        if [ $counter -gt 1 ] ; then print_error "Hostnames can't have spaces or dots in them, please re-enter." ; fi ;
+            read -e -i "${deploy_host}" -p "$(echo -e ${cdgy}${cwh}** ${cdgy}What is the hostname you are looking to create?\: \ ${coff})" deploy_host
+            (( counter+=1 ))
+    done
+
     while [[ ${_host_created,,} != "true" ]];  do
         case "${deploy_host}" in
             quit )
@@ -1262,11 +1519,42 @@ task_hostmanagement_create() {
             ;;
             * )
                 if [ ! -f "${_dir_flake}"/hosts/"${deploy_host}"/default.nix ] ; then
+                    task_hostmanagement_q_role
                     mkdir -p "${_dir_flake}"/hosts/"${deploy_host}"
-                    cp -R "${_dir_flake}"/templates/host/default.nix "${_dir_flake}"/hosts/"${deploy_host}"/
-                    sed -i "s|hostname = \".*\";|hostname = \"${deploy_host}\";|g" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
+                    cp -R "${_dir_flake}"/templates/host/${template_role}.nix "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
                     silent git add "${_dir_flake}"/hosts/"${deploy_host}"
-                    ## TODO Find a way to add details to flake
+                    sed -i \
+                            -e "s|hostname = \".*\";|hostname = \"${deploy_host}\";|g" \
+                            -e "s|encryption.enable = .*;|encryption.enable = ${_template_encryption};|g" \
+                            -e "s|impermanence.enable = .*;|impermanence.enable = ${_template_impermanence};|g" \
+                            -e "s|raid.enable = .*;|raid.enable = ${_template_raid};|g" \
+                        "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
+
+                    if var_true "${_template_ip_wired}" ; then
+                        sed -i "s|wired.enable = .*;|wired.enable = true;|g" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
+                        case "${_template_ip_type}" in
+                            dynamic )
+                                sed -i "s|type = \".*\";type = \"dynamic\";|g" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
+                            ;;
+                            static )
+                                sed -i \
+                                        -e "s|ip = \".*\";ip = \"${_template_network_ip}/${_template_network_subnet}\";|g" \
+                                        -e "s|gateway = \".*\";gateway = \"${_template_network_gateway}\";|g" \
+                                        -e "s|mac = \".*\";mac = \"${_template_network_macy}\";|g" \
+                                            "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
+                            ;;
+                        esac
+                    fi
+
+                    ## Don't change the indenting on any of this!
+                    sed -i "/nixosConfigurations = {/a\\
+        ${deploy_host} = lib.nixosSystem { # Workstation \n\
+          modules = [ .\/hosts\/${deploy_host} ];\n\
+          specialArgs = { inherit inputs outputs; };\n\
+        };\n" \
+                    "${_dir_flake}"/flake.nix
+
+                    silent git add "${_dir_flake}"/flake.nix
                     _host_created=true
                 else
                     print_error "Host Configuration already exists! Please choose a new name.."
@@ -1274,6 +1562,7 @@ task_hostmanagement_create() {
                 fi
             ;;
         esac
+
     done
     unset _host_created
 }
@@ -1297,7 +1586,9 @@ task_hostmanagement_delete() {
 
     rm -rf -i "${_dir_flake}"/hosts/"${opt}"
     git add .
-    ## TODO Find a way to remove details to flake
+
+    sed -i -e "/${opt} = lib.nixosSystem/,/\ \ };/d" "${_dir_flake}"/flake.nix
+    silent git add "${_dir_flake}"/flake.nix
 }
 
 task_generate_age_secrets() {
@@ -1351,6 +1642,7 @@ task_generate_ssh_key() {
     ssh-keygen -q -N "" -t ed25519 -C "${deploy_host}" -f "${_dir_remote_rootfs}"/"${feature_impermanence}"/etc/ssh/ssh_host_ed25519_key
     mkdir -p hosts/"${deploy_host}"/secrets
     cp -R "${_dir_remote_rootfs}"/"${feature_impermanence}"/etc/ssh/ssh_host_ed25519_key.pub hosts/"${deploy_host}"/secrets/
+    silent git add "${_dir_flake}"/hosts/"${deploy_host}"
 }
 
 task_update_disk_prefix() {
@@ -1389,10 +1681,12 @@ install_q_disk() {
     COLUMNS=$oldcolumns
     export deploy_disk_template=${opt}
     cp -i "${_dir_flake}"/templates/disko/${deploy_disk_template} "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix
+    silent git add "${_dir_flake}"/hosts/"${deploy_host}"
     task_update_disk_prefix
 }
 
 task_install_host() {
+    set -x
     print_info "Commencing install to Host: ${deploy_host} (${remote_host_ip_address})"
     if [ -n "${PASSWORD_ENCRYPTION}" ]; then
         luks_key=$(mktemp)
@@ -1406,7 +1700,7 @@ task_install_host() {
                                                 ${feature_luks} --extra-files "${_dir_remote_rootfs}" \
                                                 --flake "${_dir_flake}"/#${deploy_host} \
                                                 ${REMOTE_USER}@${remote_host_ip_address}
-
+sleep 10
     if [ -n "${PASSWORD_ENCRYPTION}" ]; then
         rm -rf "${luks_key}"
     fi
