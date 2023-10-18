@@ -1,7 +1,7 @@
 { config, lib, pkgs, ... }:
 let
   device = config.host.hardware ;
-in 
+in
   with lib;
 {
   config = mkIf (device.cpu == "intel" || device.cpu == "vm-intel") {
@@ -12,7 +12,9 @@ in
       kernelParams = ["i915.fastboot=1" "enable_gvt=1"];
     };
 
-    environment.systemPackages = with pkgs; 
+    environment.systemPackages = with pkgs;
       [intel-gpu-tools];
+
+    nixpkgs.hostPlatform = "x86_64-linux";
   };
 }
