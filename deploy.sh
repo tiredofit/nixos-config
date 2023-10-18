@@ -413,6 +413,7 @@ EOF
             task_generate_encryption_password
             task_generate_ssh_key
             task_generate_age_secrets
+            task_generate_sops_configuration
             menu_deploy
         ;;
         "e" | "existing" )
@@ -635,7 +636,7 @@ IP Address can be autodetected if found in DNS, otherwise, please enter hostname
 You have the capabilities of editing the hosts configuration, the main repository flake, and the hosts secrets.
 EOF
     echo -e "${coff}"
-    read -p "$(echo -e ${cdgy}Host: ${cwh}${deploy_host}${cdgy}\\n\\n${cwh}CHANGE:${cdgy}\\n\\n\(${cwh}I${cdgy}\) IP Address: ${cwh}${REMOTE_IP}${cdgy}\\n${cdgy}\(${cwh}R${cdgy}\) SSH Options\\n\\n${cwh}DEPLOY:${cdgy}\\n\\n\(${cwh}D${cdgy}\) Deploy Configuration \\n\\n${cwh}EDIT:${cdgy}\\n\\n\(${cwh}E${cdgy}\) Host Configuration \\n\(${cwh}F${cdgy}\) Flake \\n${option_secrets}${cwh}${coff}\\n${cdgy}\(${cwh}B${cdgy}\) Back to host management menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_host
+    read -p "$(echo -e ${cdgy}Host: ${cwh}${deploy_host}${cdgy}\\n\\n${cwh}CHANGE:${cdgy}\\n\\n\(${cwh}I${cdgy}\) IP Address: ${cwh}${REMOTE_IP}${cdgy}\\n${cdgy}\(${cwh}R${cdgy}\) SSH Options\\n\\n${cwh}DEPLOY:${cdgy}\\n\\n\(${cwh}D${cdgy}\) Deploy Configuration \\n\\n${cwh}EDIT:${cdgy}\\n\\n\(${cwh}E${cdgy}\) Host Configuration \\n\(${cwh}F${cdgy}\) Flake \\n${option_secrets}${cwh}${coff}\\n${cdgy}\(${cwh}S${cdgy}\) Host Secrets\\n${cdgy}\(${cwh}B${cdgy}\) Back to host management menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_host
     case "${q_menu_host,,}" in
         "d" | "deploy" )
             menu_deploy
@@ -655,8 +656,8 @@ EOF
             menu_host
         ;;
         "s" | "secrets" )
-            sops "${_dir_flake}"/hosts/"${deploy_host}"/secrets/secrets.yaml
-            menu_host
+            #sops "${_dir_flake}"/hosts/"${deploy_host}"/secrets/secrets.yaml
+            menu_host_secrets
         ;;
         "r" | "ssh" )
             menu_ssh_options
@@ -751,15 +752,15 @@ EOF
     case "${q_menu_host_secrets,,}" in
         "g" | "global" )
             menu_host_secrets_global
-            menu_host_secrets_
+            menu_host_secrets
         ;;
         "h" | "host" )
             menu_host_secrets_host
-            menu_host_secrets_
+            menu_host_secrets
         ;;
         "r" | "rekey" )
             secret_tools rekey all
-            menu_host_secrets_
+            menu_host_secrets
         ;;
         "b" | "back" )
             menu_host
@@ -791,30 +792,16 @@ menu_host_secrets_global() {
 | Secrets Additions |
 ---------------------
 
-    See help for what we are actually doing here..
+    Global configuration is required to use secrets. Use the automated modifications to add details to .sops.yaml and edit as need be.
+    This must be done otherwise you won't be able to login!
 
 EOF
 
     echo -e "${coff}"
-    read -p "$(echo -e \\n${cdgy}\(${cwh}A${cdgy}\) Apply auto modifications to .sops.yaml\\n\\n$\(${cwh}E${cdgy}\) Edit .sops.yaml\\n${cwh}${coff}\\n${cdgy}\(${cwh}B${cdgy}\) Back to host secrets menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_host_secrets_global
+    read -p "$(echo -e ${cdgy}\(${cwh}A${cdgy}\) Apply auto modifications to .sops.yaml\\n\(${cwh}E${cdgy}\) Edit .sops.yaml\\n${cwh}${coff}\\n${cdgy}\(${cwh}B${cdgy}\) Back to host secrets menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_host_secrets_global
     case "${q_menu_host_secrets_global,,}" in
         "a" | "apply" )
-            ## TODO Add -i to the yq commands after verifying they are working
-            yq eval ".keys += [ \"&host_${deploy_host} ${_age_key_pub}\" ]" "${_dir_flake}"/.sops.yaml
-            echo "Add the age key at the top"
-            read -n 1 -s -r -p "Press any key to continue"
-
-            yq eval ".creation_rules += [{\"path_regex\": \"hosts/${deploy_host}/secrets/.*\", \"key_groups\": [{\"age\": [\"*host_${deploy_host}\", \"*user_dave\"]}]}]" "${_dir_flake}"/.sops.yaml
-            print_debug "Add the new path_regex for the host along with the host and user"
-            read -n 1 -s -r -p "Press any key to continue"
-
-            yq eval ".creation_rules |= map(select(.path_regex == \"hosts/common/secrets/.*\").key_groups[0].age += [\"*host_${deploy_host}\"] // .)" "${_dir_flake}"/.sops.yaml
-            print_debug "Add the host to hosts/common/secrets"
-            read -n 1 -s -r -p "Press any key to continue"
-
-            yq eval ".creation_rules |= map(select(.path_regex == \"users/secrets.yaml\").key_groups[0].age += [\"*host_${deploy_host}\"] // .)" "${_dir_flake}"/.sops.yaml
-            print_debug "Add the host to the users_secrets"
-            read -n 1 -s -r -p "Press any key to continue"
+            task_generate_sops_configuration
         ;;
         "e" | "edit" )
             $EDITOR "${_dir_flake}"/.sops.yaml
@@ -956,9 +943,6 @@ EOF
         "d" | "deploy" )
             MODE=DEPLOY
             menu_host_management
-            #install_and_deploy_q_host
-            #check_host_availability ${deploy_host}
-            #menu_host
         ;;
         "s" | "secrets" )
             MODE=SECRETS
@@ -1057,19 +1041,104 @@ EOF
     esac
 }
 
-secret_tools() {
-    case "${1}" in
-        "common" )
-            sops "${_dir_flake}"/hosts/common/secrets/secrets.yaml
-        ;;
-        "edit" )
-            $EDITOR "${_dir_flake}"/.sops.yaml
-        ;;
-        "rekey" )
-            print_info "Rekeying secrets"
-            secret_rekey "${2}"
-        ;;
-    esac
+parse_disk_config() {
+    system_role=$(grep "role = .*;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix | cut -d '"' -f2)
+
+    if grep -qF "btrfs.enable = mkDefault true;" "${_dir_flake}"/modules/roles/"${system_role}"/default.nix; then
+        disk_btrfs=true
+    fi
+    if grep -qF "encryption.enable = mkDefault true;" "${_dir_flake}"/modules/roles/"${system_role}"/default.nix; then
+        disk_encryption=true
+    fi
+    if grep -qF "impermanence.enable = mkDefault true;" "${_dir_flake}"/modules/roles/"${system_role}"/default.nix || grep -qPzo -m 1 "(?s)impermanence = {\n.*enable = mkDefault true;"  "${_dir_flake}"/modules/roles/"${system_role}"/default.nix; then
+        disk_impermanence=true
+    fi
+    if grep -qF "raid.enable = mkDefault true;" "${_dir_flake}"/modules/roles/"${system_role}"/default.nix; then
+        disk_raid=true
+    fi
+    if grep -qF "swap_file.enable = mkDefault true;" "${_dir_flake}"/modules/roles/"${system_role}"/default.nix; then
+        disk_swapfile=true
+    fi
+
+    if grep -qF "btrfs.enable = true;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
+        disk_btrfs=true
+    elif grep -qF "btrfs.enable = false;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
+        disk_btrfs=false
+    fi
+    if grep -qF "encryption.enable = true;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
+        disk_encryption=true
+    elif grep -qF "encryption.enable = false;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
+        disk_encryption=false
+    fi
+    if grep -qF "impermanence.enable = true;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix || grep -qPzo -m 1 "(?s)impermanence = {\n.*enable = true;" "${_dir_flake}"/modules/roles/"${system_role}"/default.nix ; then
+        disk_impermanence=true
+    elif grep -qF "impermanence.enable = false;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix || grep -qPzo -m 1 "(?s)impermanence = {\n.*enable = false;" "${_dir_flake}"/modules/roles/"${system_role}"/default.nix ; then
+        disk_impermanence=false
+    fi
+    if grep -qF "raid.enable = true;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
+        disk_raid=true
+    elif grep -qF "raid.enable = false;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
+        disk_raid=false
+    fi
+    if grep -qF "swap_file.enable = true;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
+        disk_swapfile=true
+    elif grep -qF "swap_file.enable = false;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
+        disk_swapfile=false
+    fi
+
+    _template_chooser=$(mktemp)
+
+    find "${_dir_flake}"/templates/disko/*.nix -maxdepth 0 -type f | rev | cut -d / -f 1 | rev > "${_template_chooser}"
+
+    if var_false "${disk_btrfs}" ; then
+        sed -i "/btrfs/d" "${_template_chooser}"
+    else
+        sed -i -n "/btrfs/p" "${_template_chooser}"
+    fi
+
+    if var_false "${disk_encryption}" ; then
+        sed -i "/luks/d" "${_template_chooser}"
+    else
+        sed -i -n "/luks/p" "${_template_chooser}"
+    fi
+
+    if var_false "${disk_impermanence}" ; then
+        sed -i "/impermanence/d" "${_template_chooser}"
+    else
+        sed -i -n "/impermanence/p" "${_template_chooser}"
+    fi
+
+    if var_false "${disk_raid}" ; then
+        sed -i "/raid/d" "${_template_chooser}"
+    else
+        sed -i -n "/raid/p" "${_template_chooser}"
+    fi
+
+    if var_false "${disk_swapfile}" ; then
+        sed -i "/swapfile/d" "${_template_chooser}"
+    fi
+
+    if [[ "$(wc -l "${_template_chooser}" | awk '{print $1}')" -lt 1 ]]; then
+        print_warn "No Disk Template found with the settings in the hosts configuration file"
+        print_warn "Please choose a template manually.."
+        sleep 5
+        install_q_disk
+    fi
+
+    if [[ "$(wc -l "${_template_chooser}" | awk '{print $1}')" -gt 1 ]]; then
+        print_warn "More than two disk templates found based on the settings in the hosts configuration file"
+        print_warn "Please choose a template manually.."
+        sleep 5
+        install_q_disk
+    fi
+
+    if [ -z "${deploy_disk_template}" ] ; then
+        deploy_disk_template="$(cat "${_template_chooser}")"
+        cp -i "${_dir_flake}"/templates/disko/${deploy_disk_template} "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix
+        task_update_disk_prefix
+    fi
+
+    rm -rf "${_template_chooser}"
 }
 
 secret_rekey() {
@@ -1097,6 +1166,21 @@ secret_rekey() {
                     sops updatekeys ${secret}
                 fi
             done
+        ;;
+    esac
+}
+
+secret_tools() {
+    case "${1}" in
+        "common" )
+            sops "${_dir_flake}"/hosts/common/secrets/secrets.yaml
+        ;;
+        "edit" )
+            $EDITOR "${_dir_flake}"/.sops.yaml
+        ;;
+        "rekey" )
+            print_info "Rekeying secrets"
+            secret_rekey "${2}"
         ;;
     esac
 }
@@ -1222,9 +1306,6 @@ task_generate_age_secrets() {
     sudo chown root:root "${_dir_remote_rootfs}"/"${feature_impermanence}"/root/.config/sops/age/keys.txt
     sudo chmod 400 "${_dir_remote_rootfs}"/"${feature_impermanence}"/root/.config/sops/age/keys.txt
     export _age_key_pub=$(cat "${_dir_remote_rootfs}"/"${feature_impermanence}"/etc/ssh/ssh_host_ed25519_key.pub | ssh-to-age )
-    #yq -i '."keys" += "&host_'$(echo $deploy_host)' '$(echo $_age_key_pub)'"' .sops.playground.yaml
-    #yq -i '.creation_rules[] | select(.path_regex=="hosts/common/secrets/.*") | ."key_groups" += [{"age": ["*host_'$(echo $deploy_host)'"]}] ' .sops.playground.yaml
-    #yq -i '.creation_rules[] | select(.path_regex=="users/secrets.yaml") | ."key_groups" += [{"age": ["*host_'$(echo $deploy_host)'"]}] ' .sops.playground.yaml
 }
 
 task_generate_encryption_password() {
@@ -1245,6 +1326,23 @@ task_generate_encryption_password() {
         done
         PASSWORD_ENCRYPTION=${password_encryption_2}
     fi
+}
+
+task_generate_sops_configuration() {
+    touch "${_dir_flake}"/.sops.yaml
+    yq -i eval ".keys += [ \"&host_${deploy_host} ${_age_key_pub}\" ]" "${_dir_flake}"/.sops.yaml
+    print_debug "Add the hosts AGE Key at the top"
+
+    yq -i eval ".creation_rules += [{\"path_regex\": \"hosts/${deploy_host}/secrets/.*\", \"key_groups\": [{\"age\": [\"*host_${deploy_host}\", \"*user_dave\"]}]}]" "${_dir_flake}"/.sops.yaml
+    print_debug "Add the new path_regex for the host along with the host and user"
+
+    yq -i eval ".creation_rules |= map(select(.path_regex == \"hosts/common/secrets/.*\").key_groups[0].age += [\"*host_${deploy_host}\"] // .)" "${_dir_flake}"/.sops.yaml
+    print_debug "Add the host to hosts/common/secrets"
+
+    yq -i eval ".creation_rules |= map(select(.path_regex == \"users/secrets.yaml\").key_groups[0].age += [\"*host_${deploy_host}\"] // .)" "${_dir_flake}"/.sops.yaml
+    print_debug "Add the host to the users_secrets"
+
+    sed -i "s|'||g" "${_dir_flake}"/.sops.yaml
 }
 
 task_generate_ssh_key() {
@@ -1294,107 +1392,6 @@ install_q_disk() {
     task_update_disk_prefix
 }
 
-parse_disk_config() {
-    system_role=$(grep "role = .*;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix | cut -d '"' -f2)
-
-    if grep -qF "btrfs.enable = mkDefault true;" "${_dir_flake}"/modules/roles/"${system_role}"/default.nix; then
-        disk_btrfs=true
-    fi
-    if grep -qF "encryption.enable = mkDefault true;" "${_dir_flake}"/modules/roles/"${system_role}"/default.nix; then
-        disk_encryption=true
-    fi
-    if grep -qF "impermanence.enable = mkDefault true;" "${_dir_flake}"/modules/roles/"${system_role}"/default.nix || grep -qPzo -m 1 "(?s)impermanence = {\n.*enable = mkDefault true;"  "${_dir_flake}"/modules/roles/"${system_role}"/default.nix; then
-        disk_impermanence=true
-    fi
-    if grep -qF "raid.enable = mkDefault true;" "${_dir_flake}"/modules/roles/"${system_role}"/default.nix; then
-        disk_raid=true
-    fi
-    if grep -qF "swap_file.enable = mkDefault true;" "${_dir_flake}"/modules/roles/"${system_role}"/default.nix; then
-        disk_swapfile=true
-    fi
-
-    if grep -qF "btrfs.enable = true;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
-        disk_btrfs=true
-    elif grep -qF "btrfs.enable = false;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
-        disk_btrfs=false
-    fi
-    if grep -qF "encryption.enable = true;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
-        disk_encryption=true
-    elif grep -qF "encryption.enable = false;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
-        disk_encryption=false
-    fi
-
-    if grep -qF "impermanence.enable = true;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix || grep -qPzo -m 1 "(?s)impermanence = {\n.*enable = true;" "${_dir_flake}"/modules/roles/"${system_role}"/default.nix ; then
-        disk_impermanence=true
-    elif grep -qF "impermanence.enable = false;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix || grep -qPzo -m 1 "(?s)impermanence = {\n.*enable = false;" "${_dir_flake}"/modules/roles/"${system_role}"/default.nix ; then
-        disk_impermanence=false
-    fi
-    if grep -qF "raid.enable = true;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
-        disk_raid=true
-    elif grep -qF "raid.enable = false;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
-        disk_raid=false
-    fi
-    if grep -qF "swap_file.enable = true;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
-        disk_swapfile=true
-    elif grep -qF "swap_file.enable = false;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
-        disk_swapfile=false
-    fi
-
-    _template_chooser=$(mktemp)
-
-    find "${_dir_flake}"/templates/disko/*.nix -maxdepth 0 -type f | rev | cut -d / -f 1 | rev > "${_template_chooser}"
-
-    if var_false "${disk_btrfs}" ; then
-        sed -i "/btrfs/d" "${_template_chooser}"
-    else
-        sed -i -n "/btrfs/p" "${_template_chooser}"
-    fi
-
-    if var_false "${disk_encryption}" ; then
-        sed -i "/luks/d" "${_template_chooser}"
-    else
-        sed -i -n "/luks/p" "${_template_chooser}"
-    fi
-
-    if var_false "${disk_impermanence}" ; then
-        sed -i "/impermanence/d" "${_template_chooser}"
-    else
-        sed -i -n "/impermanence/p" "${_template_chooser}"
-    fi
-
-    if var_false "${disk_raid}" ; then
-        sed -i "/raid/d" "${_template_chooser}"
-    else
-        sed -i -n "/raid/p" "${_template_chooser}"
-    fi
-
-    if var_false "${disk_swapfile}" ; then
-        sed -i "/swapfile/d" "${_template_chooser}"
-    fi
-
-    if [[ "$(wc -l "${_template_chooser}" | awk '{print $1}')" -lt 1 ]]; then
-        print_warn "No Disk Template found with the settings in the hosts configuration file"
-        print_warn "Please choose a template manually.."
-        sleep 5
-        install_q_disk
-    fi
-
-    if [[ "$(wc -l "${_template_chooser}" | awk '{print $1}')" -gt 1 ]]; then
-        print_warn "More than two disk templates found based on the settings in the hosts configuration file"
-        print_warn "Please choose a template manually.."
-        sleep 5
-        install_q_disk
-    fi
-
-    if [ -z "${deploy_disk_template}" ] ; then
-        deploy_disk_template="$(cat "${_template_chooser}")"
-        cp -i "${_dir_flake}"/templates/disko/${deploy_disk_template} "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix
-        task_update_disk_prefix
-    fi
-
-    rm -rf "${_template_chooser}"
-}
-
 task_install_host() {
     print_info "Commencing install to Host: ${deploy_host} (${remote_host_ip_address})"
     if [ -n "${PASSWORD_ENCRYPTION}" ]; then
@@ -1416,29 +1413,28 @@ task_install_host() {
 }
 
 task_update_host() {
-    if [ -n "${SSH_PRIVATE_KEY}" ]; then
-        ssh_private_key_prefix="-i ${SSH_PRIVATE_KEY}"
-        ssh_private_key_text="via SSH Private key located at ${SSH_PRIVATE_KEY}"
-    fi
+    print_info "Commencing update to remote host"
+    NIX_SSHOPTS="-t -p ${SSH_PORT} ${ssh_private_key_prefix} -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" nixos-rebuild switch --flake "${_dir_flake}"/#${deploy_host} --use-remote-sudo --target-host ${REMOTE_USER}@${REMOTE_IP} --use-remote-sudo
+    read -n 1 -s -r -p "** Press any key to continue **"
+}
 
+menu_install_host() {
     printf "\033c"
     echo -e "${clm}"
     cat << EOF
----------------
-| Update Host |
----------------
+----------------
+| Install Host |
+----------------
 
 Updating host ${deploy_host} via ssh://${REMOTE_USER}@${REMOTE_IP} ${ssh_private_key_text}
 Confirm you wish to start the deployment, or change the username or IP. Also, use a custom Private Key.
 EOF
     echo -e "${coff}"
-    read -p "$(echo -e ${cdgy}\(${cwh}Y${cdgy}\) Confirm Update \\n\\n\(${cwh}S${cdgy}\) SSH Options \\n\(${cwh}B${cdgy}\) Back to host deploy menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_task_update
-    case "${q_task_update,,}" in
+    read -p "$(echo -e ${cdgy}\(${cwh}Y${cdgy}\) Confirm Update \\n\\n\(${cwh}S${cdgy}\) SSH Options \\n\(${cwh}B${cdgy}\) Back to host deploy menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_task_install
+    case "${q_menu_task_install,,}" in
         "y" | "yes" )
-            print_info "Commencing update to remote host"
-            NIX_SSHOPTS="-t -p ${SSH_PORT} ${ssh_private_key_prefix} -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" nixos-rebuild switch --flake "${_dir_flake}"/#${deploy_host} --use-remote-sudo --target-host ${REMOTE_USER}@${REMOTE_IP} --use-remote-sudo
-            read -n 1 -s -r -p "** Press any key to continue **"
-            task_update_host
+            task_install_host
+            menu_install_host
         ;;
         "s" | "ssh" )
             menu_ssh_options
@@ -1455,7 +1451,50 @@ EOF
             echo -e ""
         ;;
         * )
-            menu_startup
+            menu_install_host
+        ;;
+    esac
+}
+
+menu_update_host() {
+    if [ -n "${SSH_PRIVATE_KEY}" ]; then
+        ssh_private_key_prefix="-i ${SSH_PRIVATE_KEY}"
+        ssh_private_key_text="via SSH Private key located at ${SSH_PRIVATE_KEY}"
+    fi
+
+    printf "\033c"
+    echo -e "${clm}"
+    cat << EOF
+---------------
+| Update Host |
+---------------
+
+Updating host ${deploy_host} via ssh://${REMOTE_USER}@${REMOTE_IP} ${ssh_private_key_text}
+Confirm you wish to start the deployment, or change the username or IP. Also, use a custom Private Key.
+EOF
+    echo -e "${coff}"
+    read -p "$(echo -e ${cdgy}\(${cwh}Y${cdgy}\) Confirm Update \\n\\n\(${cwh}S${cdgy}\) SSH Options \\n\(${cwh}B${cdgy}\) Back to host deploy menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_task_update
+    case "${q_menu_task_update,,}" in
+        "y" | "yes" )
+            task_update_host
+            menu_update_host
+        ;;
+        "s" | "ssh" )
+            menu_ssh_options
+        ;;
+        "b" | "back" )
+            menu_deploy
+        ;;
+        "q" | "exit" )
+            print_info "Quitting Script"
+            exit 1
+            ;;
+        "?" | "help" )
+            echo -e "${clm}"
+            echo -e ""
+        ;;
+        * )
+            menu_update_host
         ;;
     esac
 }
