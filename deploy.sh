@@ -557,9 +557,6 @@ EOF
         ;;
         "?" | "help" )
             echo -e "${clm}"
-            echo -e "${cwh}Host${cdgy} - Change host"
-            echo -e ""
-            echo -e "${cwh}IP Address${cdgy} - Change IP address of remote host "
             echo -e ""
             menu_flaketools
         ;;
@@ -577,13 +574,12 @@ menu_host_management() {
 | Hosts Management Menu |
 -------------------------
 
-Create a new template for a new never before installed host - Please edit flake with new details manually
-Delete a host from filesystem - Please edit flake with new details manually
 Choose a host to perform work on
-
+Create a new template for a new never before installed host
+Delete a host from filesystem
 EOF
     echo -e "${coff}"
-    read -p "$(echo -e ${cdgy}\(${cwh}C${cdgy}\) Create new host configuration\\n\(${cwh}D${cdgy}\) Delete host configuration\\n\\n\(${cwh}H${cdgy}\) Choose Host to configure\\n\(${cwh}F${cdgy}\) Edit Flake \\n\(${cwh}B${cdgy}\) Back to main menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_hostmanagement
+    read -p "$(echo -e ${cdgy}\(${cwh}H${cdgy}\) Choose Host to configure\\n\\n\(${cwh}C${cdgy}\) Create new host configuration\\n\(${cwh}D${cdgy}\) Delete host configuration\\n\\n\(${cwh}F${cdgy}\) Edit Flake \\n\(${cwh}B${cdgy}\) Back to main menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_hostmanagement
     case "${q_menu_hostmanagement,,}" in
         "c" | "create" )
             task_hostmanagement_create
@@ -625,6 +621,10 @@ menu_host() {
         option_secrets="(${cwh}S${cdgy}) Host secrets.yaml \n"
     fi
 
+    if [ "${REMOTE_IP}" != "" ]; then
+        menu_host_option_deploy="\\n${cwh}DEPLOY:${cdgy}\\n\\n${cdgy}(${cwh}N${cdgy}) New Installation\\n(${cwh}U${cdgy}) Update Existing Installation\\n"
+    fi
+
     printf "\033c"
     echo -e "${clm}"
     cat << EOF
@@ -632,21 +632,40 @@ menu_host() {
 | Host Menu |
 -------------
 
-IP Address can be autodetected if found in DNS, otherwise, please enter hostname or IP of host.
+Fill in details of the IP Addresss - It may be auto populated if found in DNS, otherwise enter Hostname or IP
+Change any settings for SSH, specifically the username, and make sure that you can support passwordless logins to the host in question.
 
-You have the capabilities of editing the hosts configuration, the main repository flake, and the hosts secrets.
+Once ready, deploy the configuration.
+
+You can also update the hosts configuration and you'll need to ensure that secrets have been generated.
 EOF
     echo -e "${coff}"
-    read -p "$(echo -e ${cdgy}Host: ${cwh}${deploy_host}${cdgy}\\n\\n${cwh}CHANGE:${cdgy}\\n\\n\(${cwh}I${cdgy}\) IP Address: ${cwh}${REMOTE_IP}${cdgy}\\n${cdgy}\(${cwh}R${cdgy}\) SSH Options\\n\\n${cwh}DEPLOY:${cdgy}\\n\\n\(${cwh}D${cdgy}\) Deploy Configuration \\n\\n${cwh}EDIT:${cdgy}\\n\\n\(${cwh}E${cdgy}\) Host Configuration \\n\(${cwh}F${cdgy}\) Flake \\n${option_secrets}${cwh}${coff}\\n${cdgy}\(${cwh}S${cdgy}\) Host Secrets\\n${cdgy}\(${cwh}B${cdgy}\) Back to host management menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_host
+    read -p "$(echo -e ${cdgy}Host: ${cwh}${deploy_host}${cdgy}\\n\\n${cwh}CHANGE:${cdgy}\\n\\n\(${cwh}I${cdgy}\) IP Address: ${cwh}${REMOTE_IP}${cdgy}\\n${cdgy}\(${cwh}R${cdgy}\) SSH Options\\n${menu_host_option_deploy}\\n${cwh}EDIT:${cdgy}\\n\\n\(${cwh}E${cdgy}\) Host Configuration \\n\(${cwh}F${cdgy}\) Flake \\n${option_secrets}${cwh}${coff}\\n${cdgy}\(${cwh}S${cdgy}\) Host Secrets\\n${cdgy}\(${cwh}B${cdgy}\) Back to host management menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_host
     case "${q_menu_host,,}" in
-        "d" | "deploy" )
-            menu_deploy
-        ;;
+        #"d" | "deploy" )
+        #    menu_deploy
+        #;;
         "i" | "ip" )
             unset REMOTE_IP
             install_and_deploy_q_ipaddress
             check_host_availability "${REMOTE_IP}"
             menu_host
+        ;;
+        "n" | "new" )
+            parse_disk_config
+            task_generate_encryption_password
+            task_generate_ssh_key
+            task_generate_age_secrets
+            task_generate_sops_configuration
+            task_install_host
+            menu_deploy
+        ;;
+        "u" | "update" )
+            task_update_host
+            menu_deploy
+        ;;
+        "d" | "disk" )
+            menu_diskconfig
         ;;
         "e" | "edit" )
             $EDITOR "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
@@ -734,6 +753,10 @@ EOF
 }
 
 menu_host_secrets() {
+    if [ -f "${_dir_flake}"/hosts/"${deploy_host}"/secrets/secrets.yaml ]; then
+        menu_host_secrets_option_host_secrets="${cdgy}(${cwh}H${cdgy}) Host secrets management\\n"
+    fi
+
     printf "\033c"
     echo -e "${clm}"
     cat << EOF
@@ -749,14 +772,16 @@ In this first release, we are doing manual edits to files.
 
 EOF
     echo -e "${coff}"
-    read -p "$(echo -e ${cdgy}\(${cwh}G${cdgy}\) Global secrets management\\n\(${cwh}H${cdgy}\) Host secrets management\\n\(${cwh}R${cdgy}\) Rekey all secrets\\n${cwh}${coff}\\n${cdgy}\(${cwh}B${cdgy}\) Back to host menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_host_secrets
+    read -p "$(echo -e ${menu_host_secrets_option_host_secrets}${cdgy}\(${cwh}G${cdgy}\) Global secrets management\\n\(${cwh}R${cdgy}\) Rekey all secrets\\n${cwh}${coff}\\n${cdgy}\(${cwh}B${cdgy}\) Back to host menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_host_secrets
     case "${q_menu_host_secrets,,}" in
         "g" | "global" )
             menu_host_secrets_global
             menu_host_secrets
         ;;
         "h" | "host" )
-            menu_host_secrets_host
+            if [ -f "${_dir_flake}"/hosts/"${deploy_host}"/secrets/secrets.yaml ]; then
+                menu_host_secrets_host
+            fi
             menu_host_secrets
         ;;
         "r" | "rekey" )
@@ -793,8 +818,12 @@ menu_host_secrets_global() {
 | Secrets Additions |
 ---------------------
 
-    Global configuration is required to use secrets. Use the automated modifications to add details to .sops.yaml and edit as need be.
-    This must be done otherwise you won't be able to login!
+    Global configuration is required to use secrets.
+    When you choose a new installation moficiations are performed to the .sops.yaml file.
+    If you do not see entries related to the host, choose to apply the configuration - Only do this once!
+
+    These entries must be in the .sops.yaml file be done otherwise you won't be able to login!
+    Type 'help' to manually add the entries.
 
 EOF
 
@@ -877,17 +906,19 @@ menu_host_secrets_host() {
 
     HOST SECRETS
 
+    Before you can do anything you'll need to crete an example secret.
     Create an example secret. Delete everything in the file and replace it with the following line:
 
 ${deploy_host}: Example secret for ${deploy_host}
-
 EOF
 
     echo -e "${coff}"
-    read -p "$(echo -e \\n$\(${cwh}E${cdgy}\) Edit .sops.yaml\\n${cwh}${coff}\\n${cdgy}\(${cwh}B${cdgy}\) Back to host secrets menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_secrets_global
-    case "${q_menu_secrets_global,,}" in
+    read -p "$(echo -e \\n${cdgy}\(${cwh}E${cdgy}\) Edit ${deploy_host}\/secrets\/secrets.yaml\\n${cwh}${coff}\\n${cdgy}\(${cwh}B${cdgy}\) Back to host secrets menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_secrets_host
+    case "${q_menu_secrets_host,,}" in
         "e" | "edit" )
-            sops ${_dir_flake}/hosts/${deploy_host}/secrets/secrets.yaml
+            mkdir -p "${_dir_flake}"/hosts/"${deploy_host}"/secrets
+            sops "${_dir_flake}"/hosts/"${deploy_host}"/secrets/secrets.yaml
+            git add "${_dir_flake}"/hosts/"${deploy_host}"/secrets/secrets.yaml
             menu_host_secrets_host
         ;;
         "b" | "back" )
@@ -909,6 +940,10 @@ EOF
 }
 
 menu_startup() {
+    if [ -n "${deploy_host}" ]; then
+        _menu_startup_deploy="${cdgy}(${cwh}D${cdgy}) Deploy or Install \\n"
+    fi
+
     print_info "Starting NixOS Deployment Script at $(TZ=${TIMEZONE} date -d @${script_start_time} '+%Y-%m-%d %H:%M:%S')"
 
     printf "\033c"
@@ -918,10 +953,13 @@ menu_startup() {
 | NiXOS Deployment ${SCRIPT_VERSION} |
 --------------------------
 
+Start by selecting a Host via the Host Management Menu
+Move to the Deploy Menu to perform a new install or an upgrade of host
+
 ** WARNING ** This script will eat your cat if you aren't careful.
 EOF
     echo -e "${coff}"
-    read -p "$(echo -e ${cdgy}\(${cwh}D${cdgy}\) Deploy or Install \\n\(${cwh}F${cdgy}\) Flake Tools \\n\(${cwh}S${cdgy}\) Secrets Management \\n${cwh}${coff}\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_startup
+    read -p "$(echo -e ${cdgy}\(${cwh}H${cdgy}\) Host Management\\n${_menu_startup_deploy}\(${cwh}F${cdgy}\) Flake Tools \\n\(${cwh}S${cdgy}\) Secrets Management \\n${cwh}${coff}\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_startup
     case "${q_menu_startup,,}" in
         "f" | "flake" )
             MODE=FLAKE
@@ -943,7 +981,14 @@ EOF
         ;;
         "d" | "deploy" )
             MODE=DEPLOY
+            if [ -n "${deploy_host}" ]; then
+                menu_host
+            fi
+            menu_startup
+        ;;
+        "h" | "host" )
             menu_host_management
+            menu_startup
         ;;
         "s" | "secrets" )
             MODE=SECRETS
@@ -993,6 +1038,11 @@ menu_ssh_options() {
     if [ -n "${SSH_PRIVATE_KEY}" ]; then
         text_private_key="          SSH Private Key: ${SSH_PRIVATE_KEY}"
     fi
+
+    if [ "${REMOTE_IP}" != "" ]; then
+        menu_ssh_options_copy_key="\\n${cdgy}(${cwh}C${cdgy}) Copy SSH Key to ${deploy_host}\\n"
+        text_ssh_options_set_ip="Set IP Address to copy public key to host"
+    fi
     printf "\033c"
     echo -e "${clm}"
     cat << EOF
@@ -1003,10 +1053,11 @@ menu_ssh_options() {
     Using SSH Username: ${REMOTE_USER}
           SSH Port: ${SSH_PORT}
 ${text_private_key}
+${text_ssh_options_set_ip}
 EOF
 
     echo -e "${coff}"
-    read -p "$(echo -e ${cdgy}\(${cwh}K${cdgy}\) Use a specific Private Key\\n\(${cwh}U${cdgy}\) Change SSH Username\\n\(${cwh}P${cdgy}\) Change SSH Port${cwh}${coff}\\n\\n${cdgy}\(${cwh}C${cdgy}\) Copy SSH Key to ${deploy_host}\\n\\n${cdgy}\(${cwh}B${cdgy}\) Back to host menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_ssh_options
+    read -p "$(echo -e ${cdgy}\(${cwh}K${cdgy}\) Use a specific Private Key\\n\(${cwh}U${cdgy}\) Change SSH Username\\n\(${cwh}P${cdgy}\) Change SSH Port${cwh}${coff}\\n${menu_ssh_options_copy_key}\\n${cdgy}\(${cwh}B${cdgy}\) Back to host menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_ssh_options
     case "${q_menu_ssh_options,,}" in
         "k" | "key" )
             deploy_q_sshkey
@@ -1188,6 +1239,7 @@ secret_tools() {
 
 install_and_deploy_q_host() {
     COLUMNS=12
+    echo -e "${cwh}"
     prompt="Which host do you want to target?"
     options=( $(find ${_dir_flake}/hosts/* -maxdepth 0 -type d | rev | cut -d / -f 1 | rev | sed "/common/d" | xargs -0) )
     PS3="$prompt "
@@ -1201,10 +1253,9 @@ install_and_deploy_q_host() {
             echo "Invalid option. Try another one."
         fi
     done
+    echo -e "${cdgy}"
     COLUMNS=$oldcolumns
     export deploy_host=${opt}
-
-    # cat flake.nix | sed -e '/${deploy_host} =/,/};/!d' -e '/specialArgs = {/,/};/!d' | tail +2 | sed "/};/d"
 }
 
 install_and_deploy_q_ipaddress() {
@@ -1529,12 +1580,11 @@ EOF
                             -e "s|impermanence.enable = .*;|impermanence.enable = ${_template_impermanence};|g" \
                             -e "s|raid.enable = .*;|raid.enable = ${_template_raid};|g" \
                         "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
-
                     if var_true "${_template_ip_wired}" ; then
                         sed -i "s|wired.enable = .*;|wired.enable = true;|g" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
                         case "${_template_ip_type}" in
                             dynamic )
-                                sed -i "s|type = \".*\";type = \"dynamic\";|g" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
+                                sed -i "s|type = \".*\";|type = \"dynamic\";|g" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
                             ;;
                             static )
                                 sed -i \
@@ -1548,12 +1598,11 @@ EOF
 
                     ## Don't change the indenting on any of this!
                     sed -i "/nixosConfigurations = {/a\\
-        ${deploy_host} = lib.nixosSystem { # Workstation \n\
+        ${deploy_host} = lib.nixosSystem { # ${template_role^} Added $(date +"%Y%-%m-%d) \n\
           modules = [ .\/hosts\/${deploy_host} ];\n\
           specialArgs = { inherit inputs outputs; };\n\
         };\n" \
                     "${_dir_flake}"/flake.nix
-
                     silent git add "${_dir_flake}"/flake.nix
                     _host_created=true
                 else
