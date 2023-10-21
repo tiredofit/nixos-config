@@ -1584,13 +1584,15 @@ EOF
                         case "${_template_ip_type}" in
                             dynamic )
                                 sed -i "/hostname = \".*\";/a\      wired = {\n       enable = true;\n       type = \"dynamic\";\n      };\n" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
+                                sed -i "/wired\..* = \".*\";/d" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
                             ;;
                             static )
                                 sed "/hostname = \".*\";/a\      wired = {\n       enable = true;\n       type = \"static\";\n       ip = \"${_template_network_ip}/${_template_network_subnet}\";\n       gateway = \"${_template_network_gateway}\";\n       mac = \"${_template_network_mac}\"\n      };\n" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
+                                sed -i "/wired\..* = \".*\";/d" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
                             ;;
                         esac
                     else
-                        sed -i "/wired\..* =/d" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
+                        sed -i "/wired\..* = \".*\";/d" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
                     fi
 
                     ## Don't change the indenting on any of this!
@@ -1733,7 +1735,7 @@ install_q_disk() {
 
 task_install_host() {
     set -x
-    print_info "Commencing install to Host: ${deploy_host} (${remote_host_ip_address})"
+    print_info "Commencing install to Host: ${deploy_host} (${REMOTE_IP})"
     if [ -n "${PASSWORD_ENCRYPTION}" ]; then
         luks_key=$(mktemp)
         echo -n "${PASSWORD_ENCRYPTION}" > "${luks_key}"
