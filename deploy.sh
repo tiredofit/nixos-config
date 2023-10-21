@@ -1581,19 +1581,16 @@ EOF
                             -e "s|raid.enable = .*;|raid.enable = ${_template_raid};|g" \
                         "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
                     if var_true "${_template_ip_wired}" ; then
-                        sed -i "s|wired.enable = .*;|wired.enable = true;|g" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
                         case "${_template_ip_type}" in
                             dynamic )
-                                sed -i "s|type = \".*\";|type = \"dynamic\";|g" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
+                                sed -i "/hostname = \".*\";/a\      wired = {\n       enable = true;\n       type = \"dynamic\";\n      };\n" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
                             ;;
                             static )
-                                sed -i \
-                                        -e "s|ip = \".*\";ip = \"${_template_network_ip}/${_template_network_subnet}\";|g" \
-                                        -e "s|gateway = \".*\";gateway = \"${_template_network_gateway}\";|g" \
-                                        -e "s|mac = \".*\";mac = \"${_template_network_macy}\";|g" \
-                                            "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
+                                sed "/hostname = \".*\";/a\      wired = {\n       enable = true;\n       type = \"static\";\n       ip = \"${_template_network_ip}/${_template_network_subnet}\";\n       gateway = \"${_template_network_gateway}\";\n       mac = \"${_template_network_mac}\"\n      };\n" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
                             ;;
                         esac
+                    else
+                        sed -i "/wired\..* =/d" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
                     fi
 
                     ## Don't change the indenting on any of this!
