@@ -1595,7 +1595,7 @@ EOF
 
                     ## Don't change the indenting on any of this!
                     sed -i "/nixosConfigurations = {/a\\
-        ${deploy_host} = lib.nixosSystem { # ${template_role^} Added $(date +"%Y%-%m-%d) \n\
+        ${deploy_host} = lib.nixosSystem { # ${template_role^} Added $(date +"%Y%-%m-%d") \n\
           modules = [ .\/hosts\/${deploy_host} ];\n\
           specialArgs = { inherit inputs outputs; };\n\
         };\n" \
