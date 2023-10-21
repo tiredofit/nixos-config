@@ -409,23 +409,6 @@ EOF
     read -p "$(echo -e ${cdgy}\(${cwh}N${cdgy}\) New Install for Host: ${deploy_host}\\n\(${cwh}E${cdgy}\) Update Existing Host: ${deploy_host} \\n\\n${cwh}CHANGE **DANGER!!**:\\n\\n${m_diskconfig}${cdgy}\(${cwh}S${cdgy}\) Regenerate SSH Keys for: ${deploy_host}\\n\(${cwh}A${cdgy}\) Regenerate AGE Secret Keys for ${deploy_host}\\n${cwh}${coff}\\n${cdgy}\(${cwh}B${cdgy}\) Back to host menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_deploy
     case "${q_menu_deploy,,}" in
         "n" | "new" )
-    printf "\033c"
-    echo -e "${clm}"
-    cat << EOF
---------------------
-| New Installation |
---------------------
-
-Before the installation the following needs to occur:
-
-  - Setup Disk Drives
-  - Set Encryption passwords if necessary
-  - Generate SSH Key
-  - Generate SOPS Secrets
-  - Generate sample host secret
-
-EOF
-
             parse_disk_config
             task_generate_encryption_password
             task_generate_ssh_key
@@ -670,17 +653,34 @@ EOF
             menu_host
         ;;
         "n" | "new" )
+    printf "\033c"
+    echo -e "${clm}"
+    cat << EOF
+--------------------
+| New Installation |
+--------------------
+
+Before the installation the following needs to occur:
+
+  - Setup Disk Drives
+  - Set Encryption passwords if necessary
+  - Generate SSH Key
+  - Generate SOPS Secrets
+  - Generate sample host secret
+
+EOF
             parse_disk_config
             task_generate_encryption_password
             task_generate_ssh_key
             task_generate_age_secrets
             task_generate_sops_configuration
+            task_generate_host_secrets
             task_install_host
-            menu_deploy
+            menu_host
         ;;
         "u" | "update" )
             task_update_host
-            menu_deploy
+            menu_host
         ;;
         "d" | "disk" )
             menu_diskconfig
@@ -1600,15 +1600,13 @@ EOF
                         case "${_template_ip_type}" in
                             dynamic )
                                 sed -i "/hostname = \".*\";/a\      wired = {\n       enable = true;\n       type = \"dynamic\";\n      };\n" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
-                                sed -i "/wired\..* = \".*\";/d" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
+                                sed -i "/wired..* = .*;/d" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
                             ;;
                             static )
                                 sed "/hostname = \".*\";/a\      wired = {\n       enable = true;\n       type = \"static\";\n       ip = \"${_template_network_ip}/${_template_network_subnet}\";\n       gateway = \"${_template_network_gateway}\";\n       mac = \"${_template_network_mac}\"\n      };\n" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
-                                sed -i "/wired\..* = \".*\";/d" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
+                                sed -i "/wired..* = .*;/d" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
                             ;;
                         esac
-                    else
-                        sed -i "/wired\..* = \".*\";/d" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
                     fi
 
                     ## Don't change the indenting on any of this!
@@ -1786,7 +1784,7 @@ task_install_host() {
                                                 ${feature_luks} --extra-files "${_dir_remote_rootfs}" \
                                                 --flake "${_dir_flake}"/#${deploy_host} \
                                                 ${REMOTE_USER}@${remote_host_ip_address}
-sleep 10
+    sleep 10
     if [ -n "${PASSWORD_ENCRYPTION}" ]; then
         rm -rf "${luks_key}"
     fi
