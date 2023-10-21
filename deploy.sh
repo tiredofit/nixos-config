@@ -409,11 +409,29 @@ EOF
     read -p "$(echo -e ${cdgy}\(${cwh}N${cdgy}\) New Install for Host: ${deploy_host}\\n\(${cwh}E${cdgy}\) Update Existing Host: ${deploy_host} \\n\\n${cwh}CHANGE **DANGER!!**:\\n\\n${m_diskconfig}${cdgy}\(${cwh}S${cdgy}\) Regenerate SSH Keys for: ${deploy_host}\\n\(${cwh}A${cdgy}\) Regenerate AGE Secret Keys for ${deploy_host}\\n${cwh}${coff}\\n${cdgy}\(${cwh}B${cdgy}\) Back to host menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_deploy
     case "${q_menu_deploy,,}" in
         "n" | "new" )
+    printf "\033c"
+    echo -e "${clm}"
+    cat << EOF
+--------------------
+| New Installation |
+--------------------
+
+Before the installation the following needs to occur:
+
+  - Setup Disk Drives
+  - Set Encryption passwords if necessary
+  - Generate SSH Key
+  - Generate SOPS Secrets
+  - Generate sample host secret
+
+EOF
+
             parse_disk_config
             task_generate_encryption_password
             task_generate_ssh_key
             task_generate_age_secrets
             task_generate_sops_configuration
+            task_generate_host_secrets
             task_install_host
             menu_deploy
         ;;
@@ -916,9 +934,7 @@ EOF
     read -p "$(echo -e \\n${cdgy}\(${cwh}E${cdgy}\) Edit ${deploy_host}\/secrets\/secrets.yaml\\n${cwh}${coff}\\n${cdgy}\(${cwh}B${cdgy}\) Back to host secrets menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_secrets_host
     case "${q_menu_secrets_host,,}" in
         "e" | "edit" )
-            mkdir -p "${_dir_flake}"/hosts/"${deploy_host}"/secrets
-            sops "${_dir_flake}"/hosts/"${deploy_host}"/secrets/secrets.yaml
-            git add "${_dir_flake}"/hosts/"${deploy_host}"/secrets/secrets.yaml
+            task_generate_host_secrets
             menu_host_secrets_host
         ;;
         "b" | "back" )
@@ -1665,6 +1681,28 @@ task_generate_encryption_password() {
         done
         PASSWORD_ENCRYPTION=${password_encryption_2}
     fi
+}
+
+task_generate_host_secrets() {
+    printf "\033c"
+    echo -e "${clm}"
+    cat << EOF
+--------------------------
+| Host Secrets Additions |
+--------------------------
+
+    HOST SECRETS
+
+    Before you can do anything you'll need to crete an example secret.
+    Create an example secret. Delete everything in the file and replace it with the following line:
+
+${deploy_host}: Example secret for ${deploy_host}
+EOF
+
+    read -n 1 -s -r -p "** Press any key to continue **"
+    mkdir -p "${_dir_flake}"/hosts/"${deploy_host}"/secrets
+    sops "${_dir_flake}"/hosts/"${deploy_host}"/secrets/secrets.yaml
+    git add "${_dir_flake}"/hosts/"${deploy_host}"/secrets/secrets.yaml
 }
 
 task_generate_sops_configuration() {
