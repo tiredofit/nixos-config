@@ -415,6 +415,7 @@ EOF
             task_generate_age_secrets
             task_generate_sops_configuration
             task_generate_host_secrets
+            secret_tools rekey all
             task_install_host
             menu_deploy
         ;;
