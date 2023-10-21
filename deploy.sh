@@ -1261,8 +1261,7 @@ install_and_deploy_q_host() {
     PS3="$prompt "
     select opt in "${options[@]}" "Quit" ; do
         if (( REPLY == 1 + ${#options[@]} )) ; then
-            echo "Bye!"
-            exit 2
+            menu_host
         elif (( REPLY > 0 && REPLY <= ${#options[@]} )) ; then
             break
         else
