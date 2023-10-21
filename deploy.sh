@@ -1783,11 +1783,13 @@ task_install_host() {
                                                 --no-reboot \
                                                 ${feature_luks} --extra-files "${_dir_remote_rootfs}" \
                                                 --flake "${_dir_flake}"/#${deploy_host} \
-                                                ${REMOTE_USER}@${remote_host_ip_address}
-    sleep 10
+                                                ${REMOTE_USER}@${REMOTE_IP}
+
     if [ -n "${PASSWORD_ENCRYPTION}" ]; then
         rm -rf "${luks_key}"
     fi
+
+    read -n 1 -s -r -p "** Press any key to continue **"
 }
 
 task_update_host() {
