@@ -28,7 +28,7 @@
 
   environment = {
     defaultPackages = []; # Don't install any default programs, force everything
-    enableAllTerminfo = mkDefault true;
+    enableAllTerminfo = mkDefault false;
     systemPackages = with pkgs; [
       binutils            # standard binutils
       bind                # nslookup and nameserver tools
@@ -41,6 +41,7 @@
       iftop               # network i/o analysis
       inetutils           # internet tools
       iotop               # i/o analysis
+      kitty               # Kitty Terminfo
       links2              # console web browser
       lsof                # list open files
       mtr                 # traceroute
@@ -49,6 +50,7 @@
       nvd                 # Nix Diffs
       psmisc              # process analysis
       rsync               # Transfer files
+      tmux
       wget                # file fetcher
     ]
     ++ (lib.optionals pkgs.stdenv.isLinux [
