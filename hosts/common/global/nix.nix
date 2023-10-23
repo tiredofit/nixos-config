@@ -3,7 +3,7 @@
 {
   environment = {
     systemPackages = [
-      nvd
+      pkgs.nvd
       pkgs.git
     ];
   };
