@@ -2,7 +2,10 @@
 
 {
   environment = {
-    systemPackages = [pkgs.git];
+    systemPackages = [
+      nvd
+      pkgs.git
+    ];
   };
 
   nix = {

@@ -3,9 +3,6 @@
 {
   imports = [
     inputs.home-manager.nixosModules.home-manager
-    ./bash.nix
-    ./diceware.nix
-    ./less.nix
     ./locale.nix
     ./nix.nix
     ../../../users
@@ -29,34 +26,6 @@
   environment = {
     defaultPackages = []; # Don't install any default programs, force everything
     enableAllTerminfo = mkDefault false;
-    systemPackages = with pkgs; [
-      binutils            # standard binutils
-      bind                # nslookup and nameserver tools
-      coreutils           # gnu core utilities
-      curl                # swiss army knife
-      du-dust             # rust version of du
-      git                 # git
-      git-lfs             # git large file support
-      htop                # process analysis
-      iftop               # network i/o analysis
-      inetutils           # internet tools
-      iotop               # i/o analysis
-      kitty               # Kitty Terminfo
-      links2              # console web browser
-      lsof                # list open files
-      mtr                 # traceroute
-      ncdu                # disk usage gui
-      nano                # editor
-      nvd                 # Nix Diffs
-      psmisc              # process analysis
-      rsync               # Transfer files
-      tmux
-      wget                # file fetcher
-    ]
-    ++ (lib.optionals pkgs.stdenv.isLinux [
-      pciutils            # pci statistics
-      strace              # debug
-    ]);
   };
 
   home-manager.extraSpecialArgs = { inherit inputs outputs; };
@@ -64,6 +33,33 @@
   hardware.enableRedistributableFirmware = mkDefault true;
 
   host = {
+    applications = {
+      bash.enable = mkDefault true;
+      bind.enable = mkDefault true;
+      binutils.enable = mkDefault true;
+      coreutils.enable = mkDefault true;
+      curl.enable = mkDefault true;
+      diceware.enable = mkDefault true;
+      dust.enable = mkDefault true;
+      git.enable = mkDefault true;
+      htop.enable = mkDefault true;
+      iftop.enable = mkDefault true;
+      inetutils.enable = mkDefault true;
+      iotop.enable = mkDefault true;
+      kitty.enable = mkDefault true;
+      less.enable = mkDefault true;
+      links.enable = mkDefault true;
+      lsof.enable = mkDefault true;
+      mtr.enable = mkDefault true;
+      nano.enable = mkDefault true;
+      ncdu.enable = mkDefault true;
+      pciutils.enable = mkDefault true;
+      psmisc.enable = mkDefault true;
+      rsync.enable = mkDefault true;
+      strace.enable = mkDefault true;
+      tmux.enable = mkDefault true;
+      wget.enable = mkDefault true;
+    };
     feature = {
       secrets.enable = mkDefault true;
     };
