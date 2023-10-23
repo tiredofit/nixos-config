@@ -16,8 +16,8 @@ in
   };
 
   config = mkIf cfg.enable {
-        environment.systemPackages = [
-          bind
-        ];
-      };
+    environment.systemPackages = [
+      bind
+    ];
+  };
 }
