@@ -10,13 +10,13 @@ in
       enable = mkOption {
         default = false;
         type = with types; bool;
-        description = "Enables file downloader";
+        description = "Enables web downloader";
       };
     };
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = [
+    environment.systemPackages = with pkgs; [
       wget
     ];
   };
