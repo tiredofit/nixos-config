@@ -16,12 +16,12 @@ in
   };
 
   config = mkIf cfg.enable {
-        environment.systemPackages = [
+    environment.systemPackages = [
+    ];
 
-        ];
+    programs.changeme = {
 
-        programs.changeme = {
+    };
 
-        };
-      };
+  };
 }

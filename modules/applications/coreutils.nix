@@ -16,8 +16,8 @@ in
   };
 
   config = mkIf cfg.enable {
-        environment.systemPackages = [
-          coreutils
-        ];
-      };
+    environment.systemPackages = [
+      coreutils
+    ];
+  };
 }
