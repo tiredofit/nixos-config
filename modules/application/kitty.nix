@@ -10,14 +10,14 @@ in
       enable = mkOption {
         default = false;
         type = with types; bool;
-        description = "Enables kitty";
+        description = "Enables kitty terminal support";
       };
     };
   };
 
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
-      kitty
+      kitty.terminfo
     ];
   };
 }
