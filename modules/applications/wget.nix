@@ -1,7 +1,7 @@
 {config, lib, pkgs, ...}:
 
 let
-  cfg = config.host.application.;
+  cfg = config.host.application.wget;
 in
   with lib;
 {
