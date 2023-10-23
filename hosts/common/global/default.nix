@@ -33,7 +33,7 @@
   hardware.enableRedistributableFirmware = mkDefault true;
 
   host = {
-    applications = {
+    application = {
       bash.enable = mkDefault true;
       bind.enable = mkDefault true;
       binutils.enable = mkDefault true;
