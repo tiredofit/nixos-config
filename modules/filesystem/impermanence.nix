@@ -46,12 +46,8 @@ in
     boot.initrd = lib.mkMerge [
       (lib.mkIf (cfg_impermanence.enable && !cfg_encrypt.enable) {
         postDeviceCommands = pkgs.lib.mkBefore ''
-        set -x
           mkdir -p /mnt
-          mount -o subvol=/ /dev/disk/by-partlabel/pool0_0 /mnt
-          btrfs subvolume list -o /mnt/
-          echo "2"
-          btrfs subvolume list -o /mnt/${cfg_impermanence.root-subvol}
+          mount -o subvol=/ /dev/disk/by-partlabel/rootfs /mnt
           btrfs subvolume list -o /mnt/${cfg_impermanence.root-subvol} | cut -f9 -d' ' |
           while read subvolume; do
               echo "Deleting /$subvolume subvolume"
@@ -63,7 +59,6 @@ in
           btrfs subvolume snapshot /mnt/${cfg_impermanence.blank-root-subvol} /mnt/${cfg_impermanence.root-subvol}
           mkdir -p /mnt/${cfg_impermanence.root-subvol}/mnt
           umount /mnt
-        set +x
         '';
       })
 
