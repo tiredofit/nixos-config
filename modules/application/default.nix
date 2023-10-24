@@ -6,10 +6,12 @@ with lib;
     ./bash.nix
     ./bind.nix
     ./binutils.nix
+    ./busybox.nix
     ./coreutils.nix
     ./curl.nix
     ./diceware.nix
     ./dust.nix
+    ./e2fsprogs.nix
     ./git.nix
     ./htop.nix
     ./iftop.nix
