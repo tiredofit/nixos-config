@@ -31,7 +31,7 @@ in
               };
             };
             root = {
-              label = "rootfs";
+              label = "pool0_0";
               name = "btrfs";
               size = "100%";
               content = {
