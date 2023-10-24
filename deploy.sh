@@ -308,10 +308,9 @@ check_for_repository() {
                 prompt="Where is your NixOS repository?"
                 options=( "Local Filesystem" "Git Repository" )
                 PS3="$prompt "
-                select opt in "${options[@]}" "Quit" ; do
+                select opt in "${options[@]}" "Back" ; do
                     if (( REPLY == 1 + ${#options[@]} )) ; then
-                        echo "Bye!"
-                        exit 2
+                        break
                     elif (( REPLY > 0 && REPLY <= ${#options[@]} )) ; then
                         break
                     else
@@ -1298,7 +1297,7 @@ install_and_deploy_q_host() {
     prompt="Which host do you want to target?"
     options=( $(find ${_dir_flake}/hosts/* -maxdepth 0 -type d | rev | cut -d / -f 1 | rev | sed "/common/d" | xargs -0) )
     PS3="$prompt "
-    select opt in "${options[@]}" "Quit" ; do
+    select opt in "${options[@]}" "Back" ; do
         if (( REPLY == 1 + ${#options[@]} )) ; then
             menu_host
         elif (( REPLY > 0 && REPLY <= ${#options[@]} )) ; then
@@ -1797,10 +1796,9 @@ install_q_disk() {
     prompt="Which Disk template do you want to deploy?"
     options=( $(find ${_dir_flake}/templates/disko/* -maxdepth 0 -type f | rev | cut -d / -f 1 | rev | sed "s|.nix||g" | xargs -0) )
     PS3="$prompt "
-    select opt in "${options[@]}" "Quit" ; do
+    select opt in "${options[@]}" "Back" ; do
         if (( REPLY == 1 + ${#options[@]} )) ; then
-            echo "Bye!"
-            exit 2
+            break
         elif (( REPLY > 0 && REPLY <= ${#options[@]} )) ; then
             break
         else
