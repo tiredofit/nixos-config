@@ -27,7 +27,7 @@ in
           dateext = mkDefault true;
           dateformat = mkDefault "-%Y-%m-%d";
           nomail = mkDefault true;
-          notifempty = mkDefault false;
+          notifempty = mkDefault true; # TODO - when switching to false this breaks
           missingok = mkDefault true;
           copytruncate = mkDefault true;
           compress = mkDefault true;
