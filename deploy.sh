@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 SCRIPT_VERSION=0.0.1
-LOG_LEVEL=DEBUG
+LOG_LEVEL=NOTICE
 SSH_PORT=${SSH_PORT:-"22"}
 REMOTE_USER=${REMOTE_USER:-"$(whoami)"}
 
@@ -1217,6 +1217,7 @@ parse_disk_config() {
 }
 
 secret_rekey() {
+    echo ""
     print_info "Rekeying Secrets. Please select y or n when prompted"
     case "${1}" in
         all )
@@ -1224,7 +1225,7 @@ secret_rekey() {
             for secret in "${_dir_flake}"/hosts/*/secrets/* ; do
                 if ! [[ $(basename "${secret}") =~ ssh_host.* ]] ; then
                     print_debug "[secret_rekey] Rekeying ALL - ${secret}"
-                    sops updatekeys ${secret}
+                    sops updatekeys "${secret}"
                 fi
             done
         ;;
@@ -1232,7 +1233,7 @@ secret_rekey() {
             for secret in "${_dir_flake}"/hosts/common/secrets/* ; do
                 if ! [[ $(basename "${secret}") =~ ssh_host.* ]] ; then
                     print_debug "[secret_rekey] Rekeying Common - ${secret}"
-                    sops updatekeys ${secret}
+                    sops updatekeys "${secret}"
                 fi
             done
         ;;
@@ -1245,7 +1246,7 @@ secret_rekey() {
             for secret in "${_dir_flake}"/hosts/${1}/secrets/* ; do
                 if ! [[ $(basename "${secret}") =~ ssh_host.* ]] ; then
                     print_debug "[secret_rekey] Rekeying Wildcard - host/sercrets/${secret}"
-                    sops updatekeys ${secret}
+                    sops updatekeys "${secret}"
                 fi
             done
         ;;
@@ -1262,8 +1263,6 @@ secret_tools() {
             $EDITOR "${_dir_flake}"/.sops.yaml
         ;;
         "rekey" )
-            print_info "Rekeying secrets"
-            wait_for_keypress
             secret_rekey "${2}"
         ;;
     esac
