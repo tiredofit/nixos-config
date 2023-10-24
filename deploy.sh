@@ -4,6 +4,8 @@ SCRIPT_VERSION=0.0.1
 LOG_LEVEL=NOTICE
 SSH_PORT=${SSH_PORT:-"22"}
 REMOTE_USER=${REMOTE_USER:-"$(whoami)"}
+SECRET_USER="dave"
+SECRET_HOST="beef"
 
 case "$1" in
     "--debug" )
