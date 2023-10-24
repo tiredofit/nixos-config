@@ -2,18 +2,18 @@
 
 {
   environment = {
-    systemPackages = [
-      pkgs.nvd
-      pkgs.git
+    systemPackages = with.pkgs [
+      git
+      nvd
     ];
   };
 
   nix = {
     gc = {
-      automatic = true;
-      dates = "19:00";
-      persistent = true;
-      options = "--delete-older-than 10d";
+      automatic = mkDefault true;
+      dates = mkDefault "19:00";
+      persistent = mkDefault true;
+      options = mkDefault "--delete-older-than 10d";
     };
 
     settings = {
