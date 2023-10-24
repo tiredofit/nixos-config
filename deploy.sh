@@ -1716,7 +1716,6 @@ EOF
     mkdir -p "${_dir_flake}"/hosts/"${deploy_host}"/secrets
     sops "${_dir_flake}"/hosts/"${deploy_host}"/secrets/secrets.yaml
     git add "${_dir_flake}"/hosts/"${deploy_host}"/secrets/secrets.yaml
-    wait_for_keypress
 }
 
 task_generate_sops_configuration() {
@@ -1734,7 +1733,6 @@ task_generate_sops_configuration() {
     print_debug "Add the host to the users_secrets"
 
     sed -i "s|'||g" "${_dir_flake}"/.sops.yaml
-    wait_for_keypress
 }
 
 task_generate_ssh_key() {
@@ -1744,7 +1742,6 @@ task_generate_ssh_key() {
     mkdir -p hosts/"${deploy_host}"/secrets
     cp -R "${_dir_remote_rootfs}"/"${feature_impermanence}"/etc/ssh/ssh_host_ed25519_key.pub hosts/"${deploy_host}"/secrets/
     silent git add "${_dir_flake}"/hosts/"${deploy_host}"
-    wait_for_keypress
 }
 
 task_update_disk_prefix() {
@@ -1796,6 +1793,9 @@ task_install_host() {
         feature_luks="--disk-encryption-keys ${luks_key} /tmp/luks-key"
     fi
     set -x
+    ## TODO
+    ## We use sudo here as we're generating secrets and setting them as root and when nixosanywhere rsyncs them over it can't read them..
+    ## Potential PR to the nixos project to execute a "pre-hook" bash script before the installation process actually occurs.
     nix run github:numtide/nixos-anywhere -- \
                                                 --ssh-port ${SSH_PORT} ${ssh_private_key_prefix} \
                                                 --no-reboot \
