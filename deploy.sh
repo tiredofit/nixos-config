@@ -1213,6 +1213,7 @@ parse_disk_config() {
 }
 
 secret_rekey() {
+    set -x
     case "${1}" in
         all )
             print_debug "[secret_rekey] Rekeying ALL"
@@ -1245,10 +1246,12 @@ secret_rekey() {
             done
         ;;
     esac
+    set +x
     wait_for_keypress
 }
 
 secret_tools() {
+set -x
     case "${1}" in
         "common" )
             sops "${_dir_flake}"/hosts/common/secrets/secrets.yaml
@@ -1258,9 +1261,11 @@ secret_tools() {
         ;;
         "rekey" )
             print_info "Rekeying secrets"
+            wait_for_keypress
             secret_rekey "${2}"
         ;;
     esac
+set +x
 }
 
 install_and_deploy_q_host() {
