@@ -1,8 +1,8 @@
 { inputs, lib, outputs, pkgs, ... }:
-
+  with lib;
 {
   environment = {
-    systemPackages = with.pkgs [
+    systemPackages = with pkgs; [
       git
       nvd
     ];
@@ -18,15 +18,15 @@
 
     settings = {
       accept-flake-config = true;
-      auto-optimise-store = lib.mkDefault true;
+      auto-optimise-store = mkDefault true;
       experimental-features = [ "nix-command" "flakes" "repl-flake" ];
       # show more log lines for failed builds
       log-lines = 30;
       # Free up to 10GiB whenever there is less than 5GB left.
       # this setting is in bytes, so we multiply with 1024 thrice
-      min-free = "${toString (5 * 1024 * 1024 * 1024)}";
-      max-free = "${toString (10 * 1024 * 1024 * 1024)}";
-      max-jobs = "auto";
+      min-free = mkDefault "${toString (5 * 1024 * 1024 * 1024)}";
+      max-free = mkDefault "${toString (10 * 1024 * 1024 * 1024)}";
+      max-jobs = mkDefault "auto";
       trusted-users = [ "root" "@wheel" ];
       warn-dirty = false;
     };
@@ -39,9 +39,9 @@
   nixpkgs = {
     overlays = builtins.attrValues outputs.overlays;
     config = {
-      allowBroken = false;
-      allowUnfree = true;
-      allowUnsupportedSystem = true;
+      allowBroken = mkDefault false;
+      allowUnfree = mkDefault true;
+      allowUnsupportedSystem = mkDefault true;
       permittedInsecurePackages = [
       ];
     };
@@ -62,8 +62,8 @@
       mkdir -p /var/log/activations
       nvd diff $(ls -dv /nix/var/nix/profiles/system-*-link | tail -2) > /var/log/activations/$(date +'%Y%m%d%H%M%S')-$(ls -dv /nix/var/nix/profiles/system-*-link | tail -1 | cut -d '-' -f 2)-$(readlink $(ls -dv /nix/var/nix/profiles/system-*-link | tail -1) | cut -d - -f 4-).log
     '';
-    autoUpgrade.enable = false;
-    stateVersion = lib.mkDefault "23.11";
+    autoUpgrade.enable = mkDefault false;
+    stateVersion = mkDefault "23.11";
   };
 }
 
