@@ -97,6 +97,7 @@ in
       networkmanager= {
         enable = mkDefault false;                     # systemd-networkd is cleaner and built in
       };
+      useDHCP = mkDefault false;
       useNetworkd = mkDefault false;
     };
 
