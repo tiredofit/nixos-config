@@ -1239,6 +1239,12 @@ secret_rekey() {
                     fi
                 fi
             done
+            print_debug "[secret_rekey] Rekeying Users - users/secrets.yaml"
+            if var_true "${secret_rekey_silent}"; then
+                yes | silent sops updatekeys "${_dir_flake}"/users/secrets.yaml
+            else
+                sops updatekeys "${_dir_flake}"/users/secrets.yaml
+            fi
         ;;
         common )
             for secret in "${_dir_flake}"/hosts/common/secrets/* ; do
