@@ -1224,7 +1224,7 @@ parse_disk_config() {
 
 secret_rekey() {
     if var_true "${secret_rekey_silent}"; then
-        secret_rekey_prefix="silent yes | "
+        :
     else
         echo ""
         print_info "Rekeying Secrets. Please select y or n when prompted"
@@ -1236,7 +1236,11 @@ secret_rekey() {
             for secret in "${_dir_flake}"/hosts/*/secrets/* ; do
                 if ! [[ $(basename "${secret}") =~ ssh_host.* ]] ; then
                     print_debug "[secret_rekey] Rekeying ALL - ${secret}"
-                    ${secret_rekey_prefix} sops updatekeys "${secret}"
+                    if var_true "${secret_rekey_silent}"; then
+                        yes | silent sops updatekeys "${secret}"
+                    else
+                        sops updatekeys "${secret}"
+                    fi
                 fi
             done
         ;;
@@ -1244,20 +1248,32 @@ secret_rekey() {
             for secret in "${_dir_flake}"/hosts/common/secrets/* ; do
                 if ! [[ $(basename "${secret}") =~ ssh_host.* ]] ; then
                     print_debug "[secret_rekey] Rekeying Common - ${secret}"
-                    ${secret_rekey_prefix} sops updatekeys "${secret}"
+                    if var_true "${secret_rekey_silent}"; then
+                        yes | silent sops updatekeys "${secret}"
+                    else
+                        sops updatekeys "${secret}"
+                    fi
                 fi
             done
         ;;
         users )
             print_debug "[secret_rekey] Rekeying Users - users/secrets.yaml"
-            ${secret_rekey_prefix} sops updatekeys "${_dir_flake}"/users/secrets.yaml
+            if var_true "${secret_rekey_silent}"; then
+                yes | silent sops updatekeys "${_dir_flake}"/users/secrets.yaml
+            else
+                sops updatekeys "${_dir_flake}"/users/secrets.yaml
+            fi
         ;;
         * )
             print_debug "[secret_rekey] Rekeying Wildcard"
             for secret in "${_dir_flake}"/hosts/${1}/secrets/* ; do
                 if ! [[ $(basename "${secret}") =~ ssh_host.* ]] ; then
                     print_debug "[secret_rekey] Rekeying Wildcard - host/sercrets/${secret}"
-                    ${secret_rekey_prefix} sops updatekeys "${secret}"
+                    if var_true "${secret_rekey_silent}"; then
+                        yes | silent sops updatekeys "${secret}"
+                    else
+                        sops updatekeys "${secret}"
+                    fi
                 fi
             done
         ;;
@@ -1664,7 +1680,7 @@ task_hostmanagement_delete() {
     prompt="Which host do you want to delete?"
     options=( $(find ${_dir_flake}/hosts/* -maxdepth 0 -type d | rev | cut -d / -f 1 | rev | sed "/common/d" | xargs -0) )
     PS3="$prompt "
-    select opt in "${options[@]}" "Quit" ; do
+    select opt in "${options[@]}" "Back" ; do
         if (( REPLY == 1 + ${#options[@]} )) ; then
             echo "Bye!"
             exit 2
