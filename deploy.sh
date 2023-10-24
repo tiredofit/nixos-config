@@ -1228,6 +1228,7 @@ secret_rekey() {
 
     case "${1}" in
         all )
+            LOG_LEVEL=DEBUG
             print_debug "[secret_rekey] Rekeying ALL"
             for secret in "${_dir_flake}"/hosts/*/secrets/* ; do
                 if ! [[ $(basename "${secret}") =~ ssh_host.* ]] ; then
@@ -1245,6 +1246,8 @@ secret_rekey() {
             else
                 sops updatekeys "${_dir_flake}"/users/secrets.yaml
             fi
+            wait_for_keypress
+            LOG_LEVEL=NOTICE
         ;;
         common )
             for secret in "${_dir_flake}"/hosts/common/secrets/* ; do
@@ -1270,7 +1273,7 @@ secret_rekey() {
             print_debug "[secret_rekey] Rekeying Wildcard"
             for secret in "${_dir_flake}"/hosts/${1}/secrets/* ; do
                 if ! [[ $(basename "${secret}") =~ ssh_host.* ]] ; then
-                    print_debug "[secret_rekey] Rekeying Wildcard - host/sercrets/${secret}"
+                    print_debug "[secret_rekey] Rekeying Wildcard - host/secrets/${secret}"
                     if var_true "${secret_rekey_silent}"; then
                         yes | silent sops updatekeys "${secret}"
                     else
