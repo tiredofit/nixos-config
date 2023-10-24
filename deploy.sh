@@ -932,6 +932,9 @@ menu_host_secrets_host() {
     Create an example secret. Delete everything in the file and replace it with the following line:
 
 ${deploy_host}: Example secret for ${deploy_host}
+
+    You can also add other secrets but the secret with starting with ${deploy_host} must exist.
+
 EOF
 
     echo -e "${coff}"
@@ -1792,7 +1795,7 @@ task_install_host() {
         echo -n "${PASSWORD_ENCRYPTION}" > "${luks_key}"
         feature_luks="--disk-encryption-keys ${luks_key} /tmp/luks-key"
     fi
-    set -x
+    #set -x
     ## TODO
     ## We use sudo here as we're generating secrets and setting them as root and when nixosanywhere rsyncs them over it can't read them..
     ## Potential PR to the nixos project to execute a "pre-hook" bash script before the installation process actually occurs.
