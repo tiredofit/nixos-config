@@ -39,7 +39,7 @@ in
                 extraOpenArgs = [ "--allow-discards" ];
                 # if you want to use the key for interactive login be sure there is no trailing newline
                 # for example use `echo -n "password" > /tmp/secret.key`
-                keyFile = "/tmp/secret.key"; # Interactive
+                passwordFile = "/tmp/secret.key"; # Interactive
                 # or file based
                 #settings.keyFile = "/tmp/secret.key";
                 #additionalKeyFiles = ["/tmp/additionalSecret.key"];
