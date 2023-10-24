@@ -25,9 +25,9 @@ in
           frequency = mkDefault "daily";
           rotate = mkDefault 7;
           dateext = mkDefault true;
-          dateformat = mkDefault "%Y-%m-%d";
+          dateformat = mkDefault "-%Y-%m-%d";
           nomail = mkDefault true;
-          notifempty = mkDefault true;
+          notifempty = mkDefault false;
           missingok = mkDefault true;
           copytruncate = mkDefault true;
           compress = mkDefault true;
