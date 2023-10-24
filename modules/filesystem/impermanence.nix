@@ -49,6 +49,9 @@ in
         set -x
           mkdir -p /mnt
           mount -o subvol=/ /dev/disk/by-partlabel/pool0_0 /mnt
+          btrfs subvolume list -o /mnt/
+          echo "2"
+          btrfs subvolume list -o /mnt/${cfg_impermanence.root-subvol}
           btrfs subvolume list -o /mnt/${cfg_impermanence.root-subvol} | cut -f9 -d' ' |
           while read subvolume; do
               echo "Deleting /$subvolume subvolume"

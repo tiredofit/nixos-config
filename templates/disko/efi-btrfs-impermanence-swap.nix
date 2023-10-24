@@ -42,6 +42,9 @@ in
                     mountpoint = "/";
                     mountOptions = [ "compress=zstd" "noatime" ];
                   };
+                  "/root-blank" = {
+                    mountOptions = [ "compress=zstd" "noatime" ];
+                  };
                   "/home" = {
                     mountOptions = [ "compress=zstd" "noatime" ];
                   };
