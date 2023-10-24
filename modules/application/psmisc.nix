@@ -10,7 +10,7 @@ in
       enable = mkOption {
         default = false;
         type = with types; bool;
-        description = "Enables process managment tools";
+        description = "A set of small useful utilities that use the proc filesystem (such as fuser, killall and pstree)";
       };
     };
   };
