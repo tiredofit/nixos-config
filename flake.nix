@@ -65,10 +65,6 @@
       formatter = forEachSystem (pkgs: pkgs.nixpkgs-fmt);
 
       nixosConfigurations = {
-        test = lib.nixosSystem { # Server Added 2023%-10-24 
-          modules = [ ./hosts/test ];
-          specialArgs = { inherit inputs outputs; };
-        };
 
         beef = lib.nixosSystem { # Workstation
           modules = [ ./hosts/beef ];
