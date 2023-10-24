@@ -48,7 +48,7 @@ in
       };
       mac = mkOption {
         type = with types; str;
-        default = "null";
+        default = "*";
         description = "MAC Address to Match";
       };
     };
