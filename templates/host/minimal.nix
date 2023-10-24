@@ -12,7 +12,7 @@
     };
     filesystem = {
       swap = {
-        partition = "disk/by-label/swap";
+        partition = "disk/by-partlabel/swap";
       };
     };
     hardware = {
