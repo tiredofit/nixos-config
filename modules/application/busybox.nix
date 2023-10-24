@@ -1,23 +1,23 @@
 {config, lib, pkgs, ...}:
 
 let
-  cfg = config.host.application.e2fsprogs;
+  cfg = config.host.application.busybox;
 in
   with lib;
 {
   options = {
-    host.application.e2fsprogs = {
+    host.application.busybox = {
       enable = mkOption {
         default = false;
         type = with types; bool;
-        description = "Enables e2fsprogs";
+        description = "Enables busybox";
       };
     };
   };
 
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
-      e2fsprogs
+      busybox
     ];
   };
 }
