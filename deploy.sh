@@ -1767,7 +1767,7 @@ task_generate_sops_configuration() {
     yq -i eval ".keys += [ \"&host_${deploy_host} ${_age_key_pub}\" ]" "${_dir_flake}"/.sops.yaml
     print_debug "Add the hosts AGE Key at the top"
 
-    yq -i eval ".creation_rules += [{\"path_regex\": \"hosts/${deploy_host}/secrets/.*\", \"key_groups\": [{\"age\": [\"*host_${deploy_host}\", \"*user_dave\"]}]}]" "${_dir_flake}"/.sops.yaml
+    yq -i eval ".creation_rules += [{\"path_regex\": \"hosts/${deploy_host}/secrets/.*\", \"key_groups\": [{\"age\": [\"*host_${deploy_host}\", \"*host_${SECRET_HOST}\", \"*user_${SECRET_USER}\"]}]}]" "${_dir_flake}"/.sops.yaml
     print_debug "Add the new path_regex for the host along with the host and user"
 
     yq -i eval ".creation_rules |= map(select(.path_regex == \"hosts/common/secrets/.*\").key_groups[0].age += [\"*host_${deploy_host}\"] // .)" "${_dir_flake}"/.sops.yaml
@@ -1836,7 +1836,7 @@ task_install_host() {
         echo -n "${PASSWORD_ENCRYPTION}" > "${luks_key}"
         feature_luks="--disk-encryption-keys ${luks_key} /tmp/luks-key"
     fi
-    #set -x
+    set -x
     ## TODO
     ## We use sudo here as we're generating secrets and setting them as root and when nixosanywhere rsyncs them over it can't read them..
     ## Potential PR to the nixos project to execute a "pre-hook" bash script before the installation process actually occurs.
@@ -1847,6 +1847,7 @@ task_install_host() {
                                                 --flake "${_dir_flake}"/#${deploy_host} \
                                                 ${REMOTE_USER}@${REMOTE_IP}
     set +x
+
     #if [ -n "${PASSWORD_ENCRYPTION}" ]; then
     #    rm -rf "${luks_key}"
     #fi
