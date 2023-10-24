@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 SCRIPT_VERSION=0.0.1
-LOG_LEVEL=NOTICE
+LOG_LEVEL=DEBUG
 SSH_PORT=${SSH_PORT:-"22"}
 REMOTE_USER=${REMOTE_USER:-"$(whoami)"}
 
@@ -367,6 +367,7 @@ check_host_availability() {
 copy_ssh_key() {
     print_notice "Performing Check against SSH that you can log in"
     ssh-copy-id -p ${SSH_PORT} ${ssh_private_key_prefix} -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_IP}
+    wait_for_keypress
 }
 
 flake_tools() {
@@ -671,6 +672,7 @@ Before the installation the following needs to occur:
 
 EOF
             parse_disk_config
+            task_update_swap_size
             task_generate_encryption_password
             task_generate_ssh_key
             task_generate_age_secrets
@@ -1190,14 +1192,14 @@ parse_disk_config() {
     if [[ "$(wc -l "${_template_chooser}" | awk '{print $1}')" -lt 1 ]]; then
         print_warn "No Disk Template found with the settings in the hosts configuration file"
         print_warn "Please choose a template manually.."
-        sleep 5
+        wait_for_keypress
         install_q_disk
     fi
 
     if [[ "$(wc -l "${_template_chooser}" | awk '{print $1}')" -gt 1 ]]; then
         print_warn "More than two disk templates found based on the settings in the hosts configuration file"
         print_warn "Please choose a template manually.."
-        sleep 5
+        wait_for_keypress
         install_q_disk
     fi
 
@@ -1213,8 +1215,10 @@ parse_disk_config() {
 secret_rekey() {
     case "${1}" in
         all )
+            print_debug "[secret_rekey] Rekeying ALL"
             for secret in "${_dir_flake}"/hosts/*/secrets/* ; do
                 if ! [[ $(basename "${secret}") =~ ssh_host.* ]] ; then
+                    print_debug "[secret_rekey] Rekeying ALL - ${secret}"
                     sops updatekeys ${secret}
                 fi
             done
@@ -1222,21 +1226,26 @@ secret_rekey() {
         common )
             for secret in "${_dir_flake}"/hosts/common/secrets/* ; do
                 if ! [[ $(basename "${secret}") =~ ssh_host.* ]] ; then
+                    print_debug "[secret_rekey] Rekeying Common - ${secret}"
                     sops updatekeys ${secret}
                 fi
             done
         ;;
         users )
+            print_debug "[secret_rekey] Rekeying Users - users/secrets.yaml"
             sops updatekeys "${_dir_flake}"/users/secrets.yaml
         ;;
         * )
+            print_debug "[secret_rekey] Rekeying Wildcard"
             for secret in "${_dir_flake}"/hosts/${1}/secrets/* ; do
                 if ! [[ $(basename "${secret}") =~ ssh_host.* ]] ; then
+                    print_debug "[secret_rekey] Rekeying Wildcard - host/sercrets/${secret}"
                     sops updatekeys ${secret}
                 fi
             done
         ;;
     esac
+    wait_for_keypress
 }
 
 secret_tools() {
@@ -1697,10 +1706,11 @@ task_generate_host_secrets() {
 ${deploy_host}: Example secret for ${deploy_host}
 EOF
 
-    read -n 1 -s -r -p "** Press any key to continue **"
+    wait_for_keypress
     mkdir -p "${_dir_flake}"/hosts/"${deploy_host}"/secrets
     sops "${_dir_flake}"/hosts/"${deploy_host}"/secrets/secrets.yaml
     git add "${_dir_flake}"/hosts/"${deploy_host}"/secrets/secrets.yaml
+    wait_for_keypress
 }
 
 task_generate_sops_configuration() {
@@ -1718,6 +1728,7 @@ task_generate_sops_configuration() {
     print_debug "Add the host to the users_secrets"
 
     sed -i "s|'||g" "${_dir_flake}"/.sops.yaml
+    wait_for_keypress
 }
 
 task_generate_ssh_key() {
@@ -1727,6 +1738,7 @@ task_generate_ssh_key() {
     mkdir -p hosts/"${deploy_host}"/secrets
     cp -R "${_dir_remote_rootfs}"/"${feature_impermanence}"/etc/ssh/ssh_host_ed25519_key.pub hosts/"${deploy_host}"/secrets/
     silent git add "${_dir_flake}"/hosts/"${deploy_host}"
+    wait_for_keypress
 }
 
 task_update_disk_prefix() {
@@ -1770,32 +1782,32 @@ install_q_disk() {
 }
 
 task_install_host() {
-    set -x
+
     print_info "Commencing install to Host: ${deploy_host} (${REMOTE_IP})"
     if [ -n "${PASSWORD_ENCRYPTION}" ]; then
         luks_key=$(mktemp)
         echo -n "${PASSWORD_ENCRYPTION}" > "${luks_key}"
         feature_luks="--disk-encryption-keys ${luks_key} /tmp/luks-key"
     fi
-
+    set -x
     nix run github:numtide/nixos-anywhere -- \
                                                 --ssh-port ${SSH_PORT} ${ssh_private_key_prefix} \
                                                 --no-reboot \
                                                 ${feature_luks} --extra-files "${_dir_remote_rootfs}" \
                                                 --flake "${_dir_flake}"/#${deploy_host} \
                                                 ${REMOTE_USER}@${REMOTE_IP}
+    set +x
+    #if [ -n "${PASSWORD_ENCRYPTION}" ]; then
+    #    rm -rf "${luks_key}"
+    #fi
 
-    if [ -n "${PASSWORD_ENCRYPTION}" ]; then
-        rm -rf "${luks_key}"
-    fi
-
-    read -n 1 -s -r -p "** Press any key to continue **"
+    wait_for_keypress
 }
 
 task_update_host() {
     print_info "Commencing update to remote host"
     NIX_SSHOPTS="-t -p ${SSH_PORT} ${ssh_private_key_prefix} -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" nixos-rebuild switch --flake "${_dir_flake}"/#${deploy_host} --use-remote-sudo --target-host ${REMOTE_USER}@${REMOTE_IP} --use-remote-sudo
-    read -n 1 -s -r -p "** Press any key to continue **"
+    wait_for_keypress
 }
 
 menu_install_host() {
@@ -1908,10 +1920,12 @@ case "${MODE,,}" in
             case "${2}" in
                 update )
                     flake_tools update
+                    wait_for_keypress
                     exit
                 ;;
                 upgrade )
                     flake_tools upgrade
+                    wait_for_keypress
                     exit
                 ;;
             esac
@@ -1943,3 +1957,7 @@ case "${MODE,,}" in
         menu_secrets
     ;;
 esac
+
+wait_for_keypress() {
+    read -n 1 -s -r -p "** Press any key to continue **"
+}

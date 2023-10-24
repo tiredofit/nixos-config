@@ -29,6 +29,7 @@
     role = "server";
     user = {
       root.enable = true;
+      test.enable = true;
     };
   };
 }
