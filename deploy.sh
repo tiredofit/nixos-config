@@ -387,74 +387,74 @@ flake_tools() {
     esac
 }
 
-menu_deploy() {
-    if [ -f "${_dir_flake}"/hosts/"${deploy_host}"/secrets/secrets.yaml ] ; then
-        option_secrets="(${cwh}S${cdgy}) Host secrets.yaml \n"
-    fi
-
-    if [ -f "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix ] ; then
-        m_diskconfig="${cdgy}(${cwh}D${cdgy}) Edit Disk Config\\n"
-    fi
-
-    printf "\033c"
-    echo -e "${clm}"
-    cat << EOF
--------------
-| Deploy Menu |
--------------
-
-Perform a new installation or update an existing installation remotely.
-
-EOF
-    echo -e "${coff}"
-    read -p "$(echo -e ${cdgy}\(${cwh}N${cdgy}\) New Install for Host: ${deploy_host}\\n\(${cwh}E${cdgy}\) Update Existing Host: ${deploy_host} \\n\\n${cwh}CHANGE **DANGER!!**:\\n\\n${m_diskconfig}${cdgy}\(${cwh}S${cdgy}\) Regenerate SSH Keys for: ${deploy_host}\\n\(${cwh}A${cdgy}\) Regenerate AGE Secret Keys for ${deploy_host}\\n${cwh}${coff}\\n${cdgy}\(${cwh}B${cdgy}\) Back to host menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_deploy
-    case "${q_menu_deploy,,}" in
-        "n" | "new" )
-            parse_disk_config
-            task_generate_encryption_password
-            task_generate_ssh_key
-            task_generate_age_secrets
-            task_generate_sops_configuration
-            task_generate_host_secrets
-            secret_tools rekey all
-            task_install_host
-            menu_deploy
-        ;;
-        "e" | "existing" )
-            task_update_host
-            menu_deploy
-        ;;
-        "d" | "disk" )
-            menu_diskconfig
-        ;;
-        "s" | "ssh" )
-            task_generate_ssh_key
-            menu_deploy
-        ;;
-        "a" | "age" )
-            task_generate_age_secrets
-            menu_deploy
-        ;;
-        "b" | "back" )
-            menu_host
-        ;;
-        "q" | "exit" )
-            print_info "Quitting Script"
-            exit 1
-        ;;
-        "?" | "help" )
-            echo -e "${clm}"
-            echo -e "${cwh}Host${cdgy} - Change host"
-            echo -e ""
-            echo -e "${cwh}IP Address${cdgy} - Change IP address of remote host "
-            echo -e ""
-        ;;
-        * )
-            menu_deploy
-        ;;
-
-    esac
-}
+#menu_deploy() {
+#    if [ -f "${_dir_flake}"/hosts/"${deploy_host}"/secrets/secrets.yaml ] ; then
+#        option_secrets="(${cwh}S${cdgy}) Host secrets.yaml \n"
+#    fi
+#
+#    if [ -f "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix ] ; then
+#        m_diskconfig="${cdgy}(${cwh}D${cdgy}) Edit Disk Config\\n"
+#    fi
+#
+#    printf "\033c"
+#    echo -e "${clm}"
+#    cat << EOF
+#-------------
+#| Deploy Menu |
+#-------------
+#
+#Perform a new installation or update an existing installation remotely.
+#
+#EOF
+#    echo -e "${coff}"
+#    read -p "$(echo -e ${cdgy}\(${cwh}N${cdgy}\) New Install for Host: ${deploy_host}\\n\(${cwh}E${cdgy}\) Update Existing Host: ${deploy_host} \\n\\n${cwh}CHANGE **DANGER!!**:\\n\\n${m_diskconfig}${cdgy}\(${cwh}S${cdgy}\) Regenerate SSH Keys for: ${deploy_host}\\n\(${cwh}A${cdgy}\) Regenerate AGE Secret Keys for ${deploy_host}\\n${cwh}${coff}\\n${cdgy}\(${cwh}B${cdgy}\) Back to host menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_deploy
+#    case "${q_menu_deploy,,}" in
+#        "n" | "new" )
+#            parse_disk_config
+#            task_generate_encryption_password
+#            task_generate_ssh_key
+#            task_generate_age_secrets
+#            task_generate_sops_configuration
+#            task_generate_host_secrets
+#            secret_tools rekey all
+#            task_install_host
+#            menu_deploy
+#        ;;
+#        "e" | "existing" )
+#            task_update_host
+#            menu_deploy
+#        ;;
+#        "d" | "disk" )
+#            menu_diskconfig
+#        ;;
+#        "s" | "ssh" )
+#            task_generate_ssh_key
+#            menu_deploy
+#        ;;
+#        "a" | "age" )
+#            task_generate_age_secrets
+#            menu_deploy
+#        ;;
+#        "b" | "back" )
+#            menu_host
+#        ;;
+#        "q" | "exit" )
+#            print_info "Quitting Script"
+#            exit 1
+#        ;;
+#        "?" | "help" )
+#            echo -e "${clm}"
+#            echo -e "${cwh}Host${cdgy} - Change host"
+#            echo -e ""
+#            echo -e "${cwh}IP Address${cdgy} - Change IP address of remote host "
+#            echo -e ""
+#        ;;
+#        * )
+#            menu_deploy
+#        ;;
+#
+#    esac
+#}
 
 menu_diskconfig() {
     if var_true "${disk_encryption}"; then
@@ -678,6 +678,7 @@ EOF
             task_generate_age_secrets
             task_generate_sops_configuration
             task_generate_host_secrets
+            secret_tools rekey all
             task_install_host
             menu_host
         ;;
