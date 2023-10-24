@@ -1381,6 +1381,7 @@ EOF
             task_hostmanagement_q_impermanence
             task_hostmanagement_q_encryption
             task_hostmanagement_q_raid
+            read -e -i "$_template_network_mac" -p "$(echo -e ${clg}** ${cdgy}What is the remote networks MAC Address \(eg 00:01:02:03:04:05\): \ ${coff})" _template_network_mac
             task_hostmanagement_q_networking
         ;;
         "v" | "vm" )
@@ -1498,11 +1499,15 @@ task_hostmanagement_q_networking() {
                             done
                             _template_network_gateway=${network_ip_public_gateway_tmp}
                             break
-
-                            read -e -i "$_template_network_mac" -p "$(echo -e ${clg}** ${cdgy}Network MAC Address \(eg 00:01:02:03:04:05\): \ ${coff})" _template_network_mac
+                            if [ -z "${_template_network_mac}" ]; then
+                                read -e -i "$_template_network_mac" -p "$(echo -e ${clg}** ${cdgy}Network MAC Address \(eg 00:01:02:03:04:05\): \ ${coff})" _template_network_mac
+                            fi
                         ;;
                         "d" | "dhcp" | "dynamic" )
                             _template_ip_type="dynamic"
+                            if [ -z "${_template_network_mac}" ]; then
+                                read -e -i "$_template_network_mac" -p "$(echo -e ${clg}** ${cdgy}Network MAC Address \(eg 00:01:02:03:04:05\): \ ${coff})" _template_network_mac
+                            fi
                             break
                         ;;
                         "q" | "exit" )
