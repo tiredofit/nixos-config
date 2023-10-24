@@ -66,6 +66,7 @@
 
       nixosConfigurations = {
 
+
         beef = lib.nixosSystem { # Workstation
           modules = [ ./hosts/beef ];
           specialArgs = { inherit inputs outputs; };

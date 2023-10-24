@@ -586,7 +586,7 @@ EOF
     case "${q_menu_hostmanagement,,}" in
         "c" | "create" )
             task_hostmanagement_create
-            menu_host_management
+            menu_host
         ;;
         "d" | "delete" )
             task_hostmanagement_delete
@@ -645,9 +645,6 @@ EOF
     echo -e "${coff}"
     read -p "$(echo -e ${cdgy}Host: ${cwh}${deploy_host}${cdgy}\\n\\n${cwh}CHANGE:${cdgy}\\n\\n\(${cwh}I${cdgy}\) IP Address: ${cwh}${REMOTE_IP}${cdgy}\\n${cdgy}\(${cwh}R${cdgy}\) SSH Options\\n${menu_host_option_deploy}\\n${cwh}EDIT:${cdgy}\\n\\n\(${cwh}E${cdgy}\) Host Configuration \\n\(${cwh}F${cdgy}\) Flake \\n${option_secrets}${cwh}${coff}\\n${cdgy}\(${cwh}S${cdgy}\) Host Secrets\\n${cdgy}\(${cwh}B${cdgy}\) Back to host management menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_host
     case "${q_menu_host,,}" in
-        #"d" | "deploy" )
-        #    menu_deploy
-        #;;
         "i" | "ip" )
             unset REMOTE_IP
             install_and_deploy_q_ipaddress
