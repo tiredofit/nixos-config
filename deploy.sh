@@ -1230,14 +1230,12 @@ secret_rekey() {
 
     case "${1}" in
         all )
-            LOG_LEVEL=DEBUG
             print_debug "[secret_rekey] Rekeying ALL"
             for secret in "${_dir_flake}"/hosts/*/secrets/* ; do
                 if ! [[ $(basename "${secret}") =~ ssh_host.* ]] ; then
                     print_debug "[secret_rekey] Rekeying ALL - ${secret}"
                     if var_true "${secret_rekey_silent}"; then
-                        #yes | silent sops updatekeys "${secret}"
-                        sops --verbose updatekeys "${secret}"
+                        yes | silent sops updatekeys "${secret}"
                     else
                         sops updatekeys "${secret}"
                     fi
@@ -1245,21 +1243,17 @@ secret_rekey() {
             done
             print_debug "[secret_rekey] Rekeying Users - users/secrets.yaml"
             if var_true "${secret_rekey_silent}"; then
-                sops --verbose updatekeys "${_dir_flake}"/users/secrets.yaml
-                #yes | silent sops updatekeys "${_dir_flake}"/users/secrets.yaml
+                yes | silent sops updatekeys "${_dir_flake}"/users/secrets.yaml
             else
                 sops updatekeys "${_dir_flake}"/users/secrets.yaml
             fi
-            wait_for_keypress
-            LOG_LEVEL=NOTICE
         ;;
         common )
             for secret in "${_dir_flake}"/hosts/common/secrets/* ; do
                 if ! [[ $(basename "${secret}") =~ ssh_host.* ]] ; then
                     print_debug "[secret_rekey] Rekeying Common - ${secret}"
                     if var_true "${secret_rekey_silent}"; then
-                        #yes | silent sops updatekeys "${secret}"
-                        sops --verbose updatekeys "${secret}"
+                        yes | silent sops updatekeys "${secret}"
                     else
                         sops updatekeys "${secret}"
                     fi
@@ -1269,8 +1263,7 @@ secret_rekey() {
         users )
             print_debug "[secret_rekey] Rekeying Users - users/secrets.yaml"
             if var_true "${secret_rekey_silent}"; then
-                sops --verbose updatekeys "${_dir_flake}"/users/secrets.yaml
-                #yes | silent sops updatekeys "${_dir_flake}"/users/secrets.yaml
+                yes | silent sops updatekeys "${_dir_flake}"/users/secrets.yaml
             else
                 sops updatekeys "${_dir_flake}"/users/secrets.yaml
             fi
@@ -1281,8 +1274,7 @@ secret_rekey() {
                 if ! [[ $(basename "${secret}") =~ ssh_host.* ]] ; then
                     print_debug "[secret_rekey] Rekeying Wildcard - host/secrets/${secret}"
                     if var_true "${secret_rekey_silent}"; then
-                        #yes | silent sops updatekeys "${secret}"
-                        sops --verbose updatekeys "${secret}"
+                        yes | silent sops updatekeys "${secret}"
                     else
                         sops updatekeys "${secret}"
                     fi
