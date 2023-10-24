@@ -1826,7 +1826,7 @@ task_install_host() {
     if [ -n "${PASSWORD_ENCRYPTION}" ]; then
         luks_key=$(mktemp)
         echo -n "${PASSWORD_ENCRYPTION}" > "${luks_key}"
-        feature_luks="--disk-encryption-keys ${luks_key}"
+        feature_luks="--disk-encryption-keys /tmp/secret.key ${luks_key}"
     fi
     set -x
     ## TODO
