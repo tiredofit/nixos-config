@@ -1641,11 +1641,11 @@ EOF
                     if var_true "${_template_ip_wired}" ; then
                         case "${_template_ip_type}" in
                             dynamic )
-                                sed -i "/hostname = \".*\";/a\      wired = {\n       enable = true;\n       type = \"dynamic\";\n       mac = \"${_template_network_mac}\"\n      };\n" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
+                                sed -i "/hostname = \".*\";/a\      wired = {\n       enable = true;\n       type = \"dynamic\";\n       mac = \"${_template_network_mac}\";\n      };\n" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
                                 sed -i "/wired..* = .*;/d" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
                             ;;
                             static )
-                                sed "/hostname = \".*\";/a\      wired = {\n       enable = true;\n       type = \"static\";\n       ip = \"${_template_network_ip}/${_template_network_subnet}\";\n       gateway = \"${_template_network_gateway}\";\n       mac = \"${_template_network_mac}\"\n      };\n" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
+                                sed "/hostname = \".*\";/a\      wired = {\n       enable = true;\n       type = \"static\";\n       ip = \"${_template_network_ip}/${_template_network_subnet}\";\n       gateway = \"${_template_network_gateway}\";\n       mac = \"${_template_network_mac}\";\n      };\n" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
                                 sed -i "/wired..* = .*;/d" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
                             ;;
                         esac
