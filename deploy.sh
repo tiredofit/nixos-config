@@ -1124,6 +1124,7 @@ parse_disk_config() {
     fi
     if grep -qF "impermanence.enable = mkDefault true;" "${_dir_flake}"/modules/roles/"${system_role}"/default.nix || grep -qPzo -m 1 "(?s)impermanence = {\n.*enable = mkDefault true;"  "${_dir_flake}"/modules/roles/"${system_role}"/default.nix; then
         disk_impermanence=true
+        feature_impermanence="persist"
     fi
     if grep -qF "raid.enable = mkDefault true;" "${_dir_flake}"/modules/roles/"${system_role}"/default.nix; then
         disk_raid=true
@@ -1144,8 +1145,10 @@ parse_disk_config() {
     fi
     if grep -qF "impermanence.enable = true;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix || grep -qPzo -m 1 "(?s)impermanence = {\n.*enable = true;" "${_dir_flake}"/modules/roles/"${system_role}"/default.nix ; then
         disk_impermanence=true
+        feature_impermanence="persist"
     elif grep -qF "impermanence.enable = false;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix || grep -qPzo -m 1 "(?s)impermanence = {\n.*enable = false;" "${_dir_flake}"/modules/roles/"${system_role}"/default.nix ; then
         disk_impermanence=false
+        unset feature_impermanence
     fi
     if grep -qF "raid.enable = true;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
         disk_raid=true
@@ -1214,7 +1217,7 @@ parse_disk_config() {
 }
 
 secret_rekey() {
-    set -x
+    print_info "Rekeying Secrets. Please select y or n when prompted"
     case "${1}" in
         all )
             print_debug "[secret_rekey] Rekeying ALL"
@@ -1247,12 +1250,10 @@ secret_rekey() {
             done
         ;;
     esac
-    set +x
     wait_for_keypress
 }
 
 secret_tools() {
-set -x
     case "${1}" in
         "common" )
             sops "${_dir_flake}"/hosts/common/secrets/secrets.yaml
@@ -1266,7 +1267,6 @@ set -x
             secret_rekey "${2}"
         ;;
     esac
-set +x
 }
 
 install_and_deploy_q_host() {
@@ -1670,6 +1670,7 @@ task_hostmanagement_delete() {
 
 task_generate_age_secrets() {
     mkdir -p "${_dir_remote_rootfs}"/"${feature_impermanence}"/root/.config/sops/age/
+    chmod 700 "${_dir_remote_rootfs}"/"${feature_impermanence}"/root/.config/sops/age/
     ssh-to-age -private-key -i "${_dir_remote_rootfs}"/etc/ssh/ssh_host_ed25519_key > "${_dir_remote_rootfs}"/"${feature_impermanence}"/root/.config/sops/age/keys.txt
     sudo chown root:root "${_dir_remote_rootfs}"/"${feature_impermanence}"/root/.config/sops/age/keys.txt
     sudo chmod 400 "${_dir_remote_rootfs}"/"${feature_impermanence}"/root/.config/sops/age/keys.txt
@@ -1737,7 +1738,8 @@ task_generate_sops_configuration() {
 
 task_generate_ssh_key() {
     _dir_remote_rootfs=$(mktemp -d)
-    mkdir -p "${_dir_remote_rootfs}"/${feature_impermanence}/etc/ssh/
+    mkdir -p "${_dir_remote_rootfs}"/"${feature_impermanence}"/etc/ssh/
+    chmod 755 "${_dir_remote_rootfs}"/"${feature_impermanence}"/etc/ssh/
     ssh-keygen -q -N "" -t ed25519 -C "${deploy_host}" -f "${_dir_remote_rootfs}"/"${feature_impermanence}"/etc/ssh/ssh_host_ed25519_key
     mkdir -p hosts/"${deploy_host}"/secrets
     cp -R "${_dir_remote_rootfs}"/"${feature_impermanence}"/etc/ssh/ssh_host_ed25519_key.pub hosts/"${deploy_host}"/secrets/
@@ -1785,7 +1787,6 @@ install_q_disk() {
 }
 
 task_install_host() {
-
     print_info "Commencing install to Host: ${deploy_host} (${REMOTE_IP})"
     if [ -n "${PASSWORD_ENCRYPTION}" ]; then
         luks_key=$(mktemp)
@@ -1796,7 +1797,7 @@ task_install_host() {
     ## TODO
     ## We use sudo here as we're generating secrets and setting them as root and when nixosanywhere rsyncs them over it can't read them..
     ## Potential PR to the nixos project to execute a "pre-hook" bash script before the installation process actually occurs.
-    nix run github:numtide/nixos-anywhere -- \
+    sudo nix run github:numtide/nixos-anywhere -- \
                                                 --ssh-port ${SSH_PORT} ${ssh_private_key_prefix} \
                                                 --no-reboot \
                                                 ${feature_luks} --extra-files "${_dir_remote_rootfs}" \
