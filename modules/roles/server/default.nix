@@ -97,7 +97,7 @@ in
       networkmanager= {
         enable = mkDefault false;                     # systemd-networkd is cleaner and built in
       };
-      useNetworkd = mkDefault true;
+      useNetworkd = mkDefault false;
     };
 
     systemd = {
