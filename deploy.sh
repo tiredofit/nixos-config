@@ -1490,7 +1490,7 @@ task_hostmanagement_q_impermanence() {
 
 task_hostmanagement_q_networking() {
     while true; do
-        read -p "$(echo -e ${clg}** ${cdgy}Adjust wired network settings? \(${cwh}Y${cdgy}\) Yes \(default\) \| \(${cwh}N${cdgy}\) No  : ${cwh}${coff}) " q_wirednetworking
+        read -p "$(echo -e ${clg}** ${cdgy}Does this system have a wired network card\? \(${cwh}Y${cdgy}\) Yes \(default\) \| \(${cwh}N${cdgy}\) No  : ${cwh}${coff}) " q_wirednetworking
         case "${q_wirednetworking,,}" in
             "y" | "yes" | "" )
                 _template_ip_wired=true
@@ -1642,7 +1642,7 @@ EOF
                     if var_true "${_template_ip_wired}" ; then
                         case "${_template_ip_type}" in
                             dynamic )
-                                sed -i "/hostname = \".*\";/a\      wired = {\n       enable = true;\n       type = \"dynamic\";\n      };\n" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
+                                sed -i "/hostname = \".*\";/a\      wired = {\n       enable = true;\n       type = \"dynamic\";\n       mac = \"${_template_network_mac}\"\n      };\n" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
                                 sed -i "/wired..* = .*;/d" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
                             ;;
                             static )
