@@ -679,7 +679,9 @@ EOF
             task_generate_age_secrets
             task_generate_sops_configuration
             task_generate_host_secrets
+            secret_rekey_silent=true
             secret_tools rekey all
+            secret_rekay_silent=false
             task_install_host
             menu_host
         ;;
@@ -1221,15 +1223,20 @@ parse_disk_config() {
 }
 
 secret_rekey() {
-    echo ""
-    print_info "Rekeying Secrets. Please select y or n when prompted"
+    if var_true "${secret_rekey_silent}"; then
+        secret_rekey_prefix="silent yes \| "
+    else
+        echo ""
+        print_info "Rekeying Secrets. Please select y or n when prompted"
+    fi
+
     case "${1}" in
         all )
             print_debug "[secret_rekey] Rekeying ALL"
             for secret in "${_dir_flake}"/hosts/*/secrets/* ; do
                 if ! [[ $(basename "${secret}") =~ ssh_host.* ]] ; then
                     print_debug "[secret_rekey] Rekeying ALL - ${secret}"
-                    sops updatekeys "${secret}"
+                    ${secret_rekey_prefix} sops updatekeys "${secret}"
                 fi
             done
         ;;
@@ -1237,25 +1244,25 @@ secret_rekey() {
             for secret in "${_dir_flake}"/hosts/common/secrets/* ; do
                 if ! [[ $(basename "${secret}") =~ ssh_host.* ]] ; then
                     print_debug "[secret_rekey] Rekeying Common - ${secret}"
-                    sops updatekeys "${secret}"
+                    ${secret_rekey_prefix} sops updatekeys "${secret}"
                 fi
             done
         ;;
         users )
             print_debug "[secret_rekey] Rekeying Users - users/secrets.yaml"
-            sops updatekeys "${_dir_flake}"/users/secrets.yaml
+            ${secret_rekey_prefix} sops updatekeys "${_dir_flake}"/users/secrets.yaml
         ;;
         * )
             print_debug "[secret_rekey] Rekeying Wildcard"
             for secret in "${_dir_flake}"/hosts/${1}/secrets/* ; do
                 if ! [[ $(basename "${secret}") =~ ssh_host.* ]] ; then
                     print_debug "[secret_rekey] Rekeying Wildcard - host/sercrets/${secret}"
-                    sops updatekeys "${secret}"
+                    ${secret_rekey_prefix} sops updatekeys "${secret}"
                 fi
             done
         ;;
     esac
-    wait_for_keypress
+    if var_nottrue "${secret_rekey_silent}"; then wait_for_keypress; fi
 }
 
 secret_tools() {
@@ -1795,6 +1802,7 @@ install_q_disk() {
 }
 
 task_install_host() {
+    echo ""
     print_info "Commencing install to Host: ${deploy_host} (${REMOTE_IP})"
     if [ -n "${PASSWORD_ENCRYPTION}" ]; then
         luks_key=$(mktemp)
