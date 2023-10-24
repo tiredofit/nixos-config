@@ -666,6 +666,7 @@ Before the installation the following needs to occur:
 
   - Setup Disk Drives
   - Set Encryption passwords if necessary
+  - Ask for Network Card MAC Address if necessary
   - Generate SSH Key
   - Generate SOPS Secrets
   - Generate sample host secret
