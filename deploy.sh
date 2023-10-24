@@ -1224,7 +1224,7 @@ parse_disk_config() {
 
 secret_rekey() {
     if var_true "${secret_rekey_silent}"; then
-        secret_rekey_prefix="silent yes \| "
+        secret_rekey_prefix="silent yes | "
     else
         echo ""
         print_info "Rekeying Secrets. Please select y or n when prompted"
@@ -1686,7 +1686,7 @@ task_hostmanagement_delete() {
 task_generate_age_secrets() {
     mkdir -p "${_dir_remote_rootfs}"/"${feature_impermanence}"/root/.config/sops/age/
     chmod 700 "${_dir_remote_rootfs}"/"${feature_impermanence}"/root/.config/sops/age/
-    ssh-to-age -private-key -i "${_dir_remote_rootfs}"/etc/ssh/ssh_host_ed25519_key > "${_dir_remote_rootfs}"/"${feature_impermanence}"/root/.config/sops/age/keys.txt
+    ssh-to-age -private-key -i "${_dir_remote_rootfs}"/"${feature_impermanence}"/etc/ssh/ssh_host_ed25519_key > "${_dir_remote_rootfs}"/"${feature_impermanence}"/root/.config/sops/age/keys.txt
     sudo chown root:root "${_dir_remote_rootfs}"/"${feature_impermanence}"/root/.config/sops/age/keys.txt
     sudo chmod 400 "${_dir_remote_rootfs}"/"${feature_impermanence}"/root/.config/sops/age/keys.txt
     export _age_key_pub=$(cat "${_dir_remote_rootfs}"/"${feature_impermanence}"/etc/ssh/ssh_host_ed25519_key.pub | ssh-to-age )
