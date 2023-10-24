@@ -41,6 +41,7 @@
       curl.enable = mkDefault true;
       diceware.enable = mkDefault true;
       dust.enable = mkDefault true;
+      e2fsprogs.enable = mkDefault true;
       git.enable = mkDefault true;
       htop.enable = mkDefault true;
       iftop.enable = mkDefault true;
