@@ -1755,7 +1755,7 @@ task_update_disk_prefix() {
 task_update_swap_size() {
     if [ -f "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix ] ; then
         read -e -i "$DISK_SWAP_SIZE_GB" -p "$(echo -e ${cdgy}${cwh}** ${cdgy}Disk Swap Size in GB\: \ ${coff}) " DISK_SWAP_SIZE_GB
-        sed -i "s|size = ".*"; # SWAP - Do not Delete this comment|size = "${DISK_SWAP_SIZE_GB}G"; # SWAP - Do not Delete this comment|g" "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix
+        sed -i "s|size = ".*"; # SWAP - Do not Delete this comment|size = \"${DISK_SWAP_SIZE_GB}G\"; # SWAP - Do not Delete this comment|g" "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix
     fi
 }
 
@@ -1891,7 +1891,12 @@ EOF
     esac
 }
 
-################
+wait_for_keypress() {
+    read -n 1 -s -r -p "** Press any key to continue **"
+}
+
+################ FUNCTIONS END
+
 check_for_repository
 case "${1,,}" in
     deploy )
@@ -1958,6 +1963,3 @@ case "${MODE,,}" in
     ;;
 esac
 
-wait_for_keypress() {
-    read -n 1 -s -r -p "** Press any key to continue **"
-}
