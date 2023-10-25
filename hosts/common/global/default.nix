@@ -5,7 +5,6 @@
     inputs.home-manager.nixosModules.home-manager
     ./locale.nix
     ./nix.nix
-    ../../../users
   ] ++ (builtins.attrValues outputs.nixosModules);
 
   boot = {
@@ -14,23 +13,22 @@
       compressorArgs = mkDefault ["-19"];
 
       systemd = {
-        strip = mkDefault true;                               # Saves considerable space in initrd
+        strip = mkDefault true;                         # Saves considerable space in initrd
       };
     };
     kernel.sysctl = {
-      "vm.dirty_ratio" = mkDefault 6;                         # sync disk when buffer reach 6% of memory
+      "vm.dirty_ratio" = mkDefault 6;                   # sync disk when buffer reach 6% of memory
     };
-    kernelPackages = pkgs.linuxPackages_latest;               # Latest kernel
+    kernelPackages = pkgs.linuxPackages_latest;         # Latest kernel
   };
 
   environment = {
-    defaultPackages = []; # Don't install any default programs, force everything
+    defaultPackages = [];                               # Don't install any default programs, force everything
     enableAllTerminfo = mkDefault false;
   };
 
-  home-manager.extraSpecialArgs = { inherit inputs outputs; };
-
   hardware.enableRedistributableFirmware = mkDefault true;
+  home-manager.extraSpecialArgs = { inherit inputs outputs; };
 
   host = {
     application = {
@@ -77,23 +75,24 @@
 
   networking.domain = mkDefault "tiredofit.ca";
 
-  # Increase open file limit for sudoers
-  security.pam.loginLimits = [
-    {
-      domain = "@wheel";
-      item = "nofile";
-      type = "soft";
-      value = "524288";
-    }
-    {
-      domain = "@wheel";
-      item = "nofile";
-      type = "hard";
-      value = "1048576";
-    }
-  ];
-
-  security.sudo.wheelNeedsPassword = mkDefault false ;
+  security = {
+    pam.loginLimits = [
+      # Increase open file limit for sudoers
+      {
+        domain = "@wheel";
+        item = "nofile";
+        type = "soft";
+        value = "524288";
+      }
+      {
+        domain = "@wheel";
+        item = "nofile";
+        type = "hard";
+        value = "1048576";
+      }
+    ];
+    sudo.wheelNeedsPassword = mkDefault false;
+  };
 
   services.fstrim.enable = mkDefault true;
   users.mutableUsers = mkDefault false;
