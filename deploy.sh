@@ -1858,7 +1858,7 @@ task_install_host() {
     ## We use sudo here as we're generating secrets and setting them as root and when nixosanywhere rsyncs them over it can't read them..
     ## Potential PR to the nixos project to execute a "pre-hook" bash script before the installation process actually occurs.
     sudo nix run github:numtide/nixos-anywhere -- \
-                                                --ssh-port ${SSH_PORT} ${ssh_private_key_prefix} ${feature_build_remote} ${feature_debug} ${feature_reboot} ${feature_ssh_key} \
+                                                --ssh-port ${SSH_PORT} ${feature_build_remote} ${feature_debug} ${feature_reboot} ${feature_ssh_key} \
                                                 ${feature_luks} --extra-files "${_dir_remote_rootfs}" \
                                                 --flake "${_dir_flake}"/#${deploy_host} \
                                                 ${REMOTE_USER}@${REMOTE_IP}
