@@ -1,13 +1,17 @@
 #!/usr/bin/env bash
 
-SCRIPT_VERSION=0.0.1
+SCRIPT_VERSION=1.0.0
+
+INSTALL_BUILD_LOCAL=${INSTALL_BUILD_LOCAL:-"TRUE"}
+INSTALL_DEBUG=${INSTALL_DEBUG:-"FALSE"}
+INSTALL_REBOOT=${INSTALL_REBOOT:-"FALSE"}
 LOG_LEVEL=NOTICE
-SSH_PORT=${SSH_PORT:-"22"}
 REMOTE_USER=${REMOTE_USER:-"$(whoami)"}
 SECRET_USER="dave"
 SECRET_HOST="beef"
+SSH_PORT=${SSH_PORT:-"22"}
 
-case "$1" in
+case "${1}" in
     "--debug" )
             export DEBUG_MODE=TRUE
         ;;
@@ -226,8 +230,6 @@ valid_ip() {
     return $stat
 }
 
-## Timesaver for if statements
-## Usage: if var_false $VARNAME ; then ... fi
 var_false() {
     [ "${1,,}" = "false" ] || [ "${1,,}" = "no" ]
 }
@@ -365,10 +367,16 @@ check_host_availability() {
     fi
 }
 
-copy_ssh_key() {
-    print_notice "Performing Check against SSH that you can log in"
-    ssh-copy-id -p ${SSH_PORT} ${ssh_private_key_prefix} -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_IP}
-    wait_for_keypress
+cleanup() {
+   if [ -d "${_dir_remote_rootfs}" ] ; then rm -rf "${_dir_remote_rootfs}"; fi
+   if [ -f "${_template_chooser}"] ; then rm -rf "${_template_chooser}"; fi
+   if [ -f "${luks_key}" ]; then rm -rf "${luks_key}"; fi
+
+}
+
+ctrl_c() {
+    cleanup
+    exit
 }
 
 flake_tools() {
@@ -387,75 +395,6 @@ flake_tools() {
         ;;
     esac
 }
-
-#menu_deploy() {
-#    if [ -f "${_dir_flake}"/hosts/"${deploy_host}"/secrets/secrets.yaml ] ; then
-#        option_secrets="(${cwh}S${cdgy}) Host secrets.yaml \n"
-#    fi
-#
-#    if [ -f "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix ] ; then
-#        m_diskconfig="${cdgy}(${cwh}D${cdgy}) Edit Disk Config\\n"
-#    fi
-#
-#    printf "\033c"
-#    echo -e "${clm}"
-#    cat << EOF
-#-------------
-#| Deploy Menu |
-#-------------
-#
-#Perform a new installation or update an existing installation remotely.
-#
-#EOF
-#    echo -e "${coff}"
-#    read -p "$(echo -e ${cdgy}\(${cwh}N${cdgy}\) New Install for Host: ${deploy_host}\\n\(${cwh}E${cdgy}\) Update Existing Host: ${deploy_host} \\n\\n${cwh}CHANGE **DANGER!!**:\\n\\n${m_diskconfig}${cdgy}\(${cwh}S${cdgy}\) Regenerate SSH Keys for: ${deploy_host}\\n\(${cwh}A${cdgy}\) Regenerate AGE Secret Keys for ${deploy_host}\\n${cwh}${coff}\\n${cdgy}\(${cwh}B${cdgy}\) Back to host menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_deploy
-#    case "${q_menu_deploy,,}" in
-#        "n" | "new" )
-#            parse_disk_config
-#            task_generate_encryption_password
-#            task_generate_ssh_key
-#            task_generate_age_secrets
-#            task_generate_sops_configuration
-#            task_generate_host_secrets
-#            secret_tools rekey all
-#            task_install_host
-#            menu_deploy
-#        ;;
-#        "e" | "existing" )
-#            task_update_host
-#            menu_deploy
-#        ;;
-#        "d" | "disk" )
-#            menu_diskconfig
-#        ;;
-#        "s" | "ssh" )
-#            task_generate_ssh_key
-#            menu_deploy
-#        ;;
-#        "a" | "age" )
-#            task_generate_age_secrets
-#            menu_deploy
-#        ;;
-#        "b" | "back" )
-#            menu_host
-#        ;;
-#        "q" | "exit" )
-#            print_info "Quitting Script"
-#            exit 1
-#        ;;
-#        "?" | "help" )
-#            echo -e "${clm}"
-#            echo -e "${cwh}Host${cdgy} - Change host"
-#            echo -e ""
-#            echo -e "${cwh}IP Address${cdgy} - Change IP address of remote host "
-#            echo -e ""
-#        ;;
-#        * )
-#            menu_deploy
-#        ;;
-#
-#    esac
-#}
 
 menu_diskconfig() {
     if var_true "${disk_encryption}"; then
@@ -503,7 +442,7 @@ EOF
         ;;
         "q" | "exit" )
             print_info "Quitting Script"
-            exit 1
+            cleanup
         ;;
         "?" |  "help" )
             echo -e "${clm}"
@@ -557,7 +496,7 @@ EOF
         ;;
         "q" | "exit" )
             print_info "Quitting Script"
-            exit 1
+            cleanup
         ;;
         "?" | "help" )
             echo -e "${clm}"
@@ -567,6 +506,63 @@ EOF
         * )
             menu_flaketools
         ;;
+    esac
+}
+
+menu_execute_options() {
+    printf "\033c"
+    echo -e "${clm}"
+    cat << EOF
+---------------------------
+| Hosts Execution Options |
+---------------------------
+
+Build configuration locally and send remotely, or build on remote host
+Reboot remote host after install
+Set Allow more debug verbosity
+EOF
+    echo -e "${coff}"
+    read -p "$(echo -e ${cdgy}\(${cwh}L${cdgy}\) Local Build: ${INSTALL_BUILD_LOCAL^}\\n\(${cwh}R${cdgy}\) Reboot after installation: ${INSTALL_REBOOT^}\\n\(${cwh}D${cdgy}\) Debug Installation: ${INSTALL_DEBUG^}\\n\\n\(${cwh}B${cdgy}\) Back to main menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_hostexecution
+    case "${q_menu_hostexecution,,}" in
+        "l" | "build" )
+            if var_true "${INSTALL_BUILD_LOCAL}" ; then
+                INSTALL_BUILD_LOCAL=FALSE
+            else
+                INSTALL_BUILD_LOCAL=TRUE
+            fi
+            menu_execute_options
+        ;;
+        "r" | "reboot" )
+            if var_true "${INSTALL_REBOOT}" ; then
+                INSTALL_REBOOT=FALSE
+            else
+                INSTALL_REBOOT=TRUE
+            fi
+            menu_execute_options
+        ;;
+        "d" | "debug" )
+            if var_true "${INSTALL_DEBUG}" ; then
+                INSTALL_DEBUG=FALSE
+            else
+                INSTALL_DEBUG=TRUE
+            fi
+            menu_execute_options
+            ;;
+        "b" | "back" )
+            menu_host
+        ;;
+        "q" | "exit" )
+            print_info "Quitting Script"
+            cleanup
+        ;;
+        "?" |  "help" )
+            echo -e "${clm}"
+            echo -e ""
+        ;;
+        * )
+            menu_host
+        ;;
+
     esac
 }
 
@@ -606,7 +602,7 @@ EOF
         ;;
         "q" | "exit" )
             print_info "Quitting Script"
-            exit 1
+            cleanup
         ;;
         "?" |  "help" )
             echo -e "${clm}"
@@ -644,7 +640,7 @@ Once ready, deploy the configuration.
 You can also update the hosts configuration and you'll need to ensure that secrets have been generated.
 EOF
     echo -e "${coff}"
-    read -p "$(echo -e ${cdgy}Host: ${cwh}${deploy_host}${cdgy}\\n\\n${cwh}CHANGE:${cdgy}\\n\\n\(${cwh}I${cdgy}\) IP Address: ${cwh}${REMOTE_IP}${cdgy}\\n${cdgy}\(${cwh}R${cdgy}\) SSH Options\\n${menu_host_option_deploy}\\n${cwh}EDIT:${cdgy}\\n\\n\(${cwh}E${cdgy}\) Host Configuration \\n\(${cwh}F${cdgy}\) Flake \\n${option_secrets}${cwh}${coff}\\n${cdgy}\(${cwh}S${cdgy}\) Host Secrets\\n${cdgy}\(${cwh}B${cdgy}\) Back to host management menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_host
+    read -p "$(echo -e ${cdgy}Host: ${cwh}${deploy_host}${cdgy}\\n\\n${cwh}CHANGE:${cdgy}\\n\\n\(${cwh}I${cdgy}\) IP Address: ${cwh}${REMOTE_IP}${cdgy}\\n${cdgy}\(${cwh}R${cdgy}\) SSH Options\\n${menu_host_option_deploy}\\n${cwh}EDIT:${cdgy}\\n\\n\(${cwh}E${cdgy}\) Host Configuration \\n\(${cwh}F${cdgy}\) Flake \\n${option_secrets}${cwh}${coff}\\n${cdgy}\(${cwh}S${cdgy}\) Host Secrets\\n${cdgy}\(${cwh}X${cdgy}\) Remote Options\\n${cdgy}\(${cwh}B${cdgy}\) Back to host management menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_host
     case "${q_menu_host,,}" in
         "i" | "ip" )
             unset REMOTE_IP
@@ -671,15 +667,15 @@ Before the installation the following needs to occur:
 
 EOF
             parse_disk_config
-            task_update_swap_size
-            task_generate_encryption_password
-            task_generate_ssh_key
-            task_generate_age_secrets
-            task_generate_sops_configuration
-            task_generate_host_secrets
+            if [ -z "${DISK_SWAP_SIZE_GB}" ] ; then task_update_swap_size; fi
+            if [ -z "${PASSWORD_ENCRYPTION}" ] ; then task_generate_encryption_password ; fi
+            if var_nottrue "${task_generate_ssh_key_new}" ; then task_generate_ssh_key new ;fi
+            if var_nottrue "${task_generate_age_secrets_new}" ; then task_generate_age_secrets new ; fi
+            if var_nottrue "${task_generate_sops_configuration_new}" ; then task_generate_sops_configuration new ; fi
+            if var_nottrue "${task_generate_host_secrets_new}" ; then task_generate_host_secrets new; fi
             secret_rekey_silent=true
             secret_tools rekey all
-            secret_rekay_silent=false
+            secret_rekey_silent=false
             task_install_host
             menu_host
         ;;
@@ -699,18 +695,20 @@ EOF
             menu_host
         ;;
         "s" | "secrets" )
-            #sops "${_dir_flake}"/hosts/"${deploy_host}"/secrets/secrets.yaml
             menu_host_secrets
         ;;
         "r" | "ssh" )
             menu_ssh_options
+        ;;
+        "x" | "xecute options" )
+            menu_execute_options
         ;;
         "b" | "back" )
             menu_host_management
         ;;
         "q" | "exit" )
             print_info "Quitting Script"
-            exit 1
+            cleanup
         ;;
         "?" |  "help" )
             echo -e "${clm}"
@@ -759,7 +757,7 @@ EOF
         ;;
         "q" | "exit" )
             print_info "Quitting Script"
-            exit 1
+            cleanup
         ;;
         "?" | "help" )
             echo -e "${clm}"
@@ -816,7 +814,7 @@ EOF
         ;;
         "q" | "exit" )
             print_info "Quitting Script"
-            exit 1
+            cleanup
         ;;
         "?" | "help" )
             echo -e "${clm}"
@@ -865,7 +863,7 @@ EOF
         ;;
         "q" | "exit" )
             print_info "Quitting Script"
-            exit 1
+            cleanup
         ;;
         "?" | "help" )
             echo -e "${clm}"
@@ -950,7 +948,7 @@ EOF
         ;;
         "q" | "exit" )
             print_info "Quitting Script"
-            exit 1
+            cleanup
         ;;
         "?" | "help" )
             echo -e "${clm}"
@@ -1041,7 +1039,7 @@ EOF
         ;;
         "q" | "exit" )
             print_info "Quitting Script"
-            exit 1
+            cleanup
             ;;
         "?" | "help" )
             echo -e "${clm}"
@@ -1096,7 +1094,7 @@ EOF
             menu_ssh_options
         ;;
         "c" | "copy" )
-            copy_ssh_key
+            task_copy_ssh_key
             menu_ssh_options
         ;;
          "b" | "back" )
@@ -1104,7 +1102,7 @@ EOF
         ;;
         "q" | "exit" )
             print_info "Quitting Script"
-            exit 1
+            cleanup
         ;;
         "?" | "help" )
             echo -e "${clm}"
@@ -1365,6 +1363,12 @@ deploy_q_sshport() {
     SSH_PORT=${q_ssh_port}
 }
 
+task_copy_ssh_key() {
+    print_notice "Performing Check against SSH that you can log in"
+    ssh-copy-id -p ${SSH_PORT} ${ssh_private_key_prefix} -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_IP}
+    wait_for_keypress
+}
+
 task_hostmanagement_q_role() {
     cat << EOF
 -----------------
@@ -1422,7 +1426,7 @@ EOF
         ;;
         "q" | "exit" )
             print_info "Quitting Script"
-            exit 1
+            cleanup
         ;;
         "?" | "help" )
             echo -e "${clm}"
@@ -1452,7 +1456,7 @@ task_hostmanagement_q_encryption() {
             ;;
             "q" | "exit" )
                 print_info "Quitting Script"
-                exit 1
+                cleanup
             ;;
             "?" | "h" | "help" )
                 echo -e "${clm}"
@@ -1482,7 +1486,7 @@ task_hostmanagement_q_impermanence() {
             ;;
             "q" | "exit" )
                 print_info "Quitting Script"
-                exit 1
+                cleanup
             ;;
             "?" | "h" | "help" )
                 echo -e "${clm}"
@@ -1540,7 +1544,7 @@ task_hostmanagement_q_networking() {
                         ;;
                         "q" | "exit" )
                             print_info "Quitting Script"
-                            exit 1
+                            cleanup
                         ;;
                         "?" | "h" | "help" )
                             echo -e "${clm}"
@@ -1563,7 +1567,7 @@ task_hostmanagement_q_networking() {
             ;;
             "q" | "exit" )
                 print_info "Quitting Script"
-                exit 1
+                cleanup
             ;;
             "?" | "h" | "help" )
                 echo -e "${clm}"
@@ -1593,7 +1597,7 @@ task_hostmanagement_q_raid() {
             ;;
             "q" | "exit" )
                 print_info "Quitting Script"
-                exit 1
+                cleanup
             ;;
             "?" | "h" | "help" )
                 echo -e "${clm}"
@@ -1710,6 +1714,7 @@ task_generate_age_secrets() {
     sudo chown root:root "${_dir_remote_rootfs}"/"${feature_impermanence}"/root/.config/sops/age/keys.txt
     sudo chmod 400 "${_dir_remote_rootfs}"/"${feature_impermanence}"/root/.config/sops/age/keys.txt
     export _age_key_pub=$(cat "${_dir_remote_rootfs}"/"${feature_impermanence}"/etc/ssh/ssh_host_ed25519_key.pub | ssh-to-age )
+    if [ "${1}" = "new" ]; then task_generate_age_secrets_new=true; fi
 }
 
 task_generate_encryption_password() {
@@ -1719,12 +1724,11 @@ task_generate_encryption_password() {
         password_encryption_2=$RANDOM
         counter=1
 
-        print_notice "Enter an encryption password to be entered on every system boot"
         while [ "$password_encryption_1" != "$password_encryption_2" ]; do
             if [ $counter -gt 1 ] ; then print_error "Passwords don't match, please reenter" ; fi ;
-            read -s -e -p "$(echo -e ${cdgy}${cwh}Disk Encryption Password: \ ${coff})" password_encryption_1
+            read -s -e -p "$(echo -e ${cdgy}${cwh}** ${cdgy} Enter Disk Encryption Password: \ ${coff})" password_encryption_1
             echo ""
-            read -s -e -p "$(echo -e ${cdgy}${cwh}Confirm Disk Encryption Password: \ ${coff})" password_encryption_2
+            read -s -e -p "$(echo -e ${cdgy}${cwh}** ${cdgy} Confirm Disk Encryption Password: \ ${coff})" password_encryption_2
             echo ""
             (( counter+=1 ))
         done
@@ -1752,6 +1756,8 @@ EOF
     mkdir -p "${_dir_flake}"/hosts/"${deploy_host}"/secrets
     sops "${_dir_flake}"/hosts/"${deploy_host}"/secrets/secrets.yaml
     git add "${_dir_flake}"/hosts/"${deploy_host}"/secrets/secrets.yaml
+
+    if [ "${1}" = "new" ]; then task_generate_host_secrets_new=true; fi
 }
 
 task_generate_sops_configuration() {
@@ -1769,6 +1775,8 @@ task_generate_sops_configuration() {
     print_debug "Add the host to the users_secrets"
 
     sed -i "s|'||g" "${_dir_flake}"/.sops.yaml
+
+    if [ "${1}" = "new" ]; then task_generate_sops_configuration_new=true; fi
 }
 
 task_generate_ssh_key() {
@@ -1779,6 +1787,7 @@ task_generate_ssh_key() {
     mkdir -p hosts/"${deploy_host}"/secrets
     cp -R "${_dir_remote_rootfs}"/"${feature_impermanence}"/etc/ssh/ssh_host_ed25519_key.pub hosts/"${deploy_host}"/secrets/
     silent git add "${_dir_flake}"/hosts/"${deploy_host}"
+    if [ "${1}" = "new" ]; then task_generate_ssh_key_new=true; fi
 }
 
 task_update_disk_prefix() {
@@ -1823,26 +1832,37 @@ install_q_disk() {
 task_install_host() {
     echo ""
     print_info "Commencing install to Host: ${deploy_host} (${REMOTE_IP})"
+
+    if var_false "${INSTALL_BUILD_LOCAL}" ; then
+        feature_build_remote="--build-on-remote"
+    fi
+
+    if var_false "${INSTALL_REBOOT}" ; then
+        feature_reboot="--no-reboot"
+    fi
+
+    if var_true "${INSTALL_DEBUG}" ; then
+        feature_debug="--debug"
+    fi
+
     if [ -n "${PASSWORD_ENCRYPTION}" ]; then
         luks_key=$(mktemp)
         echo -n "${PASSWORD_ENCRYPTION}" > "${luks_key}"
         feature_luks="--disk-encryption-keys /tmp/secret.key ${luks_key}"
     fi
-    set -x
+
     ## TODO
     ## We use sudo here as we're generating secrets and setting them as root and when nixosanywhere rsyncs them over it can't read them..
     ## Potential PR to the nixos project to execute a "pre-hook" bash script before the installation process actually occurs.
     sudo nix run github:numtide/nixos-anywhere -- \
-                                                --ssh-port ${SSH_PORT} ${ssh_private_key_prefix} \
-                                                --no-reboot \
+                                                --ssh-port ${SSH_PORT} ${ssh_private_key_prefix} ${feature_build_remote} ${feature_debug} ${feature_reboot} \
                                                 ${feature_luks} --extra-files "${_dir_remote_rootfs}" \
                                                 --flake "${_dir_flake}"/#${deploy_host} \
                                                 ${REMOTE_USER}@${REMOTE_IP}
-    set +x
 
-    #if [ -n "${PASSWORD_ENCRYPTION}" ]; then
-    #    rm -rf "${luks_key}"
-    #fi
+    if [ -n "${PASSWORD_ENCRYPTION}" ]; then
+        rm -rf "${luks_key}"
+    fi
 
     wait_for_keypress
 }
@@ -1879,7 +1899,7 @@ EOF
         ;;
         "q" | "exit" )
             print_info "Quitting Script"
-            exit 1
+            cleanup
             ;;
         "?" | "help" )
             echo -e "${clm}"
@@ -1922,7 +1942,7 @@ EOF
         ;;
         "q" | "exit" )
             print_info "Quitting Script"
-            exit 1
+            cleanup
             ;;
         "?" | "help" )
             echo -e "${clm}"
@@ -1940,7 +1960,10 @@ wait_for_keypress() {
 
 ################ FUNCTIONS END
 
+trap ctrl_c INT
+
 check_for_repository
+
 case "${1,,}" in
     deploy )
         MODE=DEPLOY
