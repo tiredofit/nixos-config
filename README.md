@@ -30,6 +30,7 @@ If you would like to base your own configuration from this, you will need to be 
   - `...`: And so on as above with other hosts
 - `lib`: Helpers, functions, libraries and timesavers
 - `modules`: Modules that are specific to this implementation and allow for toggled configuration
+  - `application`: Applications accessible to all users of system
   - `features`: Features such as virtualization, gaming, cross compilation
   - `filesystem`: Encryption, impermanence, BTRFS options
   - `hardware`: Bluetooth, Printing, Sound, Wireless
