@@ -480,6 +480,19 @@ in
     system.activationScripts.create_docker_networks =
       let dockerBin = "${pkgs.docker}/bin/docker";
       in ''
+        if [ -d /var/local/data ]; then
+            mkdir -p /var/local/data
+        fi
+
+        if [ -d /var/local/data/_system ] ; then
+            mkdir -p /var/local/data/_system
+        fi
+
+        if [ -d /var/local/db ]; then
+            mkdir -p /var/local/db
+            chattr +C /var/local/db
+        fi
+
         if ${pkgs.procps}/bin/pgrep dockerd > /dev/null 2>&1 ; then
             ${dockerBin} network inspect proxy > /dev/null || ${dockerBin} network create proxy --subnet 172.19.0.0/18
             ${dockerBin} network inspect services >/dev/null || ${dockerBin} network create services --subnet 172.19.128.0/18
