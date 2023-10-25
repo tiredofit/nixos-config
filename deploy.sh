@@ -368,10 +368,9 @@ check_host_availability() {
 }
 
 cleanup() {
-   if [ -d "${_dir_remote_rootfs}" ] ; then rm -rf "${_dir_remote_rootfs}"; fi
-   if [ -f "${_template_chooser}"] ; then rm -rf "${_template_chooser}"; fi
+   if [ -d "${_dir_remote_rootfs}" ]; then rm -rf "${_dir_remote_rootfs}"; fi
+   if [ -f "${_template_chooser}" ]; then rm -rf "${_template_chooser}"; fi
    if [ -f "${luks_key}" ]; then rm -rf "${luks_key}"; fi
-
 }
 
 ctrl_c() {
