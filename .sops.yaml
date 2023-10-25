@@ -11,55 +11,55 @@ keys:
 creation_rules:
   - path_regex: hosts/common/secrets/.*
     key_groups:
-    - age:
-      - *host_beef
-      - *host_butcher
-      - *host_disko
-      - *host_nakulaptop
-      - *host_selecta
-      - *host_soy
-      - *user_dave
-      - *user_ireen
-      - *user_media
+      - age:
+          - *host_beef
+          - *host_butcher
+          - *host_disko
+          - *host_nakulaptop
+          - *host_selecta
+          - *host_soy
+          - *user_dave
+          - *user_ireen
+          - *user_media
   - path_regex: users/secrets.yaml
     key_groups:
-    - age:
-      - *host_beef
-      - *host_butcher
-      - *host_disko
-      - *host_nakulaptop
-      - *host_selecta
-      - *host_soy
-      - *user_dave
+      - age:
+          - *host_beef
+          - *host_butcher
+          - *host_disko
+          - *host_nakulaptop
+          - *host_selecta
+          - *host_soy
+          - *user_dave
   - path_regex: hosts/beef/secrets/.*
     key_groups:
-    - age:
-      - *host_beef
-      - *user_dave
+      - age:
+          - *host_beef
+          - *user_dave
   - path_regex: hosts/butcher/secrets/.*
     key_groups:
-    - age:
-      - *host_butcher
-      - *user_dave
+      - age:
+          - *host_butcher
+          - *user_dave
   - path_regex: hosts/disko/secrets/.*
     key_groups:
-    - age:
-      - *host_disko
-      - *user_dave
+      - age:
+          - *host_disko
+          - *user_dave
   - path_regex: hosts/nakulaptop/secrets/.*
     key_groups:
-    - age:
-      - *host_nakulaptop
-      - *user_dave
-      - *user_ireen
+      - age:
+          - *host_nakulaptop
+          - *user_dave
+          - *user_ireen
   - path_regex: hosts/selecta/secrets/.*
     key_groups:
-    - age:
-      - *host_selecta
-      - *user_dave
-      - *user_media
+      - age:
+          - *host_selecta
+          - *user_dave
+          - *user_media
   - path_regex: hosts/soy/secrets/.*
     key_groups:
-    - age:
-      - *host_soy
-      - *user_dave
+      - age:
+          - *host_soy
+          - *user_dave
