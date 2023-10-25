@@ -42,6 +42,8 @@ If you would like to base your own configuration from this, you will need to be 
 
 ## Usage
 
+### Manual approach
+
 Get your installer disc booted up and your disks partitioned. I took notes on how I did an install with [BTRFS and encryption on my website](https://notes.tiredofit.ca/books/linux/page/installing-nixos-encrypted-btrfs-impermanance). Once you have your partitions created and subvolumes mounted then we can continue..
 
 - Generate your `hardware-configuration.nix` file.
@@ -65,9 +67,10 @@ git clone https://github.com/tiredofit/nixos-config.git /mnt/etc/nixos
 nixos-install --root /mnt --flake /mnt/etc/nixos#<host>
 ```
 
-#### Experimental Deploy Scripts
+### Optimized deployment via script
 
-- An experimental deployment script `deploy.sh` is being built to allow one to:
+- Use the included deployment script on an Arch or NixOS system to:
+  - Add remove new hosts and templates
   - Update Flake
   - Update running system
   - Generate SSH Key and AGE keys per host
@@ -105,8 +108,6 @@ For example to have a base AMD system using with an integrated GPU using BTRFS a
     };
   };
 ```
-
-Features and options are changing often.
 
 ### Keep it up to date
 
