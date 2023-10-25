@@ -5,10 +5,10 @@ keys:
   - &host_nakulaptop age1m6gzjlvx5paan69evccl6kywj0ghdk46prumx4jn4hxcrxd4re6qckdl9w
   - &host_selecta age148dmxhvqa2mrc43qhvu4qs963e4vcwdqr5kt0glrymh0sv62xp0qhgj0re
   - &host_soy age1wq5xj5mwv9xk4tp26cxc4xqjq9xd9hwqv0zeemawl2cc8sarmqesw366dh
+  - &host_tentacle age190tmygg8xmn9tkj4yjgemvdd8s4tnmycr9n4qfrr0l97zxfq3gjs36xsn8
   - &user_dave age1upzm9um3qljxlmxcg8vl35d7eyeqtnsfcnqlh3wtnj46dhfzwyrqa80avw
   - &user_ireen age1477n5xa2cr4tgdy80vxg24tsdcrcmzarn4ad99tjvrsjedq6sqpqsxyrms
   - &user_media age1zsws94zmm5axrtpswg2pwcfcn04zuwxtm8gm3z75frwvqtquz9rqgugv7f
-  - &host_tentacle age190tmygg8xmn9tkj4yjgemvdd8s4tnmycr9n4qfrr0l97zxfq3gjs36xsn8
 creation_rules:
   - path_regex: hosts/common/secrets/.*
     key_groups:

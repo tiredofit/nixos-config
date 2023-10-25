@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-SCRIPT_VERSION=1.0.1
+SCRIPT_VERSION=1.1.0
 
 INSTALL_BUILD_LOCAL=${INSTALL_BUILD_LOCAL:-"TRUE"}
 INSTALL_DEBUG=${INSTALL_DEBUG:-"FALSE"}
@@ -1850,11 +1850,15 @@ task_install_host() {
         feature_luks="--disk-encryption-keys /tmp/secret.key ${luks_key}"
     fi
 
+    if [ -n "${SSH_PRIVATE_KEY}" ] ; then
+        feature_ssh_key="-i ${SSH_PRIVATE_KEY}"
+    fi
+
     ## TODO
     ## We use sudo here as we're generating secrets and setting them as root and when nixosanywhere rsyncs them over it can't read them..
     ## Potential PR to the nixos project to execute a "pre-hook" bash script before the installation process actually occurs.
     sudo nix run github:numtide/nixos-anywhere -- \
-                                                --ssh-port ${SSH_PORT} ${ssh_private_key_prefix} ${feature_build_remote} ${feature_debug} ${feature_reboot} \
+                                                --ssh-port ${SSH_PORT} ${ssh_private_key_prefix} ${feature_build_remote} ${feature_debug} ${feature_reboot} ${feature_ssh_key} \
                                                 ${feature_luks} --extra-files "${_dir_remote_rootfs}" \
                                                 --flake "${_dir_flake}"/#${deploy_host} \
                                                 ${REMOTE_USER}@${REMOTE_IP}
@@ -1912,7 +1916,6 @@ EOF
 
 menu_update_host() {
     if [ -n "${SSH_PRIVATE_KEY}" ]; then
-        ssh_private_key_prefix="-i ${SSH_PRIVATE_KEY}"
         ssh_private_key_text="via SSH Private key located at ${SSH_PRIVATE_KEY}"
     fi
 
