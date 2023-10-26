@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-SCRIPT_VERSION=1.1.1
+SCRIPT_VERSION=1.2.0
 
 INSTALL_BUILD_LOCAL=${INSTALL_BUILD_LOCAL:-"TRUE"}
 INSTALL_DEBUG=${INSTALL_DEBUG:-"FALSE"}
@@ -744,6 +744,18 @@ menu_host_management_select_host() {
     echo -e "${cdgy}"
     COLUMNS=$oldcolumns
     export deploy_host=${opt}
+
+    if grep -q "hostname = \".*\"" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix ; then
+        hname=$(grep "hostname = \".*\"" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix | cut -d '"' -f 2)
+
+        if grep -q "domainname = \".*\"" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix ; then
+            dname=".$(grep "domainname = \".*\"" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix | cut -d '"' -f 2)"
+        elif grep -q "domainname = .*\".*\"" "${_dir_flake}"/hosts/common/global/default.nix ; then
+            dname=".$(grep "domainname = .*\".*\"" "${_dir_flake}"/hosts/common/global/default.nix | cut -d '"' -f 2)"
+        fi
+
+        if [ -n "${hname}" ]; then check_host_availability ${hname}${dname}; fi
+    fi
 }
 
 menu_host_secrets() {
