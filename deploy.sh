@@ -246,6 +246,10 @@ var_true() {
     [ "${1,,}" = "true" ] || [ "${1,,}" = "yes" ]
 }
 
+wait_for_keypress() {
+    read -n 1 -s -r -p "** Press any key to continue **"
+}
+
 #########################################
 
 check_dependencies() {
@@ -363,7 +367,7 @@ check_host_availability() {
         REMOTE_IP=${remote_ip_tmp}
     else
         print_warn "Couldn't resolve hostname, please enter in a new hostname or ip address"
-        install_and_deploy_q_ipaddress
+        task_set_ip_address
     fi
 }
 
@@ -415,7 +419,7 @@ EOF
     read -p "$(echo -e ${cwh}CHANGE:${cdgy}\\n\\n\(${cwh}D${cdgy}\) Disk Template: ${deploy_disk_template}\\n${m_deploy_password}\(${cwh}S${cdgy}\) Swap Size \\n\\n${cwh}EDIT:${cdgy}\\n\\n\(${cwh}E${cdgy}\) Disk Template \\n${cdgy}\(${cwh}B${cdgy}\) Back to deploy menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_host
     case "${q_menu_host,,}" in
         "d" | "disk" )
-            install_q_disk
+            task_q_select_disktemplate
             if [ -z "${PASSWORD_ENCRYPTION}" ] ; then task_generate_encryption_password ; fi
             menu_diskconfig
             ;;
@@ -438,6 +442,63 @@ EOF
         ;;
         "b" | "back" )
             menu_deploy
+        ;;
+        "q" | "exit" )
+            print_info "Quitting Script"
+            cleanup
+        ;;
+        "?" |  "help" )
+            echo -e "${clm}"
+            echo -e ""
+        ;;
+        * )
+            menu_host
+        ;;
+
+    esac
+}
+
+menu_execute_options() {
+    printf "\033c"
+    echo -e "${clm}"
+    cat << EOF
+---------------------------
+| Hosts Execution Options |
+---------------------------
+
+Build configuration locally and send remotely, or build on remote host
+Reboot remote host after install
+Set Allow more debug verbosity
+EOF
+    echo -e "${coff}"
+    read -p "$(echo -e ${cdgy}\(${cwh}L${cdgy}\) Local Build: ${INSTALL_BUILD_LOCAL^}\\n\(${cwh}R${cdgy}\) Reboot after installation: ${INSTALL_REBOOT^}\\n\(${cwh}D${cdgy}\) Debug Installation: ${INSTALL_DEBUG^}\\n\\n\(${cwh}B${cdgy}\) Back to main menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_hostexecution
+    case "${q_menu_hostexecution,,}" in
+        "l" | "build" )
+            if var_true "${INSTALL_BUILD_LOCAL}" ; then
+                INSTALL_BUILD_LOCAL=FALSE
+            else
+                INSTALL_BUILD_LOCAL=TRUE
+            fi
+            menu_execute_options
+        ;;
+        "r" | "reboot" )
+            if var_true "${INSTALL_REBOOT}" ; then
+                INSTALL_REBOOT=FALSE
+            else
+                INSTALL_REBOOT=TRUE
+            fi
+            menu_execute_options
+        ;;
+        "d" | "debug" )
+            if var_true "${INSTALL_DEBUG}" ; then
+                INSTALL_DEBUG=FALSE
+            else
+                INSTALL_DEBUG=TRUE
+            fi
+            menu_execute_options
+            ;;
+        "b" | "back" )
+            menu_host
         ;;
         "q" | "exit" )
             print_info "Quitting Script"
@@ -508,113 +569,6 @@ EOF
     esac
 }
 
-menu_execute_options() {
-    printf "\033c"
-    echo -e "${clm}"
-    cat << EOF
----------------------------
-| Hosts Execution Options |
----------------------------
-
-Build configuration locally and send remotely, or build on remote host
-Reboot remote host after install
-Set Allow more debug verbosity
-EOF
-    echo -e "${coff}"
-    read -p "$(echo -e ${cdgy}\(${cwh}L${cdgy}\) Local Build: ${INSTALL_BUILD_LOCAL^}\\n\(${cwh}R${cdgy}\) Reboot after installation: ${INSTALL_REBOOT^}\\n\(${cwh}D${cdgy}\) Debug Installation: ${INSTALL_DEBUG^}\\n\\n\(${cwh}B${cdgy}\) Back to main menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_hostexecution
-    case "${q_menu_hostexecution,,}" in
-        "l" | "build" )
-            if var_true "${INSTALL_BUILD_LOCAL}" ; then
-                INSTALL_BUILD_LOCAL=FALSE
-            else
-                INSTALL_BUILD_LOCAL=TRUE
-            fi
-            menu_execute_options
-        ;;
-        "r" | "reboot" )
-            if var_true "${INSTALL_REBOOT}" ; then
-                INSTALL_REBOOT=FALSE
-            else
-                INSTALL_REBOOT=TRUE
-            fi
-            menu_execute_options
-        ;;
-        "d" | "debug" )
-            if var_true "${INSTALL_DEBUG}" ; then
-                INSTALL_DEBUG=FALSE
-            else
-                INSTALL_DEBUG=TRUE
-            fi
-            menu_execute_options
-            ;;
-        "b" | "back" )
-            menu_host
-        ;;
-        "q" | "exit" )
-            print_info "Quitting Script"
-            cleanup
-        ;;
-        "?" |  "help" )
-            echo -e "${clm}"
-            echo -e ""
-        ;;
-        * )
-            menu_host
-        ;;
-
-    esac
-}
-
-menu_host_management() {
-    printf "\033c"
-    echo -e "${clm}"
-    cat << EOF
--------------------------
-| Hosts Management Menu |
--------------------------
-
-Choose a host to perform work on
-Create a new template for a new never before installed host
-Delete a host from filesystem
-EOF
-    echo -e "${coff}"
-    read -p "$(echo -e ${cdgy}\(${cwh}H${cdgy}\) Choose Host to configure\\n\\n\(${cwh}C${cdgy}\) Create new host configuration\\n\(${cwh}D${cdgy}\) Delete host configuration\\n\\n\(${cwh}F${cdgy}\) Edit Flake \\n\(${cwh}B${cdgy}\) Back to main menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_hostmanagement
-    case "${q_menu_hostmanagement,,}" in
-        "c" | "create" )
-            task_hostmanagement_create
-            menu_host
-        ;;
-        "d" | "delete" )
-            task_hostmanagement_delete
-            menu_host_management
-        ;;
-        "h" | "host" )
-            install_and_deploy_q_host
-            menu_host
-            ;;
-        "f" | "flake" )
-            $EDITOR "${_dir_flake}"/flake.nix
-            menu_host_management
-        ;;
-        "b" | "back" )
-            menu_startup
-        ;;
-        "q" | "exit" )
-            print_info "Quitting Script"
-            cleanup
-        ;;
-        "?" |  "help" )
-            echo -e "${clm}"
-            echo -e ""
-        ;;
-        * )
-            menu_host
-        ;;
-
-    esac
-}
-
-
 menu_host() {
     if [ -f "${_dir_flake}"/hosts/"${deploy_host}"/secrets/secrets.yaml ] ; then
         option_secrets="(${cwh}S${cdgy}) Host secrets.yaml \n"
@@ -643,7 +597,7 @@ EOF
     case "${q_menu_host,,}" in
         "i" | "ip" )
             unset REMOTE_IP
-            install_and_deploy_q_ipaddress
+            task_set_ip_address
             check_host_availability "${REMOTE_IP}"
             menu_host
         ;;
@@ -665,7 +619,7 @@ Before the installation the following needs to occur:
   - Generate sample host secret
 
 EOF
-            parse_disk_config
+            task_parse_disk_config
             if [ -z "${DISK_SWAP_SIZE_GB}" ] ; then task_update_swap_size; fi
             if [ -z "${PASSWORD_ENCRYPTION}" ] ; then task_generate_encryption_password ; fi
             if var_nottrue "${task_generate_ssh_key_new}" ; then task_generate_ssh_key new ;fi
@@ -723,33 +677,36 @@ EOF
     esac
 }
 
-menu_secrets() {
+menu_host_management() {
     printf "\033c"
     echo -e "${clm}"
     cat << EOF
----------------------
-| Secrets Additions |
----------------------
+-------------------------
+| Hosts Management Menu |
+-------------------------
 
-Edit Global SOPS configuration here.
-Edit hosts/common/secrets/secrets.yaml.
-Rekey existing secrets after adding any new keys or configurations.
-
+Choose a host to perform work on
+Create a new template for a new never before installed host
+Delete a host from filesystem
 EOF
     echo -e "${coff}"
-    read -p "$(echo -e ${cdgy}\(${cwh}E${cdgy}\) Edit .sops.yaml\\n\(${cwh}R${cdgy}\) Rekey all secrets\\n${cwh}${coff}\\n${cdgy}\(${cwh}B${cdgy}\) Back to main menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_secrets
-    case "${q_menu_secrets,,}" in
-        "e" | "edit" )
-            secret_tools edit
-            menu_secrets
+    read -p "$(echo -e ${cdgy}\(${cwh}H${cdgy}\) Choose Host to configure\\n\\n\(${cwh}C${cdgy}\) Create new host configuration\\n\(${cwh}D${cdgy}\) Delete host configuration\\n\\n\(${cwh}F${cdgy}\) Edit Flake \\n\(${cwh}B${cdgy}\) Back to main menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_hostmanagement
+    case "${q_menu_hostmanagement,,}" in
+        "c" | "create" )
+            task_hostmanagement_create
+            menu_host
         ;;
-        "c" | "common" )
-            secret_tools common
-            menu_secrets
+        "d" | "delete" )
+            task_hostmanagement_delete
+            menu_host_management
         ;;
-        "r" | "rekey" )
-            secret_tools rekey all
-            menu_secrets
+        "h" | "host" )
+            menu_host_management_select_host
+            menu_host
+            ;;
+        "f" | "flake" )
+            $EDITOR "${_dir_flake}"/flake.nix
+            menu_host_management
         ;;
         "b" | "back" )
             menu_startup
@@ -758,18 +715,35 @@ EOF
             print_info "Quitting Script"
             cleanup
         ;;
-        "?" | "help" )
+        "?" |  "help" )
             echo -e "${clm}"
-            echo -e "${cwh}Edit${cdgy} - Edits the .sops.yaml global secret configuration"
-            echo -e ""
-            echo -e "${cwh}Rekey${cdgy} - Rekeys all secrets from hosts, common, users"
             echo -e ""
         ;;
         * )
-            menu_secrets
+            menu_host
         ;;
 
     esac
+}
+
+menu_host_management_select_host() {
+    COLUMNS=12
+    echo -e "${cwh}"
+    prompt="Which host do you want to target?"
+    options=( $(find ${_dir_flake}/hosts/* -maxdepth 0 -type d | rev | cut -d / -f 1 | rev | sed "/common/d" | xargs -0) )
+    PS3="$prompt "
+    select opt in "${options[@]}" "Back" ; do
+        if (( REPLY == 1 + ${#options[@]} )) ; then
+            menu_host
+        elif (( REPLY > 0 && REPLY <= ${#options[@]} )) ; then
+            break
+        else
+            echo "Invalid option. Try another one."
+        fi
+    done
+    echo -e "${cdgy}"
+    COLUMNS=$oldcolumns
+    export deploy_host=${opt}
 }
 
 menu_host_secrets() {
@@ -960,6 +934,186 @@ EOF
     esac
 }
 
+menu_install_host() {
+    printf "\033c"
+    echo -e "${clm}"
+    cat << EOF
+----------------
+| Install Host |
+----------------
+
+Updating host ${deploy_host} via ssh://${REMOTE_USER}@${REMOTE_IP} ${ssh_private_key_text}
+Confirm you wish to start the deployment, or change the username or IP. Also, use a custom Private Key.
+EOF
+    echo -e "${coff}"
+    read -p "$(echo -e ${cdgy}\(${cwh}Y${cdgy}\) Confirm Update \\n\\n\(${cwh}S${cdgy}\) SSH Options \\n\(${cwh}B${cdgy}\) Back to host deploy menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_task_install
+    case "${q_menu_task_install,,}" in
+        "y" | "yes" )
+            task_install_host
+            menu_install_host
+        ;;
+        "s" | "ssh" )
+            menu_ssh_options
+        ;;
+        "b" | "back" )
+            menu_deploy
+        ;;
+        "q" | "exit" )
+            print_info "Quitting Script"
+            cleanup
+            ;;
+        "?" | "help" )
+            echo -e "${clm}"
+            echo -e ""
+        ;;
+        * )
+            menu_install_host
+        ;;
+    esac
+}
+
+menu_secrets() {
+    printf "\033c"
+    echo -e "${clm}"
+    cat << EOF
+---------------------
+| Secrets Additions |
+---------------------
+
+Edit Global SOPS configuration here.
+Edit hosts/common/secrets/secrets.yaml.
+Rekey existing secrets after adding any new keys or configurations.
+
+EOF
+    echo -e "${coff}"
+    read -p "$(echo -e ${cdgy}\(${cwh}E${cdgy}\) Edit .sops.yaml\\n\(${cwh}R${cdgy}\) Rekey all secrets\\n${cwh}${coff}\\n${cdgy}\(${cwh}B${cdgy}\) Back to main menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_secrets
+    case "${q_menu_secrets,,}" in
+        "e" | "edit" )
+            secret_tools edit
+            menu_secrets
+        ;;
+        "c" | "common" )
+            secret_tools common
+            menu_secrets
+        ;;
+        "r" | "rekey" )
+            secret_tools rekey all
+            menu_secrets
+        ;;
+        "b" | "back" )
+            menu_startup
+        ;;
+        "q" | "exit" )
+            print_info "Quitting Script"
+            cleanup
+        ;;
+        "?" | "help" )
+            echo -e "${clm}"
+            echo -e "${cwh}Edit${cdgy} - Edits the .sops.yaml global secret configuration"
+            echo -e ""
+            echo -e "${cwh}Rekey${cdgy} - Rekeys all secrets from hosts, common, users"
+            echo -e ""
+        ;;
+        * )
+            menu_secrets
+        ;;
+
+    esac
+}
+
+menu_ssh_options() {
+    if [ -n "${SSH_PRIVATE_KEY}" ]; then
+        text_private_key="          SSH Private Key: ${SSH_PRIVATE_KEY}"
+    fi
+
+    if [ "${REMOTE_IP}" != "" ]; then
+        menu_ssh_options_copy_key="\\n${cdgy}(${cwh}C${cdgy}) Copy SSH Key to ${deploy_host}\\n"
+        text_ssh_options_set_ip="Set IP Address to copy public key to host"
+    fi
+    printf "\033c"
+    echo -e "${clm}"
+    cat << EOF
+---------------
+| SSH Options |
+---------------
+
+    Using SSH Username: ${REMOTE_USER}
+          SSH Port: ${SSH_PORT}
+${text_private_key}
+${text_ssh_options_set_ip}
+EOF
+
+    echo -e "${coff}"
+    read -p "$(echo -e ${cdgy}\(${cwh}K${cdgy}\) Use a specific Private Key\\n\(${cwh}U${cdgy}\) Change SSH Username\\n\(${cwh}P${cdgy}\) Change SSH Port${cwh}${coff}\\n${menu_ssh_options_copy_key}\\n${cdgy}\(${cwh}B${cdgy}\) Back to host menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_ssh_options
+    case "${q_menu_ssh_options,,}" in
+        "k" | "key" )
+            menu_ssh_options_q_sshkey
+            menu_ssh_options
+        ;;
+        "u" | "user" )
+            menu_ssh_options_q_username
+            menu_ssh_options
+        ;;
+        "p" | "port" )
+            menu_ssh_options_q_port
+            menu_ssh_options
+        ;;
+        "c" | "copy" )
+            task_copy_ssh_key
+            menu_ssh_options
+        ;;
+         "b" | "back" )
+            menu_host
+        ;;
+        "q" | "exit" )
+            print_info "Quitting Script"
+            cleanup
+        ;;
+        "?" | "help" )
+            echo -e "${clm}"
+            echo -e "${cwh}Edit${cdgy} - Edit the secrets file"
+            echo -e ""
+        ;;
+        * )
+            menu_host_secrets_host
+        ;;
+    esac
+}
+
+menu_ssh_options_q_port() {
+    q_ssh_port=" "
+    while [[ $q_ssh_port = *" "* ]];  do
+        if [ $counter -gt 1 ] ; then print_error "SSH Port cannot have spaces in them" ; fi ;
+        read -e -p "$(echo -e ${clg}** ${cdgy}Enter the port that the SSH server is listening on:\ ${coff})" q_ssh_port
+        (( counter+=1 ))
+    done
+    counter=1
+    SSH_PORT=${q_ssh_port}
+}
+
+menu_ssh_options_q_sshkey() {
+    q_ssh_private_key=" "
+    while [[ $q_ssh_private_key = *" "* ]];  do
+        if [ $counter -gt 1 ] ; then print_error "SSH Key paths cannot have spaces in them" ; fi ;
+        read -e -p "$(echo -e ${clg}** ${cdgy}Enter the path and filename of your SSH Private key:\ ${coff})" q_ssh_private_key
+        if [ ! -f "${q_ssh_private_key}" ] ; then print_error "Path and Filename for SSH Private Key not valid!" ; fi
+        (( counter+=1 ))
+    done
+    counter=1
+    SSH_PRIVATE_KEY="${q_ssh_private_key}"
+}
+
+menu_ssh_options_q_username() {
+    q_remote_username=" "
+    while [[ $q_remote_username = *" "* ]];  do
+        if [ $counter -gt 1 ] ; then print_error "Usernames cannot have spaces in them" ; fi ;
+        read -e -p "$(echo -e ${clg}** ${cdgy}Enter your remote username:\ ${coff})" q_remote_username
+        (( counter+=1 ))
+    done
+    counter=1
+    REMOTE_USER="${q_remote_username}"
+}
+
 menu_startup() {
     if [ -n "${deploy_host}" ]; then
         _menu_startup_deploy="${cdgy}(${cwh}D${cdgy}) Deploy or Install \\n"
@@ -1055,231 +1209,46 @@ EOF
     esac
 };
 
-menu_ssh_options() {
+menu_update_host() {
     if [ -n "${SSH_PRIVATE_KEY}" ]; then
-        text_private_key="          SSH Private Key: ${SSH_PRIVATE_KEY}"
+        ssh_private_key_text="via SSH Private key located at ${SSH_PRIVATE_KEY}"
     fi
 
-    if [ "${REMOTE_IP}" != "" ]; then
-        menu_ssh_options_copy_key="\\n${cdgy}(${cwh}C${cdgy}) Copy SSH Key to ${deploy_host}\\n"
-        text_ssh_options_set_ip="Set IP Address to copy public key to host"
-    fi
     printf "\033c"
     echo -e "${clm}"
     cat << EOF
 ---------------
-| SSH Options |
+| Update Host |
 ---------------
 
-    Using SSH Username: ${REMOTE_USER}
-          SSH Port: ${SSH_PORT}
-${text_private_key}
-${text_ssh_options_set_ip}
+Updating host ${deploy_host} via ssh://${REMOTE_USER}@${REMOTE_IP} ${ssh_private_key_text}
+Confirm you wish to start the deployment, or change the username or IP. Also, use a custom Private Key.
 EOF
-
     echo -e "${coff}"
-    read -p "$(echo -e ${cdgy}\(${cwh}K${cdgy}\) Use a specific Private Key\\n\(${cwh}U${cdgy}\) Change SSH Username\\n\(${cwh}P${cdgy}\) Change SSH Port${cwh}${coff}\\n${menu_ssh_options_copy_key}\\n${cdgy}\(${cwh}B${cdgy}\) Back to host menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_ssh_options
-    case "${q_menu_ssh_options,,}" in
-        "k" | "key" )
-            deploy_q_sshkey
+    read -p "$(echo -e ${cdgy}\(${cwh}Y${cdgy}\) Confirm Update \\n\\n\(${cwh}S${cdgy}\) SSH Options \\n\(${cwh}B${cdgy}\) Back to host deploy menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_task_update
+    case "${q_menu_task_update,,}" in
+        "y" | "yes" )
+            task_update_host
+            menu_update_host
+        ;;
+        "s" | "ssh" )
             menu_ssh_options
         ;;
-        "u" | "user" )
-            deploy_q_username
-            menu_ssh_options
-        ;;
-        "p" | "port" )
-            deploy_q_sshport
-            menu_ssh_options
-        ;;
-        "c" | "copy" )
-            task_copy_ssh_key
-            menu_ssh_options
-        ;;
-         "b" | "back" )
-            menu_host
+        "b" | "back" )
+            menu_deploy
         ;;
         "q" | "exit" )
             print_info "Quitting Script"
             cleanup
-        ;;
+            ;;
         "?" | "help" )
             echo -e "${clm}"
-            echo -e "${cwh}Edit${cdgy} - Edit the secrets file"
             echo -e ""
         ;;
         * )
-            menu_host_secrets_host
+            menu_update_host
         ;;
     esac
-}
-
-parse_disk_config() {
-    system_role=$(grep "role = .*;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix | cut -d '"' -f2)
-
-    if grep -qF "btrfs.enable = mkDefault true;" "${_dir_flake}"/modules/roles/"${system_role}"/default.nix; then
-        disk_btrfs=true
-    fi
-    if grep -qF "encryption.enable = mkDefault true;" "${_dir_flake}"/modules/roles/"${system_role}"/default.nix; then
-        disk_encryption=true
-    fi
-    if grep -qF "impermanence.enable = mkDefault true;" "${_dir_flake}"/modules/roles/"${system_role}"/default.nix || grep -qPzo -m 1 "(?s)impermanence = {\n.*enable = mkDefault true;"  "${_dir_flake}"/modules/roles/"${system_role}"/default.nix; then
-        disk_impermanence=true
-        feature_impermanence="persist"
-    fi
-    if grep -qF "raid.enable = mkDefault true;" "${_dir_flake}"/modules/roles/"${system_role}"/default.nix; then
-        disk_raid=true
-    fi
-    if grep -qF "swap_file.enable = mkDefault true;" "${_dir_flake}"/modules/roles/"${system_role}"/default.nix; then
-        disk_swapfile=true
-    fi
-
-    if grep -qF "btrfs.enable = true;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
-        disk_btrfs=true
-    elif grep -qF "btrfs.enable = false;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
-        disk_btrfs=false
-    fi
-    if grep -qF "encryption.enable = true;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
-        disk_encryption=true
-    elif grep -qF "encryption.enable = false;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
-        disk_encryption=false
-    fi
-    if grep -qF "impermanence.enable = true;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix || grep -qPzo -m 1 "(?s)impermanence = {\n.*enable = true;" "${_dir_flake}"/modules/roles/"${system_role}"/default.nix ; then
-        disk_impermanence=true
-        feature_impermanence="persist"
-    elif grep -qF "impermanence.enable = false;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix || grep -qPzo -m 1 "(?s)impermanence = {\n.*enable = false;" "${_dir_flake}"/modules/roles/"${system_role}"/default.nix ; then
-        disk_impermanence=false
-        unset feature_impermanence
-    fi
-    if grep -qF "raid.enable = true;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
-        disk_raid=true
-    elif grep -qF "raid.enable = false;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
-        disk_raid=false
-    fi
-    if grep -qF "swap_file.enable = true;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
-        disk_swapfile=true
-    elif grep -qF "swap_file.enable = false;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
-        disk_swapfile=false
-    fi
-
-    _template_chooser=$(mktemp)
-
-    find "${_dir_flake}"/templates/disko/*.nix -maxdepth 0 -type f | rev | cut -d / -f 1 | rev > "${_template_chooser}"
-
-    if var_false "${disk_btrfs}" ; then
-        sed -i "/btrfs/d" "${_template_chooser}"
-    else
-        sed -i -n "/btrfs/p" "${_template_chooser}"
-    fi
-
-    if var_false "${disk_encryption}" ; then
-        sed -i "/luks/d" "${_template_chooser}"
-    else
-        sed -i -n "/luks/p" "${_template_chooser}"
-    fi
-
-    if var_false "${disk_impermanence}" ; then
-        sed -i "/impermanence/d" "${_template_chooser}"
-    else
-        sed -i -n "/impermanence/p" "${_template_chooser}"
-    fi
-
-    if var_false "${disk_raid}" ; then
-        sed -i "/raid/d" "${_template_chooser}"
-    else
-        sed -i -n "/raid/p" "${_template_chooser}"
-    fi
-
-    if var_false "${disk_swapfile}" ; then
-        sed -i "/swapfile/d" "${_template_chooser}"
-    fi
-
-    if [[ "$(wc -l "${_template_chooser}" | awk '{print $1}')" -lt 1 ]]; then
-        print_warn "No Disk Template found with the settings in the hosts configuration file"
-        print_warn "Please choose a template manually.."
-        wait_for_keypress
-        install_q_disk
-    fi
-
-    if [[ "$(wc -l "${_template_chooser}" | awk '{print $1}')" -gt 1 ]]; then
-        print_warn "More than two disk templates found based on the settings in the hosts configuration file"
-        print_warn "Please choose a template manually.."
-        wait_for_keypress
-        install_q_disk
-    fi
-
-    if [ -z "${deploy_disk_template}" ] ; then
-        deploy_disk_template="$(cat "${_template_chooser}")"
-        cp -i "${_dir_flake}"/templates/disko/${deploy_disk_template} "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix
-        task_update_disk_prefix
-    fi
-
-    rm -rf "${_template_chooser}"
-}
-
-secret_rekey() {
-    if var_true "${secret_rekey_silent}"; then
-        :
-    else
-        echo ""
-        print_info "Rekeying Secrets. Please select y or n when prompted"
-    fi
-
-    case "${1}" in
-        all )
-            print_debug "[secret_rekey] Rekeying ALL"
-            for secret in "${_dir_flake}"/hosts/*/secrets/* ; do
-                if ! [[ $(basename "${secret}") =~ ssh_host.* ]] ; then
-                    print_debug "[secret_rekey] Rekeying ALL - ${secret}"
-                    if var_true "${secret_rekey_silent}"; then
-                        yes | silent sops updatekeys "${secret}"
-                    else
-                        sops updatekeys "${secret}"
-                    fi
-                fi
-            done
-            print_debug "[secret_rekey] Rekeying Users - users/secrets.yaml"
-            if var_true "${secret_rekey_silent}"; then
-                yes | silent sops updatekeys "${_dir_flake}"/users/secrets.yaml
-            else
-                sops updatekeys "${_dir_flake}"/users/secrets.yaml
-            fi
-        ;;
-        common )
-            for secret in "${_dir_flake}"/hosts/common/secrets/* ; do
-                if ! [[ $(basename "${secret}") =~ ssh_host.* ]] ; then
-                    print_debug "[secret_rekey] Rekeying Common - ${secret}"
-                    if var_true "${secret_rekey_silent}"; then
-                        yes | silent sops updatekeys "${secret}"
-                    else
-                        sops updatekeys "${secret}"
-                    fi
-                fi
-            done
-        ;;
-        users )
-            print_debug "[secret_rekey] Rekeying Users - users/secrets.yaml"
-            if var_true "${secret_rekey_silent}"; then
-                yes | silent sops updatekeys "${_dir_flake}"/users/secrets.yaml
-            else
-                sops updatekeys "${_dir_flake}"/users/secrets.yaml
-            fi
-        ;;
-        * )
-            print_debug "[secret_rekey] Rekeying Wildcard"
-            for secret in "${_dir_flake}"/hosts/${1}/secrets/* ; do
-                if ! [[ $(basename "${secret}") =~ ssh_host.* ]] ; then
-                    print_debug "[secret_rekey] Rekeying Wildcard - host/secrets/${secret}"
-                    if var_true "${secret_rekey_silent}"; then
-                        yes | silent sops updatekeys "${secret}"
-                    else
-                        sops updatekeys "${secret}"
-                    fi
-                fi
-            done
-        ;;
-    esac
-    if var_nottrue "${secret_rekey_silent}"; then wait_for_keypress; fi
 }
 
 secret_tools() {
@@ -1294,72 +1263,6 @@ secret_tools() {
             secret_rekey "${2}"
         ;;
     esac
-}
-
-install_and_deploy_q_host() {
-    COLUMNS=12
-    echo -e "${cwh}"
-    prompt="Which host do you want to target?"
-    options=( $(find ${_dir_flake}/hosts/* -maxdepth 0 -type d | rev | cut -d / -f 1 | rev | sed "/common/d" | xargs -0) )
-    PS3="$prompt "
-    select opt in "${options[@]}" "Back" ; do
-        if (( REPLY == 1 + ${#options[@]} )) ; then
-            menu_host
-        elif (( REPLY > 0 && REPLY <= ${#options[@]} )) ; then
-            break
-        else
-            echo "Invalid option. Try another one."
-        fi
-    done
-    echo -e "${cdgy}"
-    COLUMNS=$oldcolumns
-    export deploy_host=${opt}
-}
-
-install_and_deploy_q_ipaddress() {
-    counter=1
-    local _remote_ip_tmp
-    _remote_ip_tmp=256.256.256.256
-    until ( valid_ip $_remote_ip_tmp ) ; do
-        if [ $counter -gt 1 ] ; then print_error "IP or Hostname is bad, please reenter" ; fi ;
-            read -e -p "$(echo -e ${clg}** ${cdgy}Remote Host IP Address: \ ${coff})" _remote_ip_tmp
-        (( counter+=1 ))
-    done
-    export REMOTE_IP=$_remote_ip_tmp
-}
-
-deploy_q_username() {
-    q_remote_username=" "
-    while [[ $q_remote_username = *" "* ]];  do
-        if [ $counter -gt 1 ] ; then print_error "Usernames cannot have spaces in them" ; fi ;
-        read -e -p "$(echo -e ${clg}** ${cdgy}Enter your remote username:\ ${coff})" q_remote_username
-        (( counter+=1 ))
-    done
-    counter=1
-    REMOTE_USER="${q_remote_username}"
-}
-
-deploy_q_sshkey() {
-    q_ssh_private_key=" "
-    while [[ $q_ssh_private_key = *" "* ]];  do
-        if [ $counter -gt 1 ] ; then print_error "SSH Key paths cannot have spaces in them" ; fi ;
-        read -e -p "$(echo -e ${clg}** ${cdgy}Enter the path and filename of your SSH Private key:\ ${coff})" q_ssh_private_key
-        if [ ! -f "${q_ssh_private_key}" ] ; then print_error "Path and Filename for SSH Private Key not valid!" ; fi
-        (( counter+=1 ))
-    done
-    counter=1
-    SSH_PRIVATE_KEY="${q_ssh_private_key}"
-}
-
-deploy_q_sshport() {
-    q_ssh_port=" "
-    while [[ $q_ssh_port = *" "* ]];  do
-        if [ $counter -gt 1 ] ; then print_error "SSH Port cannot have spaces in them" ; fi ;
-        read -e -p "$(echo -e ${clg}** ${cdgy}Enter the port that the SSH server is listening on:\ ${coff})" q_ssh_port
-        (( counter+=1 ))
-    done
-    counter=1
-    SSH_PORT=${q_ssh_port}
 }
 
 task_copy_ssh_key() {
@@ -1609,6 +1512,90 @@ task_hostmanagement_q_raid() {
     done
 }
 
+
+task_generate_age_secrets() {
+    mkdir -p "${_dir_remote_rootfs}"/"${feature_impermanence}"/root/.config/sops/age/
+    chmod 700 "${_dir_remote_rootfs}"/"${feature_impermanence}"/root/.config/sops/age/
+    ssh-to-age -private-key -i "${_dir_remote_rootfs}"/"${feature_impermanence}"/etc/ssh/ssh_host_ed25519_key > "${_dir_remote_rootfs}"/"${feature_impermanence}"/root/.config/sops/age/keys.txt
+    sudo chown root:root "${_dir_remote_rootfs}"/"${feature_impermanence}"/root/.config/sops/age/keys.txt
+    sudo chmod 400 "${_dir_remote_rootfs}"/"${feature_impermanence}"/root/.config/sops/age/keys.txt
+    export _age_key_pub=$(cat "${_dir_remote_rootfs}"/"${feature_impermanence}"/etc/ssh/ssh_host_ed25519_key.pub | ssh-to-age )
+    if [ "${1}" = "new" ]; then task_generate_age_secrets_new=true; fi
+}
+
+task_generate_encryption_password() {
+    if var_true "${disk_encryption}"; then
+        # Encryption
+        password_encryption_1=$RANDOM
+        password_encryption_2=$RANDOM
+        counter=1
+
+        while [ "$password_encryption_1" != "$password_encryption_2" ]; do
+            if [ $counter -gt 1 ] ; then print_error "Passwords don't match, please reenter" ; fi ;
+            read -s -e -p "$(echo -e ${cdgy}${cwh}** ${cdgy} Enter Disk Encryption Password: \ ${coff})" password_encryption_1
+            echo ""
+            read -s -e -p "$(echo -e ${cdgy}${cwh}** ${cdgy} Confirm Disk Encryption Password: \ ${coff})" password_encryption_2
+            echo ""
+            (( counter+=1 ))
+        done
+        PASSWORD_ENCRYPTION=${password_encryption_2}
+    fi
+}
+
+task_generate_host_secrets() {
+    printf "\033c"
+    echo -e "${clm}"
+    cat << EOF
+--------------------------
+| Host Secrets Additions |
+--------------------------
+
+    HOST SECRETS
+
+    Before you can do anything you'll need to crete an example secret.
+    Create an example secret. Delete everything in the file and replace it with the following line:
+
+${deploy_host}: Example secret for ${deploy_host}
+EOF
+
+    wait_for_keypress
+    mkdir -p "${_dir_flake}"/hosts/"${deploy_host}"/secrets
+    sops "${_dir_flake}"/hosts/"${deploy_host}"/secrets/secrets.yaml
+    git add "${_dir_flake}"/hosts/"${deploy_host}"/secrets/secrets.yaml
+
+    if [ "${1}" = "new" ]; then task_generate_host_secrets_new=true; fi
+}
+
+task_generate_sops_configuration() {
+    touch "${_dir_flake}"/.sops.yaml
+    yq -i eval ".keys += [ \"&host_${deploy_host} ${_age_key_pub}\" ]" "${_dir_flake}"/.sops.yaml
+    print_debug "Add the hosts AGE Key at the top"
+
+    yq -i eval ".creation_rules += [{\"path_regex\": \"hosts/${deploy_host}/secrets/.*\", \"key_groups\": [{\"age\": [\"*host_${deploy_host}\", \"*host_${SECRET_HOST}\", \"*user_${SECRET_USER}\"]}]}]" "${_dir_flake}"/.sops.yaml
+    print_debug "Add the new path_regex for the host along with the host and user"
+
+    yq -i eval ".creation_rules |= map(select(.path_regex == \"hosts/common/secrets/.*\").key_groups[0].age += [\"*host_${deploy_host}\"] // .)" "${_dir_flake}"/.sops.yaml
+    print_debug "Add the host to hosts/common/secrets"
+
+    yq -i eval ".creation_rules |= map(select(.path_regex == \"users/secrets.yaml\").key_groups[0].age += [\"*host_${deploy_host}\"] // .)" "${_dir_flake}"/.sops.yaml
+    print_debug "Add the host to the users_secrets"
+
+    sed -i "s|'||g" "${_dir_flake}"/.sops.yaml
+
+    if [ "${1}" = "new" ]; then task_generate_sops_configuration_new=true; fi
+}
+
+task_generate_ssh_key() {
+    _dir_remote_rootfs=$(mktemp -d)
+    mkdir -p "${_dir_remote_rootfs}"/"${feature_impermanence}"/etc/ssh/
+    chmod 755 "${_dir_remote_rootfs}"/"${feature_impermanence}"/etc/ssh/
+    ssh-keygen -q -N "" -t ed25519 -C "${deploy_host}" -f "${_dir_remote_rootfs}"/"${feature_impermanence}"/etc/ssh/ssh_host_ed25519_key
+    mkdir -p hosts/"${deploy_host}"/secrets
+    cp -R "${_dir_remote_rootfs}"/"${feature_impermanence}"/etc/ssh/ssh_host_ed25519_key.pub hosts/"${deploy_host}"/secrets/
+    silent git add "${_dir_flake}"/hosts/"${deploy_host}"
+    if [ "${1}" = "new" ]; then task_generate_ssh_key_new=true; fi
+}
+
 task_hostmanagement_create() {
     local _host_created
 
@@ -1706,128 +1693,6 @@ task_hostmanagement_delete() {
     silent git add "${_dir_flake}"/flake.nix
 }
 
-task_generate_age_secrets() {
-    mkdir -p "${_dir_remote_rootfs}"/"${feature_impermanence}"/root/.config/sops/age/
-    chmod 700 "${_dir_remote_rootfs}"/"${feature_impermanence}"/root/.config/sops/age/
-    ssh-to-age -private-key -i "${_dir_remote_rootfs}"/"${feature_impermanence}"/etc/ssh/ssh_host_ed25519_key > "${_dir_remote_rootfs}"/"${feature_impermanence}"/root/.config/sops/age/keys.txt
-    sudo chown root:root "${_dir_remote_rootfs}"/"${feature_impermanence}"/root/.config/sops/age/keys.txt
-    sudo chmod 400 "${_dir_remote_rootfs}"/"${feature_impermanence}"/root/.config/sops/age/keys.txt
-    export _age_key_pub=$(cat "${_dir_remote_rootfs}"/"${feature_impermanence}"/etc/ssh/ssh_host_ed25519_key.pub | ssh-to-age )
-    if [ "${1}" = "new" ]; then task_generate_age_secrets_new=true; fi
-}
-
-task_generate_encryption_password() {
-    if var_true "${disk_encryption}"; then
-        # Encryption
-        password_encryption_1=$RANDOM
-        password_encryption_2=$RANDOM
-        counter=1
-
-        while [ "$password_encryption_1" != "$password_encryption_2" ]; do
-            if [ $counter -gt 1 ] ; then print_error "Passwords don't match, please reenter" ; fi ;
-            read -s -e -p "$(echo -e ${cdgy}${cwh}** ${cdgy} Enter Disk Encryption Password: \ ${coff})" password_encryption_1
-            echo ""
-            read -s -e -p "$(echo -e ${cdgy}${cwh}** ${cdgy} Confirm Disk Encryption Password: \ ${coff})" password_encryption_2
-            echo ""
-            (( counter+=1 ))
-        done
-        PASSWORD_ENCRYPTION=${password_encryption_2}
-    fi
-}
-
-task_generate_host_secrets() {
-    printf "\033c"
-    echo -e "${clm}"
-    cat << EOF
---------------------------
-| Host Secrets Additions |
---------------------------
-
-    HOST SECRETS
-
-    Before you can do anything you'll need to crete an example secret.
-    Create an example secret. Delete everything in the file and replace it with the following line:
-
-${deploy_host}: Example secret for ${deploy_host}
-EOF
-
-    wait_for_keypress
-    mkdir -p "${_dir_flake}"/hosts/"${deploy_host}"/secrets
-    sops "${_dir_flake}"/hosts/"${deploy_host}"/secrets/secrets.yaml
-    git add "${_dir_flake}"/hosts/"${deploy_host}"/secrets/secrets.yaml
-
-    if [ "${1}" = "new" ]; then task_generate_host_secrets_new=true; fi
-}
-
-task_generate_sops_configuration() {
-    touch "${_dir_flake}"/.sops.yaml
-    yq -i eval ".keys += [ \"&host_${deploy_host} ${_age_key_pub}\" ]" "${_dir_flake}"/.sops.yaml
-    print_debug "Add the hosts AGE Key at the top"
-
-    yq -i eval ".creation_rules += [{\"path_regex\": \"hosts/${deploy_host}/secrets/.*\", \"key_groups\": [{\"age\": [\"*host_${deploy_host}\", \"*host_${SECRET_HOST}\", \"*user_${SECRET_USER}\"]}]}]" "${_dir_flake}"/.sops.yaml
-    print_debug "Add the new path_regex for the host along with the host and user"
-
-    yq -i eval ".creation_rules |= map(select(.path_regex == \"hosts/common/secrets/.*\").key_groups[0].age += [\"*host_${deploy_host}\"] // .)" "${_dir_flake}"/.sops.yaml
-    print_debug "Add the host to hosts/common/secrets"
-
-    yq -i eval ".creation_rules |= map(select(.path_regex == \"users/secrets.yaml\").key_groups[0].age += [\"*host_${deploy_host}\"] // .)" "${_dir_flake}"/.sops.yaml
-    print_debug "Add the host to the users_secrets"
-
-    sed -i "s|'||g" "${_dir_flake}"/.sops.yaml
-
-    if [ "${1}" = "new" ]; then task_generate_sops_configuration_new=true; fi
-}
-
-task_generate_ssh_key() {
-    _dir_remote_rootfs=$(mktemp -d)
-    mkdir -p "${_dir_remote_rootfs}"/"${feature_impermanence}"/etc/ssh/
-    chmod 755 "${_dir_remote_rootfs}"/"${feature_impermanence}"/etc/ssh/
-    ssh-keygen -q -N "" -t ed25519 -C "${deploy_host}" -f "${_dir_remote_rootfs}"/"${feature_impermanence}"/etc/ssh/ssh_host_ed25519_key
-    mkdir -p hosts/"${deploy_host}"/secrets
-    cp -R "${_dir_remote_rootfs}"/"${feature_impermanence}"/etc/ssh/ssh_host_ed25519_key.pub hosts/"${deploy_host}"/secrets/
-    silent git add "${_dir_flake}"/hosts/"${deploy_host}"
-    if [ "${1}" = "new" ]; then task_generate_ssh_key_new=true; fi
-}
-
-task_update_disk_prefix() {
-    if [ -f "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix ] ; then
-        read -e -i "$_rawdisk1" -p "$(echo -e ${cdgy}${cwh}** ${cdgy}Enter Disk Device 1 \(eg /dev/nvme0n1\: \)${coff}) " _rawdisk1
-        sed -i "s|rawdisk1 = .*|rawdisk1 = \"${_rawdisk1}\";|g" "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix
-        if var_true "${disk_raid}" ; then
-            read -e -i "$_rawdisk2" -p "$(echo -e ${cdgy}${cwh}** ${cdgy}Enter Disk Device 1 \(eg /dev/vda2\: \)${coff}) " _rawdisk2
-            sed -i "s|rawdisk2 = .*|rawdisk2 = \"${_rawdisk2}\";|g" "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix
-        fi
-    fi
-}
-
-task_update_swap_size() {
-    if [ -f "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix ] ; then
-        read -e -i "$DISK_SWAP_SIZE_GB" -p "$(echo -e ${cdgy}${cwh}** ${cdgy}Disk Swap Size in GB\: \ ${coff}) " DISK_SWAP_SIZE_GB
-        sed -i "s|size = ".*"; # SWAP - Do not Delete this comment|size = \"${DISK_SWAP_SIZE_GB}G\"; # SWAP - Do not Delete this comment|g" "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix
-    fi
-}
-
-install_q_disk() {
-    COLUMNS=12
-    prompt="Which Disk template do you want to deploy?"
-    options=( $(find ${_dir_flake}/templates/disko/* -maxdepth 0 -type f | rev | cut -d / -f 1 | rev | sed "s|.nix||g" | xargs -0) )
-    PS3="$prompt "
-    select opt in "${options[@]}" "Back" ; do
-        if (( REPLY == 1 + ${#options[@]} )) ; then
-            break
-        elif (( REPLY > 0 && REPLY <= ${#options[@]} )) ; then
-            break
-        else
-            echo "Invalid option. Try another one."
-        fi
-    done
-    COLUMNS=$oldcolumns
-    export deploy_disk_template=${opt}
-    cp -i "${_dir_flake}"/templates/disko/${deploy_disk_template} "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix
-    silent git add "${_dir_flake}"/hosts/"${deploy_host}"
-    task_update_disk_prefix
-}
-
 task_install_host() {
     echo ""
     print_info "Commencing install to Host: ${deploy_host} (${REMOTE_IP})"
@@ -1870,94 +1735,229 @@ task_install_host() {
     wait_for_keypress
 }
 
+task_parse_disk_config() {
+    system_role=$(grep "role = .*;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix | cut -d '"' -f2)
+
+    if grep -qF "btrfs.enable = mkDefault true;" "${_dir_flake}"/modules/roles/"${system_role}"/default.nix; then
+        disk_btrfs=true
+    fi
+    if grep -qF "encryption.enable = mkDefault true;" "${_dir_flake}"/modules/roles/"${system_role}"/default.nix; then
+        disk_encryption=true
+    fi
+    if grep -qF "impermanence.enable = mkDefault true;" "${_dir_flake}"/modules/roles/"${system_role}"/default.nix || grep -qPzo -m 1 "(?s)impermanence = {\n.*enable = mkDefault true;"  "${_dir_flake}"/modules/roles/"${system_role}"/default.nix; then
+        disk_impermanence=true
+        feature_impermanence="persist"
+    fi
+    if grep -qF "raid.enable = mkDefault true;" "${_dir_flake}"/modules/roles/"${system_role}"/default.nix; then
+        disk_raid=true
+    fi
+    if grep -qF "swap_file.enable = mkDefault true;" "${_dir_flake}"/modules/roles/"${system_role}"/default.nix; then
+        disk_swapfile=true
+    fi
+
+    if grep -qF "btrfs.enable = true;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
+        disk_btrfs=true
+    elif grep -qF "btrfs.enable = false;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
+        disk_btrfs=false
+    fi
+    if grep -qF "encryption.enable = true;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
+        disk_encryption=true
+    elif grep -qF "encryption.enable = false;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
+        disk_encryption=false
+    fi
+    if grep -qF "impermanence.enable = true;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix || grep -qPzo -m 1 "(?s)impermanence = {\n.*enable = true;" "${_dir_flake}"/modules/roles/"${system_role}"/default.nix ; then
+        disk_impermanence=true
+        feature_impermanence="persist"
+    elif grep -qF "impermanence.enable = false;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix || grep -qPzo -m 1 "(?s)impermanence = {\n.*enable = false;" "${_dir_flake}"/modules/roles/"${system_role}"/default.nix ; then
+        disk_impermanence=false
+        unset feature_impermanence
+    fi
+    if grep -qF "raid.enable = true;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
+        disk_raid=true
+    elif grep -qF "raid.enable = false;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
+        disk_raid=false
+    fi
+    if grep -qF "swap_file.enable = true;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
+        disk_swapfile=true
+    elif grep -qF "swap_file.enable = false;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
+        disk_swapfile=false
+    fi
+
+    _template_chooser=$(mktemp)
+
+    find "${_dir_flake}"/templates/disko/*.nix -maxdepth 0 -type f | rev | cut -d / -f 1 | rev > "${_template_chooser}"
+
+    if var_false "${disk_btrfs}" ; then
+        sed -i "/btrfs/d" "${_template_chooser}"
+    else
+        sed -i -n "/btrfs/p" "${_template_chooser}"
+    fi
+
+    if var_false "${disk_encryption}" ; then
+        sed -i "/luks/d" "${_template_chooser}"
+    else
+        sed -i -n "/luks/p" "${_template_chooser}"
+    fi
+
+    if var_false "${disk_impermanence}" ; then
+        sed -i "/impermanence/d" "${_template_chooser}"
+    else
+        sed -i -n "/impermanence/p" "${_template_chooser}"
+    fi
+
+    if var_false "${disk_raid}" ; then
+        sed -i "/raid/d" "${_template_chooser}"
+    else
+        sed -i -n "/raid/p" "${_template_chooser}"
+    fi
+
+    if var_false "${disk_swapfile}" ; then
+        sed -i "/swapfile/d" "${_template_chooser}"
+    fi
+
+    if [[ "$(wc -l "${_template_chooser}" | awk '{print $1}')" -lt 1 ]]; then
+        print_warn "No Disk Template found with the settings in the hosts configuration file"
+        print_warn "Please choose a template manually.."
+        wait_for_keypress
+        task_q_select_disktemplate
+    fi
+
+    if [[ "$(wc -l "${_template_chooser}" | awk '{print $1}')" -gt 1 ]]; then
+        print_warn "More than two disk templates found based on the settings in the hosts configuration file"
+        print_warn "Please choose a template manually.."
+        wait_for_keypress
+        task_q_select_disktemplate
+    fi
+
+    if [ -z "${deploy_disk_template}" ] ; then
+        deploy_disk_template="$(cat "${_template_chooser}")"
+        cp -i "${_dir_flake}"/templates/disko/${deploy_disk_template} "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix
+        task_update_disk_prefix
+    fi
+
+    rm -rf "${_template_chooser}"
+}
+
+task_q_select_disktemplate() {
+    COLUMNS=12
+    prompt="Which Disk template do you want to deploy?"
+    options=( $(find ${_dir_flake}/templates/disko/* -maxdepth 0 -type f | rev | cut -d / -f 1 | rev | sed "s|.nix||g" | xargs -0) )
+    PS3="$prompt "
+    select opt in "${options[@]}" "Back" ; do
+        if (( REPLY == 1 + ${#options[@]} )) ; then
+            break
+        elif (( REPLY > 0 && REPLY <= ${#options[@]} )) ; then
+            break
+        else
+            echo "Invalid option. Try another one."
+        fi
+    done
+    COLUMNS=$oldcolumns
+    export deploy_disk_template=${opt}
+    cp -i "${_dir_flake}"/templates/disko/${deploy_disk_template} "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix
+    silent git add "${_dir_flake}"/hosts/"${deploy_host}"
+    task_update_disk_prefix
+}
+
+task_secret_rekey() {
+    if var_true "${secret_rekey_silent}"; then
+        :
+    else
+        echo ""
+        print_info "Rekeying Secrets. Please select y or n when prompted"
+    fi
+
+    case "${1}" in
+        all )
+            print_debug "[secret_rekey] Rekeying ALL"
+            for secret in "${_dir_flake}"/hosts/*/secrets/* ; do
+                if ! [[ $(basename "${secret}") =~ ssh_host.* ]] ; then
+                    print_debug "[secret_rekey] Rekeying ALL - ${secret}"
+                    if var_true "${secret_rekey_silent}"; then
+                        yes | silent sops updatekeys "${secret}"
+                    else
+                        sops updatekeys "${secret}"
+                    fi
+                fi
+            done
+            print_debug "[secret_rekey] Rekeying Users - users/secrets.yaml"
+            if var_true "${secret_rekey_silent}"; then
+                yes | silent sops updatekeys "${_dir_flake}"/users/secrets.yaml
+            else
+                sops updatekeys "${_dir_flake}"/users/secrets.yaml
+            fi
+        ;;
+        common )
+            for secret in "${_dir_flake}"/hosts/common/secrets/* ; do
+                if ! [[ $(basename "${secret}") =~ ssh_host.* ]] ; then
+                    print_debug "[secret_rekey] Rekeying Common - ${secret}"
+                    if var_true "${secret_rekey_silent}"; then
+                        yes | silent sops updatekeys "${secret}"
+                    else
+                        sops updatekeys "${secret}"
+                    fi
+                fi
+            done
+        ;;
+        users )
+            print_debug "[secret_rekey] Rekeying Users - users/secrets.yaml"
+            if var_true "${secret_rekey_silent}"; then
+                yes | silent sops updatekeys "${_dir_flake}"/users/secrets.yaml
+            else
+                sops updatekeys "${_dir_flake}"/users/secrets.yaml
+            fi
+        ;;
+        * )
+            print_debug "[secret_rekey] Rekeying Wildcard"
+            for secret in "${_dir_flake}"/hosts/${1}/secrets/* ; do
+                if ! [[ $(basename "${secret}") =~ ssh_host.* ]] ; then
+                    print_debug "[secret_rekey] Rekeying Wildcard - host/secrets/${secret}"
+                    if var_true "${secret_rekey_silent}"; then
+                        yes | silent sops updatekeys "${secret}"
+                    else
+                        sops updatekeys "${secret}"
+                    fi
+                fi
+            done
+        ;;
+    esac
+    if var_nottrue "${secret_rekey_silent}"; then wait_for_keypress; fi
+}
+
+task_set_ip_address() {
+    counter=1
+    local _remote_ip_tmp
+    _remote_ip_tmp=256.256.256.256
+    until ( valid_ip $_remote_ip_tmp ) ; do
+        if [ $counter -gt 1 ] ; then print_error "IP or Hostname is bad, please reenter" ; fi ;
+            read -e -p "$(echo -e ${clg}** ${cdgy}Remote Host IP Address: \ ${coff})" _remote_ip_tmp
+        (( counter+=1 ))
+    done
+    export REMOTE_IP=$_remote_ip_tmp
+}
+
+task_update_disk_prefix() {
+    if [ -f "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix ] ; then
+        read -e -i "$_rawdisk1" -p "$(echo -e ${cdgy}${cwh}** ${cdgy}Enter Disk Device 1 \(eg /dev/nvme0n1\: \)${coff}) " _rawdisk1
+        sed -i "s|rawdisk1 = .*|rawdisk1 = \"${_rawdisk1}\";|g" "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix
+        if var_true "${disk_raid}" ; then
+            read -e -i "$_rawdisk2" -p "$(echo -e ${cdgy}${cwh}** ${cdgy}Enter Disk Device 1 \(eg /dev/vda2\: \)${coff}) " _rawdisk2
+            sed -i "s|rawdisk2 = .*|rawdisk2 = \"${_rawdisk2}\";|g" "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix
+        fi
+    fi
+}
+
 task_update_host() {
     print_info "Commencing update to remote host"
     NIX_SSHOPTS="-t -p ${SSH_PORT} ${ssh_private_key_prefix} -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" nixos-rebuild switch --flake "${_dir_flake}"/#${deploy_host} --use-remote-sudo --target-host ${REMOTE_USER}@${REMOTE_IP} --use-remote-sudo
     wait_for_keypress
 }
 
-menu_install_host() {
-    printf "\033c"
-    echo -e "${clm}"
-    cat << EOF
-----------------
-| Install Host |
-----------------
-
-Updating host ${deploy_host} via ssh://${REMOTE_USER}@${REMOTE_IP} ${ssh_private_key_text}
-Confirm you wish to start the deployment, or change the username or IP. Also, use a custom Private Key.
-EOF
-    echo -e "${coff}"
-    read -p "$(echo -e ${cdgy}\(${cwh}Y${cdgy}\) Confirm Update \\n\\n\(${cwh}S${cdgy}\) SSH Options \\n\(${cwh}B${cdgy}\) Back to host deploy menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_task_install
-    case "${q_menu_task_install,,}" in
-        "y" | "yes" )
-            task_install_host
-            menu_install_host
-        ;;
-        "s" | "ssh" )
-            menu_ssh_options
-        ;;
-        "b" | "back" )
-            menu_deploy
-        ;;
-        "q" | "exit" )
-            print_info "Quitting Script"
-            cleanup
-            ;;
-        "?" | "help" )
-            echo -e "${clm}"
-            echo -e ""
-        ;;
-        * )
-            menu_install_host
-        ;;
-    esac
-}
-
-menu_update_host() {
-    if [ -n "${SSH_PRIVATE_KEY}" ]; then
-        ssh_private_key_text="via SSH Private key located at ${SSH_PRIVATE_KEY}"
+task_update_swap_size() {
+    if [ -f "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix ] ; then
+        read -e -i "$DISK_SWAP_SIZE_GB" -p "$(echo -e ${cdgy}${cwh}** ${cdgy}Disk Swap Size in GB\: \ ${coff}) " DISK_SWAP_SIZE_GB
+        sed -i "s|size = ".*"; # SWAP - Do not Delete this comment|size = \"${DISK_SWAP_SIZE_GB}G\"; # SWAP - Do not Delete this comment|g" "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix
     fi
-
-    printf "\033c"
-    echo -e "${clm}"
-    cat << EOF
----------------
-| Update Host |
----------------
-
-Updating host ${deploy_host} via ssh://${REMOTE_USER}@${REMOTE_IP} ${ssh_private_key_text}
-Confirm you wish to start the deployment, or change the username or IP. Also, use a custom Private Key.
-EOF
-    echo -e "${coff}"
-    read -p "$(echo -e ${cdgy}\(${cwh}Y${cdgy}\) Confirm Update \\n\\n\(${cwh}S${cdgy}\) SSH Options \\n\(${cwh}B${cdgy}\) Back to host deploy menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_task_update
-    case "${q_menu_task_update,,}" in
-        "y" | "yes" )
-            task_update_host
-            menu_update_host
-        ;;
-        "s" | "ssh" )
-            menu_ssh_options
-        ;;
-        "b" | "back" )
-            menu_deploy
-        ;;
-        "q" | "exit" )
-            print_info "Quitting Script"
-            cleanup
-            ;;
-        "?" | "help" )
-            echo -e "${clm}"
-            echo -e ""
-        ;;
-        * )
-            menu_update_host
-        ;;
-    esac
-}
-
-wait_for_keypress() {
-    read -n 1 -s -r -p "** Press any key to continue **"
 }
 
 ################ FUNCTIONS END
@@ -1983,7 +1983,7 @@ if [ -z "${MODE}" ] ; then menu_startup ; fi
 case "${MODE,,}" in
     deploy )
         install_and_deploy_q_host
-        install_and_deploy_q_ipaddress
+        task_set_ip_address
         menu_host
     ;;
     flake )
