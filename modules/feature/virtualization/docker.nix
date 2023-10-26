@@ -509,6 +509,8 @@ in
         logDriver = "local";
         storageDriver = docker_storage_driver;
       };
+
+      oci-containers.backend = mkDefault "docker";
     };
   };
 }
