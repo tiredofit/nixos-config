@@ -53,6 +53,5 @@
       dave.enable = true;
       root.enable = true;
     };
-    container.socket-proxy2.enable = true;
   };
 }
