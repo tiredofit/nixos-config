@@ -1,10 +1,10 @@
 {config, lib, pkgs, ...}:
 
 let
-  container_name = "socket-proxy";
-  container_description = "Enables docker.sock proxy container";
+  container_name = "zabbix-proxy";
+  container_description = "Enables Zabbix proxy monitoring container";
   container_image_registry = "docker.io";
-  container_image_name = "tiredofit/socket-proxy";
+  container_image_name = "tiredofit/zabbix";
   container_image_tag = "latest";
   cfg = config.host.container.${container_name};
   hostname = config.host.network.hostname;
@@ -48,6 +48,25 @@ in
         type = with types; str;
         description = "Enable monitoring for this container";
       };
+      option = {
+        zabbix_proxy_listen_port = mkOption {
+          default = "10051";
+          type = with types; str;
+          description = "Zabbix Proxy Listening Port";
+        };
+
+        zabbix_proxy_server = mkOption {
+          default = config.host.service.zabbix_agent.serverActive;
+          type = with types; str;
+          description = "Zabbix Proxy Server Hostname";
+        };
+
+        zabbix_proxy_server_port = mkOption {
+          default = "10051";
+          type = with types; str;
+          description = "Zabbix Proxy Server Port";
+        };
+      };
     };
   };
 
@@ -69,8 +88,7 @@ in
     virtualisation.oci-containers.containers."${container_name}" = {
       image = "${cfg.image.name}:${cfg.image.tag}";
       volumes = [
-        "/var/run/docker.sock:/var/run/docker.sock"
-        "/var/local/data/_system/${container_name}/logs:/logs"
+        "/var/local/data/_system/${container_name}/logs:/var/log/zabbix/proxy"
       ];
       environment = {
       "TIMEZONE" = "America/Vancouver";
@@ -78,19 +96,18 @@ in
       "CONTAINER_ENABLE_MONITORING" = cfg.monitor;
       "CONTAINER_ENABLE_LOGSHIPPING" = cfg.logship;
 
-      "ALLOWED_IPS" = "127.0.0.1,172.19.192.0/18";
-      "ENABLE_READONLY" = "TRUE";
-      "MODE" = "containers,events,networks,ping,services,tasks,version";
+      "ZABBIX_PROXY_SERVER" = cfg.option.zabbix_proxy_server;
+      "ZABBIX_PROXY_SERVER_PORT" = cfg.option.zabbix_proxy_server_port;
+      "ZABBIX_PROXY_LISTEN_PORT" = cfg.option.zabbix_proxy_listen_port;
       };
       environmentFiles = [
 
       ];
       extraOptions = [
-        "--cpus=0.000"
-        "--memory=100M"
-        "--memory-reservation=32M"
-        "--network=socket-proxy"
-        "--network-alias=${hostname}-socket-proxy"
+        "--cpus=0.5"
+        "--memory=256M"
+        "--network=services"
+        "--network-alias=${hostname}-${container_name}"
       ];
 
       autoStart = mkDefault true;

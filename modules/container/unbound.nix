@@ -15,7 +15,7 @@ in
   options = {
     host.container.${container_name} = {
       enable = mkOption {
-        default = true;
+        default = false;
         type = with types; bool;
         description = container_description;
       };
@@ -59,14 +59,14 @@ in
         fi
       '';
 
-    systemd.services."docker-${hostname}-${container_name}" = {
+    systemd.services."docker-${container_name}" = {
       serviceConfig = {
         StandardOutput = "null";
         StandardError = "null";
       };
     };
 
-    virtualisation.oci-containers.containers."${hostname}-${container_name}" = {
+    virtualisation.oci-containers.containers."${container_name}" = {
       image = "${cfg.image.name}:${cfg.image.tag}";
       volumes = [
         "/var/local/data/_system/${container_name}/logs:/logs"
@@ -89,7 +89,8 @@ in
 
         "--ip=172.19.153.53"
         "--network=services"
-        "--network-alias=unbound"
+        "--network-alias=${hostname}-unbound"
+        "--network-alias=unbound-app"
       ];
 
       autoStart = mkDefault true;

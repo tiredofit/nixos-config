@@ -11,6 +11,6 @@ with lib;
     ./socket-proxy.nix
     #./tinc.nix
     ./unbound.nix
-    #./zabbix.nix
+    ./zabbix.nix
   ];
 }
