@@ -63,6 +63,9 @@
     feature = {
       secrets.enable = mkDefault true;
     };
+    network = {
+      domain = mkDefault "tiredofit.ca";
+    };
     service = {
       logrotate = {
         enable = mkDefault true;
@@ -73,8 +76,6 @@
       };
     };
   };
-
-  networking.domain = mkDefault "tiredofit.ca";
 
   security = {
     pam.loginLimits = [
