@@ -160,7 +160,7 @@ in
             chmod 640 "$path_prefix"/etc/ssh/ssh_host_ed25519_key.pub
         fi
 
-        if [ $(echo "$pub" | ${pkgs.gawk}/bin/awk '{print $2}') != "root root" ]; then
+        if [ "$(echo "$pub" | ${pkgs.gawk}/bin/awk '{print $2" "$3}')" != "root root" ]; then
             echo "Resetting ownership on SSH Host Public Key"
             chown -R root:root "$path_prefix"/etc/ssh/ssh_host_ed25519_key.pub
         fi
