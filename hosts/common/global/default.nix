@@ -64,7 +64,7 @@
       secrets.enable = mkDefault true;
     };
     network = {
-      domain = mkDefault "tiredofit.ca";
+      domainname = mkDefault "tiredofit.ca";
     };
     service = {
       logrotate = {
