@@ -86,11 +86,6 @@ For example to have a base AMD system using with an integrated GPU using BTRFS a
 
 ```
   host = {
-    feature = {
-      virtualization = {
-        docker.enable = true;
-      };
-    };
     hardware = {
       cpu = "amd";
       graphics = {
@@ -100,14 +95,15 @@ For example to have a base AMD system using with an integrated GPU using BTRFS a
       };
       webcam.enable = true;
     };
-    service = {
-      ssh = {
-        enable = true;
-        harden = true;
-      };
+    network = {
+      hostname = "samplehostname" ;
+      domainname = "tiredofit.ca" ;
     };
+    role = server;
   };
 ```
+
+This very much relies on the `modules/roles` folder and sets defaults per role, which can be overridden in each hosts unique configuration.
 
 ### Keep it up to date
 
