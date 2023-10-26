@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-SCRIPT_VERSION=1.2.0
+SCRIPT_VERSION=1.3.0
 
 INSTALL_BUILD_LOCAL=${INSTALL_BUILD_LOCAL:-"TRUE"}
 INSTALL_DEBUG=${INSTALL_DEBUG:-"FALSE"}
@@ -1587,6 +1587,21 @@ task_generate_sops_configuration() {
     print_debug "Add the hosts AGE Key at the top"
 
     yq -i eval ".creation_rules += [{\"path_regex\": \"hosts/${deploy_host}/secrets/.*\", \"key_groups\": [{\"age\": [\"*host_${deploy_host}\", \"*host_${SECRET_HOST}\", \"*user_${SECRET_USER}\"]}]}]" "${_dir_flake}"/.sops.yaml
+
+    if [ -n "${SECRET_HOST}" ]; then
+        secret_hosts=$(echo "${SECRET_HOST}" | tr " " "\n" | uniq)
+        for secret_host in $secret_hosts ; do
+            yq -i eval ".creation_rules |= map(select(.path_regex == \"hosts/${deploy_host}/secrets/.*\").key_groups[0].age += [\"*host_${secret_host}\"] // .)" "${_dir_flake}"/.sops.yaml
+	    done
+    fi
+
+    if [ -n "${SECRET_USER}" ]; then
+        secret_users=$(echo "${SECRET_USER}" | tr " " "\n" | uniq)
+        for secret_user in $secret_users ; do
+            yq -i eval ".creation_rules |= map(select(.path_regex == \"hosts/${deploy_host}/secrets/.*\").key_groups[0].age += [\"*user_${secret_user}\"] // .)" "${_dir_flake}"/.sops.yaml
+	    done
+    fi
+
     print_debug "Add the new path_regex for the host along with the host and user"
 
     yq -i eval ".creation_rules |= map(select(.path_regex == \"hosts/common/secrets/.*\").key_groups[0].age += [\"*host_${deploy_host}\"] // .)" "${_dir_flake}"/.sops.yaml
