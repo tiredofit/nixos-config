@@ -490,7 +490,7 @@ in
 
         if [ -d /var/local/db ]; then
             mkdir -p /var/local/db
-            chattr +C /var/local/db
+            ${pkgs.e2fsprogs}/bin/chattr +C /var/local/db
         fi
 
         if ${pkgs.procps}/bin/pgrep dockerd > /dev/null 2>&1 ; then
