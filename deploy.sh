@@ -1279,7 +1279,10 @@ secret_tools() {
 
 task_copy_ssh_key() {
     print_notice "Performing Check against SSH that you can log in"
-    ssh-copy-id -p ${SSH_PORT} ${ssh_private_key_prefix} -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_IP}
+    if [ -n "${SSH_PRIVATE_KEY}" ]; then
+        task_copy_ssh_key_ssh_private_key="-i ${SSH_PRIVATE_KEY}"
+    fi
+    ssh-copy-id -p ${SSH_PORT} ${task_copy_ssh_key_ssh_private_key} -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_IP}
     wait_for_keypress
 }
 
@@ -1961,7 +1964,10 @@ task_update_disk_prefix() {
 
 task_update_host() {
     print_info "Commencing update to remote host"
-    NIX_SSHOPTS="-t -p ${SSH_PORT} ${ssh_private_key_prefix} -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" nixos-rebuild switch --flake "${_dir_flake}"/#${deploy_host} --use-remote-sudo --target-host ${REMOTE_USER}@${REMOTE_IP} --use-remote-sudo
+    if [ -n "${SSH_PRIVATE_KEY}" ]; then
+        task_update_host_ssh_private_key="-i ${SSH_PRIVATE_KEY}"
+    fi
+    NIX_SSHOPTS="-t -p ${SSH_PORT} ${task_update_host_ssh_private_key} -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" nixos-rebuild switch --flake "${_dir_flake}"/#${deploy_host} --use-remote-sudo --target-host ${REMOTE_USER}@${REMOTE_IP} --use-remote-sudo
     wait_for_keypress
 }
 
