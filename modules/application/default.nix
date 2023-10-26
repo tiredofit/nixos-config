@@ -12,6 +12,7 @@ with lib;
     ./diceware.nix
     ./dust.nix
     ./e2fsprogs.nix
+    ./fzf.nix
     ./git.nix
     ./htop.nix
     ./iftop.nix
