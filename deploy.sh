@@ -1272,7 +1272,7 @@ secret_tools() {
             $EDITOR "${_dir_flake}"/.sops.yaml
         ;;
         "rekey" )
-            secret_rekey "${2}"
+            task_secret_rekey "${2}"
         ;;
     esac
 }
