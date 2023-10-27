@@ -11,6 +11,7 @@ with lib;
     ./restic.nix
     ./socket-proxy.nix
     ./tinc.nix
+    ./traefik.nix
     ./unbound.nix
     ./zabbix-proxy.nix
   ];
