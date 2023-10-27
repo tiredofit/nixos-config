@@ -117,6 +117,10 @@ in
 
     virtualisation.oci-containers.containers."${container_name}" = {
       image = "${cfg.image.name}:${cfg.image.tag}";
+      ports = [
+        "80:80"
+        "443:443"
+      ];
       volumes = [
         "/var/local/data/_system/${container_name}/certs:/data/certs"
         "/var/local/data/_system/${container_name}/config:/data/config"
@@ -128,7 +132,6 @@ in
         "CONTAINER_ENABLE_MONITORING" = cfg.monitor;
         "CONTAINER_ENABLE_LOGSHIPPING" = cfg.logship;
 
-        "DASHBOARD_HOSTNAME" = "${hostname}.vpn.env";
         "DOCKER_ENDPOINT" = "http://socket-proxy:2375";
         "LOG_LEVEL" = "WARN";
         "ACCESS_LOG_TYPE" = "FILE";
@@ -137,9 +140,10 @@ in
         "LETSENCRYPT_CHALLENGE" = "DNS";
         "LETSENCRYPT_DNS_PROVIDER" = "cloudflare";
 
-        #"LETSENCRYPT_EMAIL" = "common_env";        # hosts/common/secrets/container-zabbix-proxy.env
-        #"CF_API_EMAIL" = "1234567890";             # hosts/common/secrets/container-zabbix-proxy.env
-        #"CF_API_KEY" = "1234567890";               # hosts/common/secrets/container-zabbix-proxy.env
+        #"LETSENCRYPT_EMAIL" = "common_env";                                            # hosts/common/secrets/container-traefik.env
+        #"CF_API_EMAIL" = "1234567890";                                                 # hosts/common/secrets/container-traefik.env
+        #"CF_API_KEY" = "1234567890";                                                   # hosts/common/secrets/container-traefik.env
+        #"DASHBOARD_HOSTNAME" = "${hostname}.vpn.${config.host.network.domainname}";    # hosts/common/secrets/container-traefik.env
       };
       environmentFiles = [
         config.sops.secrets."common-container-${container_name}".path
