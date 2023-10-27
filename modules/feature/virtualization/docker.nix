@@ -133,6 +133,9 @@ in
                 # bash into running container
                 alias dbash='c_name=$($dsudo docker ps --format "table {{.Names}}\t{{.Image}}\t{{ .ID}}\t{{.RunningFor}}" | sed "/NAMES/d" | sort | fzf --tac | awk '"'"'{print $1;}'"'"') ; echo -e "\e[41m**\e[0m Entering $c_name from $(cat /etc/hostname)" ; $dsudo docker exec -e COLUMNS=$( tput cols ) -e LINES=$( tput lines ) -it $c_name bash'
 
+                # view logs
+                alias dlog='c_name=$($dsudo docker ps --format "table {{.Names}}\t{{.Image}}\t{{ .ID}}\t{{.RunningFor}}" | sed "/NAMES/d" | sort | fzf --tac | awk '"'"'{print $1;}'"'"') ; echo -e "\e[41m**\e[0m Viewing $c_name from $(cat /etc/hostname)" ; $dsudo docker logs $c_name ${1}'
+
                 # sh into running container
                 alias dsh='c_name=$($dsudo docker ps --format "table {{.Names}}\t{{.Image}}\t{{ .ID}}\t{{.RunningFor}}" | sed "/NAMES/d" | sort | fzf --tac | awk '"'"'{print $1;}'"'"') ; echo -e "\e[41m**\e[0m Entering $c_name from $(cat /etc/hostname)" ; $dsudo docker exec -e COLUMNS=$( tput cols ) -e LINES=$( tput lines ) -it $c_name sh'
 
