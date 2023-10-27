@@ -53,11 +53,11 @@ in
 
   config = mkIf cfg.enable {
     system.activationScripts."docker_${container_name}" = ''
-        if [ ! -d /var/local/data/_system/${container_name}/logs ]; then
-            mkdir -p /var/local/data/_system/${container_name}/logs
-            ${pkgs.e2fsprogs}/bin/chattr +C /var/local/data/_system/${container_name}/logs
-        fi
-      '';
+      if [ ! -d /var/local/data/_system/${container_name}/logs ]; then
+          mkdir -p /var/local/data/_system/${container_name}/logs
+          ${pkgs.e2fsprogs}/bin/chattr +C /var/local/data/_system/${container_name}/logs
+      fi
+    '';
 
     systemd.services."docker-${container_name}" = {
       serviceConfig = {
@@ -73,14 +73,14 @@ in
         "/var/local/data/_system/${container_name}/logs:/logs"
       ];
       environment = {
-      "TIMEZONE" = "America/Vancouver";
-      "CONTAINER_NAME" = "${hostname}-${container_name}";
-      "CONTAINER_ENABLE_MONITORING" = cfg.monitor;
-      "CONTAINER_ENABLE_LOGSHIPPING" = cfg.logship;
+        "TIMEZONE" = "America/Vancouver";
+        "CONTAINER_NAME" = "${hostname}-${container_name}";
+        "CONTAINER_ENABLE_MONITORING" = cfg.monitor;
+        "CONTAINER_ENABLE_LOGSHIPPING" = cfg.logship;
 
-      "ALLOWED_IPS" = "127.0.0.1,172.19.192.0/18";
-      "ENABLE_READONLY" = "TRUE";
-      "MODE" = "containers,events,networks,ping,services,tasks,version";
+        "ALLOWED_IPS" = "127.0.0.1,172.19.192.0/18";
+        "ENABLE_READONLY" = "TRUE";
+        "MODE" = "containers,events,networks,ping,services,tasks,version";
       };
       environmentFiles = [
 

@@ -52,6 +52,17 @@ in
   };
 
   config = mkIf cfg.enable {
+    sops.secrets = {
+      "common-container-${container_name}" = {
+        format = "dotenv";
+        sopsFile = ../../hosts/common/secrets/container-${container_name}.env;
+      };
+      "host-container-${container_name}" = {
+        format = "dotenv";
+        sopsFile = ../../hosts/${hostname}/secrets/container-${container_name}.env;
+      };
+    };
+
     system.activationScripts."docker_${container_name}" = ''
       if [ ! -d /var/local/data/_system/${container_name}/logs ]; then
           mkdir -p /var/local/data/_system/${container_name}/logs
@@ -77,22 +88,23 @@ in
         "/var/local/data/_system/${container_name}/logs:/www/logs"
       ];
       environment = {
-      "TIMEZONE" = "America/Vancouver";
-      "CONTAINER_NAME" = "${hostname}-${container_name}";
-      "CONTAINER_ENABLE_MONITORING" = cfg.monitor;
-      "CONTAINER_ENABLE_LOGSHIPPING" = cfg.logship;
+        "TIMEZONE" = "America/Vancouver";
+        "CONTAINER_NAME" = "${hostname}-${container_name}";
+        "CONTAINER_ENABLE_MONITORING" = cfg.monitor;
+        "CONTAINER_ENABLE_LOGSHIPPING" = cfg.logship;
 
-      "DOMAIN_NAME" = config.host.network.domainname;
-      "HANDLER_HOSTNAME" = "${hostname}.handler.auth.${config.host.network.domainname}";
-      "HANDLER_ALLOWED_IPS"= "common_env";
+        #"DOMAIN_NAME" = config.host.network.domainname;                  # hosts/common/secrets/container-llng-handler.env
+        #"HANDLER_HOSTNAME" = "${hostname}.handler.auth.example.com";     # hosts/common/secrets/container-llng-handler.env
+        #"HANDLER_ALLOWED_IPS"= "172.16.0.0/12,127.0.01";                 # hosts/common/secrets/container-llng-handler.env
 
-      "CONFIG_TYPE=REST";
-      "REST_HOST" = "common_env";
-      "REST_USER" = "host_env";
-      "REST_PASS" = "host_env";
+        #"CONFIG_TYPE=REST";                                              # hosts/common/secrets/container-llng-handler.env
+        #"REST_HOST" = "https://auth.example.com/index.psgi/config";      # hosts/common/secrets/container-llng-handler.env
+        #"REST_USER" = "user";                                            # hosts/<hostname>/secrets/container-llng-handler.env
+        #"REST_PASS" = "password";                                        # hosts/<hostname>/secrets/container-llng-handler.env
       };
       environmentFiles = [
-
+        config.sops.secrets."common-container-${container_name}".path
+        config.sops.secrets."host-container-${container_name}".path
       ];
       extraOptions = [
         "--memory=512M"

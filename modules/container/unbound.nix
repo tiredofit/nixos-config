@@ -72,12 +72,12 @@ in
         "/var/local/data/_system/${container_name}/logs:/logs"
       ];
       environment = {
-      "TIMEZONE" = "America/Vancouver";
-      "CONTAINER_NAME" = "${hostname}-${container_name}";
-      "CONTAINER_ENABLE_MONITORING" = cfg.monitor;
-      "CONTAINER_ENABLE_LOGSHIPPING" = cfg.logship;
+        "TIMEZONE" = "America/Vancouver";
+        "CONTAINER_NAME" = "${hostname}-${container_name}";
+        "CONTAINER_ENABLE_MONITORING" = cfg.monitor;
+        "CONTAINER_ENABLE_LOGSHIPPING" = cfg.logship;
 
-      "ENABLE_IPV6" = "FALSE";
+        "ENABLE_IPV6" = "FALSE";
       };
       environmentFiles = [
 

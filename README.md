@@ -31,6 +31,7 @@ If you would like to base your own configuration from this, you will need to be 
 - `lib`: Helpers, functions, libraries and timesavers
 - `modules`: Modules that are specific to this implementation and allow for toggled configuration
   - `application`: Applications accessible to all users of system
+  - `container`: Containers using some sort of OCI container engine
   - `features`: Features such as virtualization, gaming, cross compilation
   - `filesystem`: Encryption, impermanence, BTRFS options
   - `hardware`: Bluetooth, Printing, Sound, Wireless

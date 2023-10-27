@@ -53,17 +53,17 @@ in
 
   config = mkIf cfg.enable {
     system.activationScripts."docker_${container_name}" = ''
-        if [ ! -d /var/local/data/_system/${container_name}/logs ]; then
-            mkdir -p /var/local/data/_system/${container_name}/logs
-            ${pkgs.e2fsprogs}/bin/chattr +C /var/local/data/_system/${container_name}/logs
-        fi
+      if [ ! -d /var/local/data/_system/${container_name}/logs ]; then
+          mkdir -p /var/local/data/_system/${container_name}/logs
+          ${pkgs.e2fsprogs}/bin/chattr +C /var/local/data/_system/${container_name}/logs
+      fi
 
-        ## This one stores its databases as the same filename so lets disable CoW
-        if [ ! -d /var/local/data/_system/${container_name}/data ]; then
-            mkdir -p /var/local/data/_system/${container_name}/data
-            ${pkgs.e2fsprogs}/bin/chattr +C /var/local/data/_system/${container_name}/data
-        fi
-      '';
+      ## This one stores its databases as the same filename so lets disable CoW
+      if [ ! -d /var/local/data/_system/${container_name}/data ]; then
+          mkdir -p /var/local/data/_system/${container_name}/data
+          ${pkgs.e2fsprogs}/bin/chattr +C /var/local/data/_system/${container_name}/data
+      fi
+    '';
 
     systemd.services."docker-${container_name}" = {
       serviceConfig = {
@@ -79,15 +79,15 @@ in
         "/var/local/data/_system/${container_name}/logs:/logs"
       ];
       environment = {
-      "TIMEZONE" = "America/Vancouver";
-      "CONTAINER_NAME" = "${hostname}-${container_name}";
-      "CONTAINER_ENABLE_MONITORING" = cfg.monitor;
-      "CONTAINER_ENABLE_LOGSHIPPING" = cfg.logship;
+        "TIMEZONE" = "America/Vancouver";
+        "CONTAINER_NAME" = "${hostname}-${container_name}";
+        "CONTAINER_ENABLE_MONITORING" = cfg.monitor;
+        "CONTAINER_ENABLE_LOGSHIPPING" = cfg.logship;
 
-      "DEFINITIONS_UPDATE_FREQUENCY" ="60";
-      "ENABLE_ALERT_OLE2_MACROS" = "TRUE";
-      "ENABLE_DETECT_PUA" = "FALSE";
-      "EXCLUDE_PUA" = "Packed,NetTool,PWTool";
+        "DEFINITIONS_UPDATE_FREQUENCY" ="60";
+        "ENABLE_ALERT_OLE2_MACROS" = "TRUE";
+        "ENABLE_DETECT_PUA" = "FALSE";
+        "EXCLUDE_PUA" = "Packed,NetTool,PWTool";
       };
       environmentFiles = [
 

@@ -206,7 +206,6 @@ in
 
         #"DOMAIN1" = "example.com";         # hosts/common/secrets/container-traefik-cloudflare-companion.env
         #"DOMAIN1_ZONE_ID" = "abc";         # hosts/common/secrets/container-traefik-cloudflare-companion.env
-
       };
       environmentFiles = [
         config.sops.secrets."common-container-${tcc_container_name}".path

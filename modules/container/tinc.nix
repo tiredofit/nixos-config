@@ -113,7 +113,6 @@ in
         #"NODE"= "host_env";                                # hosts/<hostname>/secrets/container-tinc.env
         #"PUBLIC_IP"= "host_env";                           # hosts/<hostname>/secrets/container-tinc.env
         #"PRIVATE_IP"= "host_env";                          # hosts/<hostname>/secrets/container-tinc.env
-
       };
       environmentFiles = [
         config.sops.secrets."common-container-${container_name}".path

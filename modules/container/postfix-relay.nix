@@ -52,6 +52,17 @@ in
   };
 
   config = mkIf cfg.enable {
+    sops.secrets = {
+      "common-container-${container_name}" = {
+        format = "dotenv";
+        sopsFile = ../../hosts/common/secrets/container-${container_name}.env;
+      };
+      "host-container-${container_name}" = {
+        format = "dotenv";
+        sopsFile = ../../hosts/${hostname}/secrets/container-${container_name}.env;
+      };
+    };
+
     system.activationScripts."docker_${container_name}" = ''
       if [ ! -d /var/local/data/_system/${container_name}/logs ]; then
           mkdir -p /var/local/data/_system/${container_name}/logs
@@ -82,21 +93,24 @@ in
         "/var/local/data/_system/${container_name}/logs:/logs"
       ];
       environment = {
-      "TIMEZONE" = "America/Vancouver";
-      "CONTAINER_NAME" = "${hostname}-${container_name}";
-      "CONTAINER_ENABLE_MONITORING" = cfg.monitor;
-      "CONTAINER_ENABLE_LOGSHIPPING" = cfg.logship;
+        "TIMEZONE" = "America/Vancouver";
+        "CONTAINER_NAME" = "${hostname}-${container_name}";
+        "CONTAINER_ENABLE_MONITORING" = cfg.monitor;
+        "CONTAINER_ENABLE_LOGSHIPPING" = cfg.logship;
 
-      "MODE" = "RELAY";
-      "RELAY_HOST" = "common_env";
-      "RELAY_PORT" = "25";
-      "RELAY_USER"= "host_env";
-      "RELAY_PASS"= "host_env";
-      "SERVER_NAME" = "${hostname}.${config.host.network.domainname}";
-      "ACCEPTED_NETWORKS" = "172.16.0.0/12";
+        "MODE" = "RELAY";
+        "SERVER_NAME" = "${hostname}.${config.host.network.domainname}";
+
+        #"ACCEPTED_NETWORKS" = "172.16.0.0/12";   # hosts/common/secrets/container-postfix-relay.env
+
+        #"RELAY_HOST" = "smtp.example.com";       # hosts/common/secrets/container-postfix-relay.env
+        #"RELAY_PORT" = "25";                     # hosts/common/secrets/container-postfix-relay.env
+        #"RELAY_USER"= "username";                # hosts/<hostname>/secrets/container-postfix-relay.env
+        #"RELAY_PASS"= "password";                # hosts/<hostname>/secrets/container-postfix-relay.env
       };
       environmentFiles = [
-
+        config.sops.secrets."common-container-${container_name}".path
+        config.sops.secrets."host-container-${container_name}".path
       ];
       extraOptions = [
         "--memory=256M"

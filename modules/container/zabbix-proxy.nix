@@ -85,21 +85,23 @@ in
         "/var/local/data/_system/${container_name}/logs:/var/log/zabbix/proxy"
       ];
       environment = {
-      "TIMEZONE" = "America/Vancouver";
-      "CONTAINER_NAME" = "${hostname}-${container_name}";
-      "CONTAINER_ENABLE_MONITORING" = cfg.monitor;
-      "CONTAINER_ENABLE_LOGSHIPPING" = cfg.logship;
+        "TIMEZONE" = "America/Vancouver";
+        "CONTAINER_NAME" = "${hostname}-${container_name}";
+        "CONTAINER_ENABLE_MONITORING" = cfg.monitor;
+        "CONTAINER_ENABLE_LOGSHIPPING" = cfg.logship;
 
-      #"ZABBIX_PROXY_SERVER" = "zabbix.example.com";
-      #"ZABBIX_PROXY_SERVER_PORT" = "10051";
-      "ZABBIX_PROXY_LISTEN_PORT" = cfg.option.zabbix_proxy_listen_port;
+        #"ZABBIX_PROXY_SERVER" = "zabbix.example.com";                    # hosts/common/secrets/container-zabbix-proxy.env
+        #"ZABBIX_PROXY_SERVER_PORT" = "10051";                            # hosts/common/secrets/container-zabbix-proxy.env
+        "ZABBIX_PROXY_LISTEN_PORT" = cfg.option.zabbix_proxy_listen_port;
       };
       environmentFiles = [
-
+        config.sops.secrets."common-container-${container_name}".path
       ];
       extraOptions = [
         "--cpus=0.5"
         "--memory=256M"
+
+        "--dns=172.19.153.53"
         "--network=services"
         "--network-alias=${hostname}-${container_name}"
       ];

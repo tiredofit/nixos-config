@@ -62,6 +62,7 @@ in
         sopsFile = ../../hosts/${hostname}/secrets/container-${container_name}.env;
       };
     };
+
     system.activationScripts."docker_${container_name}" = ''
       if [ ! -d /var/local/data/_system/${container_name}/logs ]; then
           mkdir -p /var/local/data/_system/${container_name}/logs
@@ -82,18 +83,18 @@ in
         "/var/local/data/_system/${container_name}/logs:/var/log/fluentbit"
       ];
       environment = {
-      "TIMEZONE" = "America/Vancouver";
-      "CONTAINER_NAME" = "${hostname}-${container_name}";
-      "CONTAINER_ENABLE_MONITORING" = cfg.monitor;
-      "CONTAINER_ENABLE_LOGSHIPPING" = cfg.logship;
+        "TIMEZONE" = "America/Vancouver";
+        "CONTAINER_NAME" = "${hostname}-${container_name}";
+        "CONTAINER_ENABLE_MONITORING" = cfg.monitor;
+        "CONTAINER_ENABLE_LOGSHIPPING" = cfg.logship;
 
-      #"FLUENTBIT_OUTPUT" = "LOKI";                         # hosts/common/secrets/container-fluentbit.env
-      #"FLUENTBIT_OUTPUT_LOKI_HOST" = "loki.example.com";   # hosts/common/secrets/container-fluentbit.env
-      #"FLUENTBIT_OUTPUT_LOKI_PORT" = "443";                # hosts/common/secrets/container-fluentbit.env
-      #"FLUENTBIT_OUTPUT_LOKI_TLS" = "TRUE";                # hosts/common/secrets/container-fluentbit.env
-      #"FLUENTBIT_OUTPUT_LOKI_TLS_VERIFY" = "TRUE";         # hosts/common/secrets/container-fluentbit.env
-      #"FLUENTBIT_OUTPUT_LOKI_USER" = "username";           # hosts/<hostname>/secrets/container-fluentbit.env
-      #"FLUENTBIT_OUTPUT_LOKI_PASS" = "password";           # hosts/<hostname>/secrets/container-fluentbit.env
+        #"FLUENTBIT_OUTPUT" = "LOKI";                         # hosts/common/secrets/container-fluentbit.env
+        #"FLUENTBIT_OUTPUT_LOKI_HOST" = "loki.example.com";   # hosts/common/secrets/container-fluentbit.env
+        #"FLUENTBIT_OUTPUT_LOKI_PORT" = "443";                # hosts/common/secrets/container-fluentbit.env
+        #"FLUENTBIT_OUTPUT_LOKI_TLS" = "TRUE";                # hosts/common/secrets/container-fluentbit.env
+        #"FLUENTBIT_OUTPUT_LOKI_TLS_VERIFY" = "TRUE";         # hosts/common/secrets/container-fluentbit.env
+        #"FLUENTBIT_OUTPUT_LOKI_USER" = "username";           # hosts/<hostname>/secrets/container-fluentbit.env
+        #"FLUENTBIT_OUTPUT_LOKI_PASS" = "password";           # hosts/<hostname>/secrets/container-fluentbit.env
       };
       environmentFiles = [
         config.sops.secrets."common-container-${container_name}".path
