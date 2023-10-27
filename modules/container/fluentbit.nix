@@ -15,7 +15,7 @@ in
   options = {
     host.container.${container_name} = {
       enable = mkOption {
-        default = true;
+        default = false;
         type = with types; bool;
         description = container_description;
       };
@@ -53,9 +53,13 @@ in
 
   config = mkIf cfg.enable {
     sops.secrets = {
-      "common-container-${container_name}"; = {
-        format = "env";
-        sopsFile = ../../hosts/common/secrets/"container-${container_name}.env";
+      "common-container-${container_name}" = {
+        format = "dotenv";
+        sopsFile = ../../hosts/common/secrets/container-${container_name}.env;
+      };
+      "host-container-${container_name}" = {
+        format = "dotenv";
+        sopsFile = ../../hosts/${hostname}/secrets/container-${container_name}.env;
       };
     };
     system.activationScripts."docker_${container_name}" = ''
@@ -83,17 +87,17 @@ in
       "CONTAINER_ENABLE_MONITORING" = cfg.monitor;
       "CONTAINER_ENABLE_LOGSHIPPING" = cfg.logship;
 
-      "FLUENTBIT_OUTPUT" = "LOKI";
-      #"FLUENTBIT_OUTPUT_LOKI_HOST" = "common_env";
-      #"FLUENTBIT_OUTPUT_LOKI_PORT" = "common_env";
-      "FLUENTBIT_OUTPUT_LOKI_TLS" = "TRUE";
-      "FLUENTBIT_OUTPUT_LOKI_TLS_VERIFY" = "TRUE";
-      #"FLUENTBIT_OUTPUT_LOKI_USER" = "host_env";
-      #"FLUENTBIT_OUTPUT_LOKI_PASS" = "host_env";
+      #"FLUENTBIT_OUTPUT" = "LOKI";                         # hosts/common/secrets/container-fluentbit.env
+      #"FLUENTBIT_OUTPUT_LOKI_HOST" = "loki.example.com";   # hosts/common/secrets/container-fluentbit.env
+      #"FLUENTBIT_OUTPUT_LOKI_PORT" = "443";                # hosts/common/secrets/container-fluentbit.env
+      #"FLUENTBIT_OUTPUT_LOKI_TLS" = "TRUE";                # hosts/common/secrets/container-fluentbit.env
+      #"FLUENTBIT_OUTPUT_LOKI_TLS_VERIFY" = "TRUE";         # hosts/common/secrets/container-fluentbit.env
+      #"FLUENTBIT_OUTPUT_LOKI_USER" = "username";           # hosts/<hostname>/secrets/container-fluentbit.env
+      #"FLUENTBIT_OUTPUT_LOKI_PASS" = "password";           # hosts/<hostname>/secrets/container-fluentbit.env
       };
       environmentFiles = [
-        config.sops.secrets."common-container-${container_name}".path;
-        #config.sops.secrets."host-container-${container_name}".path;
+        config.sops.secrets."common-container-${container_name}".path
+        config.sops.secrets."host-container-${container_name}".path
       ];
       extraOptions = [
         "--memory=1024M"
