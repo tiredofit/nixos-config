@@ -54,23 +54,17 @@ in
           type = with types; str;
           description = "Zabbix Proxy Listening Port";
         };
-
-        zabbix_proxy_server = mkOption {
-          default = config.host.service.zabbix_agent.serverActive;
-          type = with types; str;
-          description = "Zabbix Proxy Server Hostname";
-        };
-
-        zabbix_proxy_server_port = mkOption {
-          default = "10051";
-          type = with types; str;
-          description = "Zabbix Proxy Server Port";
-        };
       };
     };
   };
 
   config = mkIf cfg.enable {
+    sops.secrets = {
+      "common-container-${container_name}" = {
+        format = "dotenv";
+        sopsFile = ../../hosts/common/secrets/container-${container_name}.env;
+      };
+    };
     system.activationScripts."docker_${container_name}" = ''
         if [ ! -d /var/local/data/_system/${container_name}/logs ]; then
             mkdir -p /var/local/data/_system/${container_name}/logs
@@ -96,8 +90,8 @@ in
       "CONTAINER_ENABLE_MONITORING" = cfg.monitor;
       "CONTAINER_ENABLE_LOGSHIPPING" = cfg.logship;
 
-      "ZABBIX_PROXY_SERVER" = cfg.option.zabbix_proxy_server;
-      "ZABBIX_PROXY_SERVER_PORT" = cfg.option.zabbix_proxy_server_port;
+      #"ZABBIX_PROXY_SERVER" = "zabbix.example.com";
+      #"ZABBIX_PROXY_SERVER_PORT" = "10051";
       "ZABBIX_PROXY_LISTEN_PORT" = cfg.option.zabbix_proxy_listen_port;
       };
       environmentFiles = [
