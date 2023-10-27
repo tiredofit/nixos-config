@@ -85,7 +85,7 @@ in
 
     virtualisation.oci-containers.containers."${container_name}" = {
       image = "${cfg.image.name}:${cfg.image.tag}";
-      ports: = [
+      ports = [
         "127.0.0.1:25:25"
       ];
       volumes = [
