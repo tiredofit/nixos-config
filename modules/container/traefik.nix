@@ -168,34 +168,34 @@ in
     sops.secrets = {
       "common-container-${tcc_container_name}" = {
         format = "dotenv";
-        sopsFile = ../../hosts/common/secrets/container-${tcc_container_name}.env;
+        sopsFile = ../../hosts/common/secrets/container-${container_name}-${tcc_container_name}.env;
       };
     };
 
-    system.activationScripts."docker_${tcc_container_name}" = mkIf host.container.${tcc_container_name} ''
+    system.activationScripts."docker_${tcc_container_name}" = mkIf config.host.container.${tcc_container_name}.enable ''
       if [ ! -d /var/local/data/_system/${container_name}/logs/tcc ]; then
           mkdir -p /var/local/data/_system/${container_name}/logs/tcc
           ${pkgs.e2fsprogs}/bin/chattr +C /var/local/data/_system/${container_name}/logs/tcc
       fi
     '';
 
-    systemd.services."docker-${tcc_container_name}" = mkIf host.container.${tcc_container_name} {
+    systemd.services."docker-${tcc_container_name}" = mkIf config.host.container.${tcc_container_name}.enable {
       serviceConfig = {
         StandardOutput = "null";
         StandardError = "null";
       };
     };
 
-    virtualisation.oci-containers.containers."${container_name}" = mkIf host.container.${tcc_container_name} {
-      image = "${host.container.${tcc_container_name}.image.name}:${host.container.${tcc_container_name}.image.tag}";
+    virtualisation.oci-containers.containers."${tcc_container_name}" = mkIf config.host.container.${tcc_container_name}.enable {
+      image = "${config.host.container.${tcc_container_name}.image.name}:${config.host.container.${tcc_container_name}.image.tag}";
       volumes = [
         "/var/local/data/_system/${container_name}/logs/tcc:/logs"
       ];
       environment = {
         "TIMEZONE" = "America/Vancouver";
         "CONTAINER_NAME" = "${hostname}-${tcc_container_name}";
-        "CONTAINER_ENABLE_MONITORING" = host.container."${tcc_container_name}".monitor;
-        "CONTAINER_ENABLE_LOGSHIPPING" = host.container."${tcc_container_name}".logship;
+        "CONTAINER_ENABLE_MONITORING" = config.host.container."${tcc_container_name}".monitor;
+        "CONTAINER_ENABLE_LOGSHIPPING" = config.host.container."${tcc_container_name}".logship;
 
         "DOCKER_HOST" = "http://socket-proxy:2375";
         "TRAEFIK_VERSION" = "2";
@@ -222,7 +222,7 @@ in
       autoStart = mkDefault true;
       log-driver = mkDefault "local";
       login = {
-        registry = host.container."${tcc_container_name}".image.registry.host;
+        registry = config.host.container."${tcc_container_name}".image.registry.host;
       };
     };
   };

@@ -18,6 +18,11 @@
   };
 
   host = {
+    container = {
+      tinc.enable = false;
+      socket-proxy.enable = true;
+      traefik.enable = true;
+    };
     feature = {
       gaming = {
         enable = true;
