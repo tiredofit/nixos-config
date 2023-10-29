@@ -120,11 +120,11 @@ in
     sops.secrets = {
       "common-container-${container_name}" = {
         format = "dotenv";
-        sopsFile = ../../hosts/common/secrets/container-${container_name}.env;
+        sopsFile = ../../hosts/common/secrets/container/container-${container_name}.env;
       };
       "host-container-${container_name}" = {
         format = "dotenv";
-        sopsFile = ../../hosts/${hostname}/secrets/container-${container_name}.env;
+        sopsFile = ../../hosts/${hostname}/secrets/container/container-${container_name}.env;
       };
     };
     system.activationScripts."docker_${container_name}" = ''

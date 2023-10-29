@@ -159,7 +159,7 @@ in
     sops.secrets = {
       "host-container-${container_name}" = {
         format = "dotenv";
-        sopsFile = ../../hosts/${hostname}/secrets/container-${container_name}.env;
+        sopsFile = ../../hosts/${hostname}/secrets/container/container-${container_name}.env;
       };
     };
 
