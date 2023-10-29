@@ -19,9 +19,22 @@
 
   host = {
     container = {
-      tinc.enable = false;
-      socket-proxy.enable = true;
-      traefik.enable = true;
+      restic = {
+        enable = true;
+        logship = "false";
+        monitor = "false";
+      };
+      socket-proxy = {
+        enable = true;
+        logship = "false";
+        monitor = "false";
+      };
+      tinc = {
+        enable = true;
+        logship = "false";
+        monitor = "false";
+      };
+      #traefik.enable = true;
     };
     feature = {
       gaming = {
