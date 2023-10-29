@@ -30,11 +30,6 @@ in
           type = with types; str;
           description = "Image tag";
         };
-        pull = {
-          default = true;
-          type = with types; bool;
-          description = "Keep image updated by pulling a new version each time";
-        };
         registry = {
           host = mkOption {
             default = container_image_registry;
@@ -42,7 +37,11 @@ in
             description = "Image Registry";
           };
         };
-
+        update = mkOption {
+          default = true;
+          type = with types; bool;
+          description = "Pull image on each service start";
+        };
       };
       logship = mkOption {
         default = "true";
@@ -58,34 +57,7 @@ in
   };
 
   config = mkIf cfg.enable {
-    sops.secrets = {
-      "host-container-${container_name}" = {
-        format = "dotenv";
-        sopsFile = ../../hosts/${hostname}/secrets/container-${container_name}.env;
-      };
-    };
-
-    system.activationScripts."docker_${container_name}_filesystem" = ''
-      if [ ! -d /var/local/data/_system/${container_name}/logs ]; then
-          mkdir -p /var/local/data/_system/${container_name}/logs
-          ${pkgs.e2fsprogs}/bin/chattr +C /var/local/data/_system/${container_name}/logs
-      fi
-
-      ## This one stores cache in here so lets disable CoW
-      if [ ! -d /var/local/data/_system/${container_name}/cache ]; then
-          mkdir -p /var/local/data/_system/${container_name}/cache
-          ${pkgs.e2fsprogs}/bin/chattr +C /var/local/data/_system/${container_name}/cache
-      fi
-    '';
-
-    systemd.services."docker-${container_name}" = {
-      serviceConfig = {
-        StandardOutput = "null";
-        StandardError = "null";
-      };
-    };
-
-    virtualisation.oci-containers.containers."${container_name}" = {
+    host.feature.virtualization.containers."${container_name}" = {
       image = "${cfg.image.name}:${cfg.image.tag}";
       volumes = [
         "/var/local/data/_system/${container_name}/cache:/cache"
@@ -136,15 +108,44 @@ in
       ];
       extraOptions = [
         #"--memory=256M" ## TODO: Map
-        "--network=services"
         "--network-alias=${hostname}-${container_name}"
         "--pull=always"
       ];
-
+      networks = [
+        "services"
+      ];
       autoStart = mkDefault true;
       log-driver = mkDefault "local";
       login = {
         registry = cfg.image.registry.host;
+      };
+      pullonStart = cfg.image.update;
+    };
+
+    sops.secrets = {
+      "host-container-${container_name}" = {
+        format = "dotenv";
+        sopsFile = ../../hosts/${hostname}/secrets/container-${container_name}.env;
+      };
+    };
+
+    system.activationScripts."docker_${container_name}_filesystem" = ''
+      if [ ! -d /var/local/data/_system/${container_name}/logs ]; then
+          mkdir -p /var/local/data/_system/${container_name}/logs
+          ${pkgs.e2fsprogs}/bin/chattr +C /var/local/data/_system/${container_name}/logs
+      fi
+
+      ## This one stores cache in here so lets disable CoW
+      if [ ! -d /var/local/data/_system/${container_name}/cache ]; then
+          mkdir -p /var/local/data/_system/${container_name}/cache
+          ${pkgs.e2fsprogs}/bin/chattr +C /var/local/data/_system/${container_name}/cache
+      fi
+    '';
+
+    systemd.services."docker-${container_name}" = {
+      serviceConfig = {
+        StandardOutput = "null";
+        StandardError = "null";
       };
     };
   };

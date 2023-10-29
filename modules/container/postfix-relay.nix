@@ -37,6 +37,11 @@ in
             description = "Image Registry";
           };
         };
+        update = mkOption {
+          default = true;
+          type = with types; bool;
+          description = "Pull image on each service start";
+        };
       };
       logship = mkOption {
         default = "true";
@@ -52,38 +57,7 @@ in
   };
 
   config = mkIf cfg.enable {
-    sops.secrets = {
-      "common-container-${container_name}" = {
-        format = "dotenv";
-        sopsFile = ../../hosts/common/secrets/container-${container_name}.env;
-      };
-      "host-container-${container_name}" = {
-        format = "dotenv";
-        sopsFile = ../../hosts/${hostname}/secrets/container-${container_name}.env;
-      };
-    };
-
-    system.activationScripts."docker_${container_name}" = ''
-      if [ ! -d /var/local/data/_system/${container_name}/logs ]; then
-          mkdir -p /var/local/data/_system/${container_name}/logs
-          ${pkgs.e2fsprogs}/bin/chattr +C /var/local/data/_system/${container_name}/logs
-      fi
-
-      ## This one stores its databases as the same filename so lets disable CoW
-      if [ ! -d /var/local/data/_system/${container_name}/data ]; then
-          mkdir -p /var/local/data/_system/${container_name}/data
-          ${pkgs.e2fsprogs}/bin/chattr +C /var/local/data/_system/${container_name}/data
-      fi
-    '';
-
-    systemd.services."docker-${container_name}" = {
-      serviceConfig = {
-        StandardOutput = "null";
-        StandardError = "null";
-      };
-    };
-
-    virtualisation.oci-containers.containers."${container_name}" = {
+    host.feature.virtualization.containers."${container_name}" = {
       image = "${cfg.image.name}:${cfg.image.tag}";
       ports = [
         "127.0.0.1:25:25"
@@ -114,14 +88,47 @@ in
       ];
       extraOptions = [
         "--memory=256M"
-        "--network=services"
         "--network-alias=${hostname}-${container_name}"
       ];
-
+      networks = [
+        "services"
+      ];
       autoStart = mkDefault true;
       log-driver = mkDefault "local";
       login = {
         registry = cfg.image.registry.host;
+      };
+      pullonStart = cfg.image.update;
+    };
+
+    sops.secrets = {
+      "common-container-${container_name}" = {
+        format = "dotenv";
+        sopsFile = ../../hosts/common/secrets/container-${container_name}.env;
+      };
+      "host-container-${container_name}" = {
+        format = "dotenv";
+        sopsFile = ../../hosts/${hostname}/secrets/container-${container_name}.env;
+      };
+    };
+
+    system.activationScripts."docker_${container_name}" = ''
+      if [ ! -d /var/local/data/_system/${container_name}/logs ]; then
+          mkdir -p /var/local/data/_system/${container_name}/logs
+          ${pkgs.e2fsprogs}/bin/chattr +C /var/local/data/_system/${container_name}/logs
+      fi
+
+      ## This one stores its databases as the same filename so lets disable CoW
+      if [ ! -d /var/local/data/_system/${container_name}/data ]; then
+          mkdir -p /var/local/data/_system/${container_name}/data
+          ${pkgs.e2fsprogs}/bin/chattr +C /var/local/data/_system/${container_name}/data
+      fi
+    '';
+
+    systemd.services."docker-${container_name}" = {
+      serviceConfig = {
+        StandardOutput = "null";
+        StandardError = "null";
       };
     };
   };

@@ -37,6 +37,11 @@ in
             description = "Image Registry";
           };
         };
+        update = mkOption {
+          default = true;
+          type = with types; bool;
+          description = "Pull image on each service start";
+        };
       };
       logship = mkOption {
         default = "true";
@@ -52,21 +57,7 @@ in
   };
 
   config = mkIf cfg.enable {
-    system.activationScripts."docker_${container_name}" = ''
-        if [ ! -d /var/local/data/_system/${container_name}/logs ]; then
-            mkdir -p /var/local/data/_system/${container_name}/logs
-            ${pkgs.e2fsprogs}/bin/chattr +C /var/local/data/_system/${container_name}/logs
-        fi
-      '';
-
-    systemd.services."docker-${container_name}" = {
-      serviceConfig = {
-        StandardOutput = "null";
-        StandardError = "null";
-      };
-    };
-
-    virtualisation.oci-containers.containers."${container_name}" = {
+    host.feature.virtualization.containers."${container_name}" = {
       image = "${cfg.image.name}:${cfg.image.tag}";
       volumes = [
         "/var/local/data/_system/${container_name}/logs:/logs"
@@ -88,16 +79,33 @@ in
         "--memory-reservation=32M"
 
         "--ip=172.19.153.53"
-        "--network=services"
         "--network-alias=${hostname}-unbound"
         "--network-alias=unbound-app"
       ];
-
+      networks = [
+        "services"
+      ];
       autoStart = mkDefault true;
       log-driver = mkDefault "local";
       login = {
         registry = cfg.image.registry.host;
       };
+      pullonStart = cfg.image.update;
     };
+
+    system.activationScripts."docker_${container_name}" = ''
+        if [ ! -d /var/local/data/_system/${container_name}/logs ]; then
+            mkdir -p /var/local/data/_system/${container_name}/logs
+            ${pkgs.e2fsprogs}/bin/chattr +C /var/local/data/_system/${container_name}/logs
+        fi
+      '';
+
+    systemd.services."docker-${container_name}" = {
+      serviceConfig = {
+        StandardOutput = "null";
+        StandardError = "null";
+      };
+    };
+
   };
 }

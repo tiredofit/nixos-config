@@ -43,6 +43,11 @@ in
             description = "Image Registry";
           };
         };
+        update = mkOption {
+          default = true;
+          type = with types; bool;
+          description = "Pull image on each service start";
+        };
       };
       logship = mkOption {
         default = "true";
@@ -80,6 +85,11 @@ in
             description = "Image Registry";
           };
         };
+        update = mkOption {
+          default = true;
+          type = with types; bool;
+          description = "Pull image on each service start";
+        };
       };
       logship = mkOption {
         default = "true";
@@ -95,27 +105,7 @@ in
   };
 
   config = mkIf cfg.enable {
-    sops.secrets = {
-      "common-container-${container_name}" = {
-        format = "dotenv";
-        sopsFile = ../../hosts/common/secrets/container-${container_name}.env;
-      };
-    };
-    system.activationScripts."docker_${container_name}" = ''
-      if [ ! -d /var/local/data/_system/${container_name}/logs ]; then
-          mkdir -p /var/local/data/_system/${container_name}/logs
-          ${pkgs.e2fsprogs}/bin/chattr +C /var/local/data/_system/${container_name}/logs
-      fi
-    '';
-
-    systemd.services."docker-${container_name}" = {
-      serviceConfig = {
-        StandardOutput = "null";
-        StandardError = "null";
-      };
-    };
-
-    virtualisation.oci-containers.containers."${container_name}" = {
+        host.feature.virtualization.containers."${container_name}" = {
       image = "${cfg.image.name}:${cfg.image.tag}";
       ports = [
         "80:80"
@@ -152,12 +142,13 @@ in
         "--hostname=${hostname}.vpn.${config.host.network.domainname}"
         "--cpus=0.5"
         "--memory=256M"
-        "--network=proxy"
-        "--network=services"
-        "--network=socket-proxy"
         "--network-alias=${hostname}-${container_name}"
       ];
-
+      networks = [
+        "proxy"
+        "services"
+        "socket-proxy"
+      ];
       autoStart = mkDefault true;
       log-driver = mkDefault "local";
       login = {
@@ -166,27 +157,26 @@ in
     };
 
     sops.secrets = {
-      "common-container-${tcc_container_name}" = {
+      "common-container-${container_name}" = {
         format = "dotenv";
-        sopsFile = ../../hosts/common/secrets/container-${container_name}-${tcc_container_name}.env;
+        sopsFile = ../../hosts/common/secrets/container-${container_name}.env;
       };
     };
-
-    system.activationScripts."docker_${tcc_container_name}" = mkIf config.host.container.${tcc_container_name}.enable ''
-      if [ ! -d /var/local/data/_system/${container_name}/logs/tcc ]; then
-          mkdir -p /var/local/data/_system/${container_name}/logs/tcc
-          ${pkgs.e2fsprogs}/bin/chattr +C /var/local/data/_system/${container_name}/logs/tcc
+    system.activationScripts."docker_${container_name}" = ''
+      if [ ! -d /var/local/data/_system/${container_name}/logs ]; then
+          mkdir -p /var/local/data/_system/${container_name}/logs
+          ${pkgs.e2fsprogs}/bin/chattr +C /var/local/data/_system/${container_name}/logs
       fi
     '';
 
-    systemd.services."docker-${tcc_container_name}" = mkIf config.host.container.${tcc_container_name}.enable {
+    systemd.services."docker-${container_name}" = {
       serviceConfig = {
         StandardOutput = "null";
         StandardError = "null";
       };
     };
 
-    virtualisation.oci-containers.containers."${tcc_container_name}" = mkIf config.host.container.${tcc_container_name}.enable {
+    host.feature.virtualization.containers."${tcc_container_name}" = mkIf config.host.container.${tcc_container_name}.enable {
       image = "${config.host.container.${tcc_container_name}.image.name}:${config.host.container.${tcc_container_name}.image.tag}";
       volumes = [
         "/var/local/data/_system/${container_name}/logs/tcc:/logs"
@@ -214,15 +204,38 @@ in
         "--hostname=${hostname}.vpn.${config.host.network.domainname}"
         "--cpus=0.25"
         "--memory=128M"
-        "--network=services"
-        "--network=socket-proxy"
         "--network-alias=${hostname}-${tcc_container_name}"
       ];
-
+      networks = [
+        "services"
+        "socket-proxy"
+      ];
       autoStart = mkDefault true;
       log-driver = mkDefault "local";
       login = {
         registry = config.host.container."${tcc_container_name}".image.registry.host;
+      };
+      pullonStart = config.host.container."${tcc_container_name}".image.update;
+    };
+
+    sops.secrets = {
+      "common-container-${tcc_container_name}" = {
+        format = "dotenv";
+        sopsFile = ../../hosts/common/secrets/container-${container_name}-${tcc_container_name}.env;
+      };
+    };
+
+    system.activationScripts."docker_${tcc_container_name}" = mkIf config.host.container.${tcc_container_name}.enable ''
+      if [ ! -d /var/local/data/_system/${container_name}/logs/tcc ]; then
+          mkdir -p /var/local/data/_system/${container_name}/logs/tcc
+          ${pkgs.e2fsprogs}/bin/chattr +C /var/local/data/_system/${container_name}/logs/tcc
+      fi
+    '';
+
+    systemd.services."docker-${tcc_container_name}" = mkIf config.host.container.${tcc_container_name}.enable {
+      serviceConfig = {
+        StandardOutput = "null";
+        StandardError = "null";
       };
     };
   };
