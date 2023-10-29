@@ -34,7 +34,11 @@
         logship = "false";
         monitor = "false";
       };
-      #traefik.enable = true;
+      traefik = {
+        enable = true;
+        logship = "false";
+        monitor = "false";
+      };
     };
     feature = {
       gaming = {
