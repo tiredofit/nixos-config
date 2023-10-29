@@ -2,9 +2,9 @@
 with lib;
 {
   imports = [
+    ./container.nix
     ./docker.nix
     ./flatpak.nix
-    ./oci-container.nix
     ./virtd.nix
   ];
 }
