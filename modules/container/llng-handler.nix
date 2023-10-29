@@ -39,12 +39,12 @@ in
         };
       };
       logship = mkOption {
-        default = "false";
+        default = "true";
         type = with types; str;
         description = "Enable monitoring for this container";
       };
       monitor = mkOption {
-        default = "false";
+        default = "true";
         type = with types; str;
         description = "Enable monitoring for this container";
       };

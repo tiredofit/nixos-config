@@ -30,6 +30,11 @@ in
           type = with types; str;
           description = "Image tag";
         };
+        pull = {
+          default = true;
+          type = with types; bool;
+          description = "Keep image updated by pulling a new version each time";
+        };
         registry = {
           host = mkOption {
             default = container_image_registry;
@@ -37,14 +42,15 @@ in
             description = "Image Registry";
           };
         };
+
       };
       logship = mkOption {
-        default = "false";
+        default = "true";
         type = with types; str;
         description = "Enable monitoring for this container";
       };
       monitor = mkOption {
-        default = "false";
+        default = "true";
         type = with types; str;
         description = "Enable monitoring for this container";
       };
@@ -59,7 +65,7 @@ in
       };
     };
 
-    system.activationScripts."docker_${container_name}" = ''
+    system.activationScripts."docker_${container_name}_filesystem" = ''
       if [ ! -d /var/local/data/_system/${container_name}/logs ]; then
           mkdir -p /var/local/data/_system/${container_name}/logs
           ${pkgs.e2fsprogs}/bin/chattr +C /var/local/data/_system/${container_name}/logs
@@ -124,36 +130,6 @@ in
         #"BACKUP03_SNAPSHOT_BLACKOUT_END" = "0500";
         #"BACKUP03_REPOSITORY_PASS" = "repository_password";
         #"BACKUP03_REPOSITORY_PATH" = "rest:https://host_env:host_env@host_env/";
-
-        #"BACKUP04_SNAPSHOT_NAME" = "w-persist";
-        #"BACKUP04_SNAPSHOT_PATH" = "/rootfs/persist";
-        #"BACKUP04_SNAPSHOT_EXCLUDE" = ".snapshots";
-        #"BACKUP04_SNAPSHOT_BEGIN" = "0301";
-        #"BACKUP04_SNAPSHOT_INTERVAL" = "1440";
-        #"BACKUP04_SNAPSHOT_BLACKOUT_BEGIN" = "0500";
-        #"BACKUP04_SNAPSHOT_BLACKOUT_END" = "0300";
-        #"BACKUP04_REPOSITORY_PASS" = "repository_password";
-        #"BACKUP04_REPOSITORY_PATH" = "rest:https://host_env:host_env@host_env/";
-
-        #"BACKUP05_SNAPSHOT_NAME" = "w-home";
-        #"BACKUP05_SNAPSHOT_PATH" = "/rootfs/home";
-        #"BACKUP05_SNAPSHOT_EXCLUDE" = ".snapshots,.vscode-server,.cache";
-        #"BACKUP05_SNAPSHOT_BEGIN" = "0302";
-        #"BACKUP05_SNAPSHOT_INTERVAL" = "1440";
-        #"BACKUP05_SNAPSHOT_BLACKOUT_BEGIN" = "0500";
-        #"BACKUP05_SNAPSHOT_BLACKOUT_END" = "0300";
-        #"BACKUP05_REPOSITORY_PASS" = "repository_password";
-        #"BACKUP05_REPOSITORY_PATH" = "rest:https://host_env:host_env@host_env/";
-
-        #"BACKUP06_SNAPSHOT_NAME" = "w-var_local";
-        #"BACKUP06_SNAPSHOT_PATH" = "/rootfs/var/local/data";
-        #"BACKUP06_SNAPSHOT_EXCLUDE" = ".snapshots,dbbackup/archive,backup/archive,cache,data/cache,restic/cache,*.db-shm,*.db-wal,*.log.db";
-        #"BACKUP06_SNAPSHOT_BEGIN" = "0304";
-        #"BACKUP06_SNAPSHOT_INTERVAL" = "1440";
-        #"BACKUP06_SNAPSHOT_BLACKOUT_BEGIN" = "0500";
-        #"BACKUP06_SNAPSHOT_BLACKOUT_END" = "0300";
-        #"BACKUP06_REPOSITORY_PASS" = "repository_password";
-        #"BACKUP06_REPOSITORY_PATH" = "rest:https://host_env:host_env@host_env/";
       };
       environmentFiles = [
         config.sops.secrets."host-container-${container_name}".path
@@ -162,6 +138,7 @@ in
         #"--memory=256M" ## TODO: Map
         "--network=services"
         "--network-alias=${hostname}-${container_name}"
+        "--pull=always"
       ];
 
       autoStart = mkDefault true;
