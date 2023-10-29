@@ -105,7 +105,7 @@ in
   };
 
   config = mkIf cfg.enable {
-        host.feature.virtualization.containers."${container_name}" = {
+    host.feature.virtualization.docker.containers."${container_name}" = {
       image = "${cfg.image.name}:${cfg.image.tag}";
       ports = [
         "80:80"
@@ -176,7 +176,7 @@ in
       };
     };
 
-    host.feature.virtualization.containers."${tcc_container_name}" = mkIf config.host.container.${tcc_container_name}.enable {
+    host.feature.virtualization.docker.containers."${tcc_container_name}" = mkIf config.host.container.${tcc_container_name}.enable {
       image = "${config.host.container.${tcc_container_name}.image.name}:${config.host.container.${tcc_container_name}.image.tag}";
       volumes = [
         "/var/local/data/_system/${container_name}/logs/tcc:/logs"

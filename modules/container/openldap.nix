@@ -71,7 +71,7 @@ in
   };
 
   config = mkIf cfg.enable {
-    host.feature.virtualization.containers."${container_name}" = {
+    host.feature.virtualization.docker.containers."${container_name}" = {
       image = "${cfg.image.name}:${cfg.image.tag}";
       ports = [
         "${cfg.option.internal_ip}:389:389"

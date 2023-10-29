@@ -57,7 +57,7 @@ in
   };
 
   config = mkIf cfg.enable {
-    host.feature.virtualization.containers."${container_name}" = {
+    host.feature.virtualization.docker.containers."${container_name}" = {
       image = "${cfg.image.name}:${cfg.image.tag}";
       volumes = [
         "/var/local/data/_system/${container_name}/logs:/logs"
@@ -94,11 +94,11 @@ in
     };
 
     system.activationScripts."docker_${container_name}" = ''
-        if [ ! -d /var/local/data/_system/${container_name}/logs ]; then
-            mkdir -p /var/local/data/_system/${container_name}/logs
-            ${pkgs.e2fsprogs}/bin/chattr +C /var/local/data/_system/${container_name}/logs
-        fi
-      '';
+      if [ ! -d /var/local/data/_system/${container_name}/logs ]; then
+          mkdir -p /var/local/data/_system/${container_name}/logs
+          ${pkgs.e2fsprogs}/bin/chattr +C /var/local/data/_system/${container_name}/logs
+      fi
+    '';
 
     systemd.services."docker-${container_name}" = {
       serviceConfig = {
