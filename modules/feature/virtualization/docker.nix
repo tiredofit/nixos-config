@@ -358,7 +358,7 @@ in
         description = "Enables tools and daemon for containerization";
       };
     };
-    host.feature.virtualization.containers = mkOption {
+    host.feature.virtualization.docker.containers = mkOption {
       default = {};
       type = types.attrsOf (types.submodule containerOptions);
       description = "Docker containers to run as systemd services.";
