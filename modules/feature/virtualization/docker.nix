@@ -274,7 +274,8 @@ let
   in
     rec {
       wantedBy = [] ++ optional (container.autoStart) "multi-user.target";
-      after = [ "docker.service" "docker.socket" "docker-networks.service" ]
+      after = [ "docker.service" "docker.socket" ]
+        ## TODO Add if we want to optionalize this "docker-networks.service"
         ++ lib.optionals (container.imageFile == null) [ "network-online.target" ]
         ++ mkAfter;
       requires = after;
