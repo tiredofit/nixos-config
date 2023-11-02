@@ -160,6 +160,7 @@ in
       "common-container-${container_name}" = {
         format = "dotenv";
         sopsFile = ../../hosts/common/secrets/container/container-${container_name}.env;
+        restartUnits = [ "docker-${container_name}.service" ];
       };
     };
     system.activationScripts."docker_${container_name}" = ''
@@ -222,6 +223,7 @@ in
       "common-container-${tcc_container_name}" = {
         format = "dotenv";
         sopsFile = ../../hosts/common/secrets/container/container-${container_name}-${tcc_container_name}.env;
+        restartUnits = [ "docker-${tcc_container_name}.service" ];
       };
     };
 

@@ -106,10 +106,12 @@ in
       "common-container-${container_name}" = {
         format = "dotenv";
         sopsFile = ../../hosts/common/secrets/container/container-${container_name}.env;
+        restartUnits = [ "docker-${container_name}.service" ];
       };
       "host-container-${container_name}" = {
         format = "dotenv";
         sopsFile = ../../hosts/${hostname}/secrets/container/container-${container_name}.env;
+        restartUnits = [ "docker-${container_name}.service" ];
       };
     };
 
