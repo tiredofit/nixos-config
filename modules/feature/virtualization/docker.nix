@@ -104,6 +104,17 @@ let
         '';
         };
 
+        labels = mkOption {
+          type = with types; attrsOf str;
+          default = {};
+          description = lib.mdDoc "Labels to attach to the container at runtime.";
+          example = literalExpression ''
+            {
+              "traefik.https.routers.example.rule" = "Host(`example.container`)";
+            }
+          '';
+        };
+
         log-driver = mkOption {
           type = types.str;
           default = "none";
@@ -317,6 +328,7 @@ let
               ++ map (v: "-v ${escapeShellArg v}") container.volumes
               ++ optional (container.workdir != null) "-w ${escapeShellArg container.workdir}"
               ++ optional (container.networks != []) "--network=${escapeShellArg (builtins.head container.networks)}"
+              ++ (mapAttrsToList (k: v: "-l ${escapeShellArg k}=${escapeShellArg v}") container.labels)
               ++ map escapeShellArg container.extraOptions
               ++ [ container.image ]
               ++ map escapeShellArg container.cmd
