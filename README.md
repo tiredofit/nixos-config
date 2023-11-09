@@ -23,7 +23,6 @@ If you would like to base your own configuration from this, you will need to be 
 - `flake.nix`: Entrypoint for NixOS configurations.
 - `hosts`: Host Configurations
   - `common`: Shared configurations consumed by all hosts.
-    - `global`: Applications and tools installed on all hosts regardless of what they do
     - `secrets`: Secrets that are available to all users
   - `<host_a>`: "host_a" specific hardware and host configuration
     - `secrets`: Secrets that are specific to the 'host_a' host
