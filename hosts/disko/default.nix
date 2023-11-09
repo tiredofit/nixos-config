@@ -6,7 +6,7 @@
     ../../templates/machine/virtd-vm.nix
     inputs.nur.nixosModules.nur
 
-    ../common/global
+    ../common
   ];
 
   host = {

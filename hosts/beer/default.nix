@@ -9,7 +9,7 @@ in
 {
 imports = [
     ./hardware-configuration.nix
-    ../common/global
+    ../common
   ];
 
   boot = {
