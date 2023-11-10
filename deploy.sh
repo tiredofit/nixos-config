@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-SCRIPT_VERSION=1.4.1
+SCRIPT_VERSION=1.4.2
 
 INSTALL_BUILD_LOCAL=${INSTALL_BUILD_LOCAL:-"TRUE"}
 INSTALL_DEBUG=${INSTALL_DEBUG:-"FALSE"}
@@ -750,8 +750,8 @@ menu_host_management_select_host() {
 
         if grep -q "domainname = \".*\"" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix ; then
             dname=".$(grep "domainname = \".*\"" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix | cut -d '"' -f 2)"
-        elif grep -q "domainname = .*\".*\"" "${_dir_flake}"/hosts/common/global/default.nix ; then
-            dname=".$(grep "domainname = .*\".*\"" "${_dir_flake}"/hosts/common/global/default.nix | cut -d '"' -f 2)"
+        elif grep -q "domainname = .*\".*\"" "${_dir_flake}"/hosts/common/default.nix ; then
+            dname=".$(grep "domainname = .*\".*\"" "${_dir_flake}"/hosts/common/default.nix | cut -d '"' -f 2)"
         fi
 
         if [ -n "${hname}" ]; then check_host_availability ${hname}${dname}; fi
