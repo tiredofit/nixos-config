@@ -7,6 +7,7 @@ with lib;
     ./eternal_terminal.nix
     ./fluent-bit.nix
     ./logrotate.nix
+    ./monit.nix
     ./ssh.nix
     ./vscode_server.nix
     ./zabbix_agent.nix

@@ -96,7 +96,7 @@ in
     ];
 
     environment.systemPackages =  with pkgs; [
-      cryptsetup          # Manipulate LUKS containers
+      cryptsetup
     ];
 
     ## TODO This is Dirty - Here's something from the NixOS Matrix room:

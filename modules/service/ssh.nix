@@ -9,7 +9,8 @@ let
     then "VERBOSE"
     else "INFO";
 
-    authMethods = if config.host.service.ssh.passwordlessLogin
+  authMethods =
+    if config.host.service.ssh.passwordlessLogin
     then "publickey password keyboard-interactive"
     else "publickey,password publickey,keyboard-interactive";
 in

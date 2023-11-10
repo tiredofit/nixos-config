@@ -20,12 +20,12 @@ in
       listenIP = mkOption {
         type = with types; str;
         default = "127.0.0.1";
-        description = "IP Address to accept connections from servers";
+        description = "Listening IP Address to accept connections from servers";
       };
       listenPort = mkOption {
         type = with types; port;
         default = 10050;
-        description = "IP Address to accept connections from servers";
+        description = "Listening Port to listen on to accept connections from servers";
       };
       server = mkOption {
         type = with types; str;
