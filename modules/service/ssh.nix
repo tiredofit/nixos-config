@@ -8,6 +8,10 @@ let
     if config.host.network.firewall.fail2ban.enable
     then "VERBOSE"
     else "INFO";
+
+    authMethods = if config.host.service.ssh.passwordlessLogin
+    then "publickey password keyboard-interactive"
+    else "publickey,password publickey,keyboard-interactive";
 in
   with lib;
 {
@@ -37,6 +41,11 @@ in
         type = types.port;
         default = 22;
         description = "Port to listen on";
+      };
+      passwordlessLogin = mkOption {
+        default = true;
+        type = with types; bool;
+        description = "Enable Passwordless login, relying only on keys";
       };
     };
   };
@@ -69,7 +78,7 @@ in
         openFirewall = mkDefault true ;
         startWhenNeeded = mkDefault false;
         settings = {
-          AuthenticationMethods = mkIf cfg.harden "publickey,password publickey,keyboard-interactive";
+          AuthenticationMethods = mkDefault authMethods;
           AcceptEnv = "LANG LC_*";
           ChallengeResponseAuthentication = mkDefault true;
           Ciphers = mkIf cfg.harden [
@@ -136,36 +145,34 @@ in
         hosts;
     };
 
-    system = {
-      activationScripts.ssh-validate_permissions = ''
-        ## This is in here when doing a remote install and rsyncing keys over as a regular user the permissions can get wonky.
-        if [ -d "/persist/etc/ssh/" ]; then
-            path_prefix=/persist/
-        fi
+    systemd.services.sshd.preStart = ''
+      ## This is in here when doing a remote install and rsyncing keys over as a regular user the permissions can get wonky.
+      if [ -d "/persist/etc/ssh/" ]; then
+        path_prefix=/persist/
+      fi
 
-        pri=$(stat -c "%a %U %G" "$path_prefix"/etc/ssh/ssh_host_ed25519_key)
-        pub=$(stat -c "%a %U %G" "$path_prefix"/etc/ssh/ssh_host_ed25519_key.pub)
+      pri=$(stat -c "%a %U %G" "$path_prefix"/etc/ssh/ssh_host_ed25519_key)
+      pub=$(stat -c "%a %U %G" "$path_prefix"/etc/ssh/ssh_host_ed25519_key.pub)
 
-        if [ $(echo "$pri" | ${pkgs.gawk}/bin/awk '{print $1}') != 600 ]; then
-            echo "Resetting Permissions on SSH Host Private Key"
-            chmod 600 "$path_prefix"/etc/ssh/ssh_host_ed25519_key
-        fi
+      if [ $(echo "$pri" | ${pkgs.gawk}/bin/awk '{print $1}') != 600 ]; then
+        echo "Resetting Permissions on SSH Host Private Key"
+        chmod 600 "$path_prefix"/etc/ssh/ssh_host_ed25519_key
+      fi
 
-        if [ $(echo "$pri" | ${pkgs.gawk}/bin/awk '{print $2}') != "root" ]; then
-            chown root:root "$path_prefix"/etc/ssh/ssh_host_ed25519_key
-        fi
+      if [ $(echo "$pri" | ${pkgs.gawk}/bin/awk '{print $2}') != "root" ]; then
+        chown root:root "$path_prefix"/etc/ssh/ssh_host_ed25519_key
+      fi
 
-        if [ $(echo "$pub" | ${pkgs.gawk}/bin/awk '{print $1}') != 640 ]; then
-            echo "Resetting Permissions on SSH Host Public Key"
-            chmod 640 "$path_prefix"/etc/ssh/ssh_host_ed25519_key.pub
-        fi
+      if [ $(echo "$pub" | ${pkgs.gawk}/bin/awk '{print $1}') != 640 ]; then
+        echo "Resetting Permissions on SSH Host Public Key"
+        chmod 640 "$path_prefix"/etc/ssh/ssh_host_ed25519_key.pub
+      fi
 
-        if [ "$(echo "$pub" | ${pkgs.gawk}/bin/awk '{print $2" "$3}')" != "root root" ]; then
-            echo "Resetting ownership on SSH Host Public Key"
-            chown -R root:root "$path_prefix"/etc/ssh/ssh_host_ed25519_key.pub
-        fi
-      '';
-    };
+      if [ "$(echo "$pub" | ${pkgs.gawk}/bin/awk '{print $2" "$3}')" != "root root" ]; then
+          echo "Resetting ownership on SSH Host Public Key"
+          chown -R root:root "$path_prefix"/etc/ssh/ssh_host_ed25519_key.pub
+      fi
+    '';
   };
 }
 

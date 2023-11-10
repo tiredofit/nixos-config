@@ -66,7 +66,7 @@ in
         networkModule = mkOption {
           type = types.listOf types.str;
           default = [];
-          example = [ "ixgbe" "r8169" "virtio-pci" ];
+          example = [ "ixgbe" "r8169" ];
           description = "Kernel module to embed in initrd to allow for network access. Use 'lspci -v' to get the right module";
         };
         port = mkOption {
