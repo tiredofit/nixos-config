@@ -8,7 +8,7 @@ in
   options = {
     host.service.monit = {
       enable = mkOption {
-        default = feature;
+        default = false;
         type = with types; bool;
         description = "Enables monit service";
       };
