@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-SCRIPT_VERSION=1.3.0
+SCRIPT_VERSION=1.4.0
 
 INSTALL_BUILD_LOCAL=${INSTALL_BUILD_LOCAL:-"TRUE"}
 INSTALL_DEBUG=${INSTALL_DEBUG:-"FALSE"}
@@ -1040,7 +1040,9 @@ menu_ssh_options() {
 
     if [ "${REMOTE_IP}" != "" ]; then
         menu_ssh_options_copy_key="\\n${cdgy}(${cwh}C${cdgy}) Copy SSH Key to ${deploy_host}\\n"
+        menu_ssh_options_connect_to_host="\\n\(${cwh}S${cdgy}\) Connect to Host\\n"
         text_ssh_options_set_ip="Set IP Address to copy public key to host"
+        text_ssh_options_connect_to_host="SSH to the host"
     fi
     printf "\033c"
     echo -e "${clm}"
@@ -1053,10 +1055,11 @@ menu_ssh_options() {
           SSH Port: ${SSH_PORT}
 ${text_private_key}
 ${text_ssh_options_set_ip}
+${text_ssh_options_connect_to_host}
 EOF
 
     echo -e "${coff}"
-    read -p "$(echo -e ${cdgy}\(${cwh}K${cdgy}\) Use a specific Private Key\\n\(${cwh}U${cdgy}\) Change SSH Username\\n\(${cwh}P${cdgy}\) Change SSH Port${cwh}${coff}\\n${menu_ssh_options_copy_key}\\n${cdgy}\(${cwh}B${cdgy}\) Back to host menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_ssh_options
+    read -p "$(echo -e ${cdgy}\(${cwh}K${cdgy}\) Use a specific Private Key\\n\(${cwh}U${cdgy}\) Change SSH Username\\n\(${cwh}P${cdgy}\) Change SSH Port${cwh}${coff}\\n${menu_ssh_options_copy_key}${menu_ssh_options_connect_to_host}${cwh}${coff}\\n${cdgy}\(${cwh}B${cdgy}\) Back to host menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_ssh_options
     case "${q_menu_ssh_options,,}" in
         "k" | "key" )
             menu_ssh_options_q_sshkey
@@ -1073,6 +1076,9 @@ EOF
         "c" | "copy" )
             task_copy_ssh_key
             menu_ssh_options
+        ;;
+        "s" | "ssh" )
+            task_ssh_to_host
         ;;
          "b" | "back" )
             menu_host
@@ -1964,6 +1970,15 @@ task_set_ip_address() {
         (( counter+=1 ))
     done
     export REMOTE_IP=$_remote_ip_tmp
+}
+
+task_ssh_to_host() {
+    if [ -n "${SSH_PRIVATE_KEY}" ]; then
+        task_ssh_to_host_private_key="-i ${SSH_PRIVATE_KEY}"
+    fi
+
+    ssh -p ${SSH_PORT}
+    ssh -p ${SSH_PORT} ${task_ssh_to_host_private_key} -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_IP}
 }
 
 task_update_disk_prefix() {
