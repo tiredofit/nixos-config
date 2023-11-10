@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-SCRIPT_VERSION=1.4.2
+SCRIPT_VERSION=1.5.0
 
 INSTALL_BUILD_LOCAL=${INSTALL_BUILD_LOCAL:-"TRUE"}
 INSTALL_DEBUG=${INSTALL_DEBUG:-"FALSE"}
@@ -10,6 +10,8 @@ REMOTE_USER=${REMOTE_USER:-"$(whoami)"}
 SECRET_USER="dave"
 SECRET_HOST="beef"
 SSH_PORT=${SSH_PORT:-"22"}
+
+if [ -f ".deploy.env" ] ; then source .deploy.env ; fi
 
 case "${1}" in
     "--debug" )
