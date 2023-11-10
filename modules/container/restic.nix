@@ -130,20 +130,20 @@ in
       };
     };
 
-    system.activationScripts."docker_${container_name}_filesystem" = ''
-      if [ ! -d /var/local/data/_system/${container_name}/logs ]; then
-          mkdir -p /var/local/data/_system/${container_name}/logs
-          ${pkgs.e2fsprogs}/bin/chattr +C /var/local/data/_system/${container_name}/logs
-      fi
-
-      ## This one stores cache in here so lets disable CoW
-      if [ ! -d /var/local/data/_system/${container_name}/cache ]; then
-          mkdir -p /var/local/data/_system/${container_name}/cache
-          ${pkgs.e2fsprogs}/bin/chattr +C /var/local/data/_system/${container_name}/cache
-      fi
-    '';
-
     systemd.services."docker-${container_name}" = {
+      preStart = ''
+        if [ ! -d /var/local/data/_system/${container_name}/logs ]; then
+            mkdir -p /var/local/data/_system/${container_name}/logs
+            ${pkgs.e2fsprogs}/bin/chattr +C /var/local/data/_system/${container_name}/logs
+        fi
+
+        ## This one stores cache in here so lets disable CoW
+        if [ ! -d /var/local/data/_system/${container_name}/cache ]; then
+            mkdir -p /var/local/data/_system/${container_name}/cache
+            ${pkgs.e2fsprogs}/bin/chattr +C /var/local/data/_system/${container_name}/cache
+        fi
+      '';
+
       serviceConfig = {
         StandardOutput = "null";
         StandardError = "null";

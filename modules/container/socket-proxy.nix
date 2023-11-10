@@ -94,14 +94,14 @@ in
       pullonStart = cfg.image.update;
     };
 
-    system.activationScripts."docker_${container_name}" = ''
-      if [ ! -d /var/local/data/_system/${container_name}/logs ]; then
-          mkdir -p /var/local/data/_system/${container_name}/logs
-          ${pkgs.e2fsprogs}/bin/chattr +C /var/local/data/_system/${container_name}/logs
-      fi
-    '';
-
     systemd.services."docker-${container_name}" = {
+      preStart = ''
+        if [ ! -d /var/local/data/_system/${container_name}/logs ]; then
+            mkdir -p /var/local/data/_system/${container_name}/logs
+            ${pkgs.e2fsprogs}/bin/chattr +C /var/local/data/_system/${container_name}/logs
+        fi
+      '';
+
       serviceConfig = {
         StandardOutput = "null";
         StandardError = "null";
