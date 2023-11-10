@@ -2,17 +2,32 @@
 
   imports = [
     inputs.nur.nixosModules.nur
-
     ./hardware-configuration.nix
     ../common
   ];
 
-
   host = {
+    container = {
+      restic = {
+        enable = true;
+        logship = "false";
+        monitor = "false";
+      };
+      socket-proxy = {
+        enable = true;
+        logship = "false";
+        monitor = "false";
+      };
+      traefik = {
+        enable = true;
+        logship = "false";
+        monitor = "false";
+      };
+    };
     filesystem = {
       encryption.enable = false;
       swap = {
-        partition = "disk/by-uuid/c49b427e-53a4-4224-9c3a-d0d9daf2ba72";
+        partition = "disk/by-partlabel/swap";
       };
     };
     hardware = {
