@@ -3,7 +3,6 @@
   imports = [
     inputs.nur.nixosModules.nur
     ./hardware-configuration.nix
-
     ../common
   ];
 
@@ -12,6 +11,11 @@
       graphics = {
         enable = true;
         backend = "x";
+      };
+    };
+    filesystem = {
+      swap = {
+        partition = "disk/by-partlabel/swap";
       };
     };
     hardware = {
