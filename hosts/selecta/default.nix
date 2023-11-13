@@ -42,6 +42,9 @@
         fail2ban.enable = false;
       };
       hostname = "selecta";
+      vpn = {
+        tailscale.enable = false;
+      };
     };
     user = {
       root.enable = true;
