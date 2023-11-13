@@ -5,9 +5,6 @@
     ./hardware-configuration.nix
 
     ../common
-
-    ../../users/dave
-    ../../users/root
   ];
 
   host = {
@@ -26,11 +23,13 @@
     };
     role = "desktop";
     network = {
-      hostname = "selekta";
+      hostname = "selecta";
     };
     user = {
-      dave.enable = true;
       root.enable = true;
+      dave.enable = true;
+      media.enable = true;
+      test.enable = true;
     };
   };
 }
