@@ -33,6 +33,8 @@
       sound = {
         server = "pulseaudio";
       };
+      scanning.enable = false;
+      yubikey.enable = false;
     };
     role = "desktop";
     network = {
