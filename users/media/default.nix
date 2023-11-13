@@ -37,7 +37,7 @@ in
       ];
 
       openssh.authorizedKeys.keys = [ (builtins.readFile ./ssh.pub) ];
-      passwordFile = config.sops.secrets.media-password.path;
+      hashedPasswordFile = config.sops.secrets.media-password.path;
       packages = [ pkgs.home-manager ];
     };
 
