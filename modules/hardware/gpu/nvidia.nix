@@ -25,10 +25,10 @@ in {
 
     services.xserver = mkMerge [
       {
-        videoDrivers = ["nvidia"];
+        videoDrivers = [ "nvidia" ];
       }
 
-      (mkIf ( !backend == "wayland") {
+      (mkIf ( backend == "x") {
         # disable DPMS
         monitorSection = ''
           Option "DPMS" "false"
@@ -45,9 +45,9 @@ in {
     ];
 
 boot = {
-      # blacklist nouveau module so that it does not conflict with nvidia drm stuff
-      # also the nouveau performance is godawful, I'd rather run linux on a piece of paper than use nouveau
-      blacklistedKernelModules = ["nouveau"];
+      blacklistedKernelModules = [
+        "nouveau"
+      ];
     };
 
     environment = {
@@ -73,8 +73,8 @@ boot = {
         vulkan-loader
         vulkan-tools
         vulkan-validation-layers
-      ] ++  (config.host.hardware.graphics.gpu == "hybrid-nvidia")  [
-        nvidia-offload
+      #] ++  mkIf device.gpu == "hybrid-nvidia"  [ ## TODO Fix
+      #  "nvidia-offload"
       ];
     };
 
@@ -85,7 +85,7 @@ boot = {
         prime.offload.enableOffloadCmd = device.gpu == "hybrid-nvidia";
         powerManagement = {
           enable = mkDefault true;
-          finegrained = mkDefault false;
+          finegrained = device.gpu == "hybrid-nvidia";
         };
 
         # use open source drivers by default, hosts may override this option if their gpu is
@@ -97,7 +97,9 @@ boot = {
       };
 
       opengl = {
-        extraPackages = with pkgs; [nvidia-vaapi-driver];
+        extraPackages = with pkgs; [
+          nvidia-vaapi-driver
+        ];
       };
     };
   };
