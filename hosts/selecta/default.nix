@@ -29,7 +29,6 @@
       root.enable = true;
       dave.enable = true;
       media.enable = true;
-      test.enable = true;
     };
   };
 }
