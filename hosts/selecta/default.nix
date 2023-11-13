@@ -8,6 +8,9 @@
 
   host = {
     feature = {
+      development.crosscompilation = {
+        enable = false;
+      };
       graphics = {
         enable = true;
         backend = "x";
