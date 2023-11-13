@@ -7,6 +7,5 @@ with lib;
     ./ireen
     ./media
     ./root
-    ./test
   ];
 }
