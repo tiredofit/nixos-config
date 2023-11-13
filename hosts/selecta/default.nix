@@ -13,6 +13,9 @@
         backend = "x";
       };
       virtualization = {
+        docker = {
+          enable = false;
+        };
         virtd = {
           client.enable = true;
           daemon.enable = true;
