@@ -12,6 +12,12 @@
         enable = true;
         backend = "x";
       };
+      virtualization = {
+        virtd = {
+          client.enable = true;
+          daemon.enable = true;
+        };
+      };
     };
     filesystem = {
       swap = {
