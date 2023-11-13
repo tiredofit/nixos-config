@@ -85,7 +85,7 @@ boot = {
         prime.offload.enableOffloadCmd = device.gpu == "hybrid-nvidia";
         powerManagement = {
           enable = mkDefault true;
-          finegrained = mkDefault true;
+          finegrained = mkDefault false;
         };
 
         # use open source drivers by default, hosts may override this option if their gpu is
