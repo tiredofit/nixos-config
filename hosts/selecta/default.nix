@@ -38,6 +38,9 @@
     };
     role = "desktop";
     network = {
+      firewall = {
+        fail2ban.enable = false;
+      };
       hostname = "selecta";
     };
     user = {
