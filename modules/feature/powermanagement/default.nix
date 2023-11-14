@@ -2,6 +2,10 @@
 
 let
   cfg = config.host.feature.powermanagement;
+  thermald =
+    if (config.host.hardware.cpu == "intel")
+    then true
+    else false;
 in
   with lib;
 {
@@ -42,7 +46,7 @@ in
           ACTION=="add|change", KERNEL=="sd[a-z]", ATTRS{queue/rotational}=="1", RUN+="${pkgs.hdparm}/bin/hdparm -S 108 -B 127 /dev/%k"
         '';
       };
-      thermald.enable = mkDefault true ;
+      thermald.enable = thermald;
     };
   };
 }
