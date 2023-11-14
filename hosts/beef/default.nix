@@ -68,6 +68,14 @@
     };
     network = {
       hostname = "beef";
+      vpn = {
+        zerotier = {
+          enable = true;
+          networks = [
+            "/var/run/secrets/zerotier/networks"
+          ];
+        };
+      };
     };
     role = "desktop";
     user = {
