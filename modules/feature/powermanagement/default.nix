@@ -46,7 +46,7 @@ in
           ACTION=="add|change", KERNEL=="sd[a-z]", ATTRS{queue/rotational}=="1", RUN+="${pkgs.hdparm}/bin/hdparm -S 108 -B 127 /dev/%k"
         '';
       };
-      thermald.enable = thermald;
+      thermald.enable = mkDefault thermald;
     };
   };
 }

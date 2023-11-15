@@ -70,6 +70,6 @@
   };
 
   services = {
-    thermald.enable = false;
+    qemuGuest.enable = true;
   };
 }

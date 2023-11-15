@@ -74,6 +74,7 @@
           networks = [
             "/var/run/secrets/zerotier/networks"
           ];
+          port = 9994;
         };
       };
     };
