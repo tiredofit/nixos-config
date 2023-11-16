@@ -133,7 +133,7 @@ in
         #"LETSENCRYPT_EMAIL" = "common_env";                                            # hosts/common/secrets/container-traefik.env
         #"CF_API_EMAIL" = "1234567890";                                                 # hosts/common/secrets/container-traefik.env
         #"CF_API_KEY" = "1234567890";                                                   # hosts/common/secrets/container-traefik.env
-        #"DASHBOARD_HOSTNAME" = "${hostname}.vpn.${config.host.network.domainname}";    # hosts/common/secrets/container-traefik.env
+        "DASHBOARD_HOSTNAME" = "${hostname}.vpn.${config.host.network.domainname}";     # hosts/common/secrets/container-traefik.env
       };
       environmentFiles = [
         config.sops.secrets."common-container-${container_name}".path
