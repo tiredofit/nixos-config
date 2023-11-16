@@ -54,7 +54,7 @@
           networks = [
             "/var/run/secrets/zerotier/networks"
           ];
-          port = 9992;
+          port = 9994;
         };
       };
       wired = {

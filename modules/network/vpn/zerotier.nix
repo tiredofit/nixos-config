@@ -67,10 +67,8 @@ in
                 _zt_join_network $network
             fi
         done
-        set -x
         if [ -f /var/run/secrets/zerotier/identity_public ] ; then cat "/var/run/secrets/zerotier/identity_public" > /var/lib/zerotier-one/identity.public ; fi
         if [ -f /var/run/secrets/zerotier/identity_private ] ; then cat "/var/run/secrets/zerotier/identity_private" > /var/lib/zerotier-one/identity.secret  ; fi
-set +x
       '';
       postStop = ''
         _zt_leave_network() {
@@ -111,6 +109,8 @@ set +x
         restartUnits = [ "zerotierone.service" ];
       };
     };
+
+    ### Not really necessary with above work
     #host.filesystem.impermanence.directories = lib.mkIf config.host.filesystem.impermanence.enable [
     #  "/var/cache/zerotier-one"
     #];
