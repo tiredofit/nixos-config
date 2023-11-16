@@ -2,7 +2,14 @@
 
 let
   cfg = config.host.network.vpn.zerotier;
-
+  metrics_symlink =
+    if cfg.metrics
+      then ""
+      else "ln -sf /dev/null /var/lib/zerotier-one/metrics.prom";
+  metrics_cleanup =
+    if cfg.metrics
+      then ""
+      else "rm -rf /var/lib/zerotier-one/metrics.prom";
 in
   with lib;
 {
@@ -24,6 +31,11 @@ in
           type = with types; str;
           description = "Private key of Identity";
         };
+      };
+      metrics = mkOption {
+        default = false;
+        type = with types; bool;
+        description = "Enables prometheus metrics writing";
       };
       networks = mkOption {
         type = with types; listOf str;
@@ -67,6 +79,9 @@ in
                 _zt_join_network $network
             fi
         done
+
+        ${metrics_symlink}
+
         if [ -f /var/run/secrets/zerotier/identity_public ] ; then cat "/var/run/secrets/zerotier/identity_public" > /var/lib/zerotier-one/identity.public ; fi
         if [ -f /var/run/secrets/zerotier/identity_private ] ; then cat "/var/run/secrets/zerotier/identity_private" > /var/lib/zerotier-one/identity.secret  ; fi
       '';
@@ -91,6 +106,8 @@ in
 
         if [ -f /var/run/secrets/zerotier/identity_public ] ; then rm -rf "/var/lib/zerotier-one/identity.public" ; fi
         if [ -f /var/run/secrets/zerotier/identity_private ] ; then rm -rf "/var/lib/zerotier-one/identity.secret" ; fi
+
+        ${metrics_cleanup}
       '';
     };
 
