@@ -56,7 +56,7 @@ in
         device = swap_location;
         randomEncryption = {
           enable = cfg.encrypt;
-          allowDiscards = true;
+          allowDiscards = "once";
         };
         size = cfg.size;
       }];
