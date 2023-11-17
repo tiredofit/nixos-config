@@ -54,7 +54,10 @@ in
 
       swapDevices = [{
         device = swap_location;
-        randomEncryption.enable = cfg.encrypt;
+        randomEncryption = {
+          enable = cfg.encrypt;
+          allowDiscards = true;
+        };
         size = cfg.size;
       }];
     })
