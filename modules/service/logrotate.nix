@@ -37,8 +37,8 @@ in
       };
     };
 
-    host.filesystem.impermanence.files = mkIf config.host.filesystem.impermanence.enable [
-      "/var/lib/logrotate.status"               # Keep markers on when files have last been rotated
-    ];
+    #host.filesystem.impermanence.files = mkIf config.host.filesystem.impermanence.enable [
+    #  "/var/lib/logrotate.status"               # Keep markers on when files have last been rotated
+    #];
   };
 }
