@@ -12,12 +12,6 @@ in
         type = with types; bool;
         description = "Enables logrotation";
       };
-    };
-  };
-
-  config = mkIf cfg.enable {
-    services = {
-      logrotate = {
         enable = true;
         settings.header = {
           global = mkDefault true;
@@ -36,9 +30,5 @@ in
         };
       };
     };
-
-    #host.filesystem.impermanence.files = mkIf config.host.filesystem.impermanence.enable [
-    #  "/var/lib/logrotate.status"               # Keep markers on when files have last been rotated
-    #];
   };
 }
