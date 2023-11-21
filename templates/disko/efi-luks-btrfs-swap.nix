@@ -21,13 +21,18 @@ in
                 mountpoint = "/boot";
               };
             };
-            swap = {
-              label = "swap";
+            luks = {
+              label = "encrypted_swap"
               size = "4G"; # SWAP - Do not Delete this comment
               content = {
-                type = "swap";
-                randomEncryption = true;
-                resumeDevice = true;
+                type = "luks";
+                name = "swap";
+                extraOpenArgs = [ "--alow-discards" ];
+                passwordFile = "/tmp/secret.key";
+                content = {
+                  type = "swap";
+                  resumeDevice = true;
+                };
               };
             };
             luks = {

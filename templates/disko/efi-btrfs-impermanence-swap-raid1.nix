@@ -27,7 +27,6 @@ in
               size = "4G"; # SWAP - Do not Delete this comment
               content = {
                 type = "swap";
-                randomEncryption = true;
                 resumeDevice = true;
             };
             root = {

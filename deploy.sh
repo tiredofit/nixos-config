@@ -1042,7 +1042,7 @@ menu_ssh_options() {
 
     if [ "${REMOTE_IP}" != "" ]; then
         menu_ssh_options_copy_key="\\n${cdgy}(${cwh}C${cdgy}) Copy SSH Key to ${deploy_host}\\n"
-        menu_ssh_options_connect_to_host="\\n\(${cwh}S${cdgy}\) Connect to Host\\n"
+        menu_ssh_options_connect_to_host="\\n(${cwh}S${cdgy}) Connect to Host\\n"
         text_ssh_options_set_ip="Set IP Address to copy public key to host"
         text_ssh_options_connect_to_host="SSH to the host"
     fi
@@ -1056,6 +1056,7 @@ menu_ssh_options() {
     Using SSH Username: ${REMOTE_USER}
           SSH Port: ${SSH_PORT}
 ${text_private_key}
+
 ${text_ssh_options_set_ip}
 ${text_ssh_options_connect_to_host}
 EOF
@@ -1101,6 +1102,7 @@ EOF
 }
 
 menu_ssh_options_q_port() {
+    local counter=0
     q_ssh_port=" "
     while [[ $q_ssh_port = *" "* ]];  do
         if [ $counter -gt 1 ] ; then print_error "SSH Port cannot have spaces in them" ; fi ;
@@ -1112,6 +1114,7 @@ menu_ssh_options_q_port() {
 }
 
 menu_ssh_options_q_sshkey() {
+    local counter=0
     q_ssh_private_key=" "
     while [[ $q_ssh_private_key = *" "* ]];  do
         if [ $counter -gt 1 ] ; then print_error "SSH Key paths cannot have spaces in them" ; fi ;
