@@ -12,6 +12,12 @@ in
         type = with types; bool;
         description = "Enables logrotation";
       };
+    };
+  };
+
+  config = mkIf cfg.enable {
+    services = {
+      logrotate = {
         enable = true;
         settings.header = {
           global = mkDefault true;
