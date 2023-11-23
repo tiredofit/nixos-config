@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-SCRIPT_VERSION=1.5.0
+SCRIPT_VERSION=1.5.1
 
 INSTALL_BUILD_LOCAL=${INSTALL_BUILD_LOCAL:-"TRUE"}
 INSTALL_DEBUG=${INSTALL_DEBUG:-"FALSE"}
@@ -1341,7 +1341,6 @@ EOF
             task_hostmanagement_q_impermanence
             task_hostmanagement_q_encryption
             task_hostmanagement_q_raid
-            read -e -i "$_template_network_mac" -p "$(echo -e ${clg}** ${cdgy}What is the remote networks MAC Address \(eg 00:01:02:03:04:05\): \ ${coff})" _template_network_mac
             task_hostmanagement_q_networking
         ;;
         "v" | "vm" )
