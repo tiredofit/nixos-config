@@ -28,6 +28,7 @@ in
               content = {
                 type = "swap";
                 resumeDevice = true;
+              };
             };
             root = {
               label = "rootfs";

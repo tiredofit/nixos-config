@@ -21,18 +21,12 @@ in
                 mountpoint = "/boot";
               };
             };
-            luks = {
-              label = "encrypted_swap"
+            swap = {
+              label = "swap";
               size = "4G"; # SWAP - Do not Delete this comment
               content = {
-                type = "luks";
-                name = "swap";
-                extraOpenArgs = [ "--alow-discards" ];
-                passwordFile = "/tmp/secret.key";
-                content = {
-                  type = "swap";
-                  resumeDevice = true;
-                };
+                type = "swap";
+                resumeDevice = true;
               };
             };
             luks = {
@@ -42,12 +36,7 @@ in
                 type = "luks";
                 name = "pool0_0";
                 extraOpenArgs = [ "--allow-discards" ];
-                # if you want to use the key for interactive login be sure there is no trailing newline
-                # for example use `echo -n "password" > /tmp/secret.key`
                 passwordFile = "/tmp/secret.key"; # Interactive
-                # or file based
-                #settings.keyFile = "/tmp/secret.key";
-                #additionalKeyFiles = ["/tmp/additionalSecret.key"];
                 content = {
                   type = "btrfs";
                   extraArgs = [ "-f" ];
