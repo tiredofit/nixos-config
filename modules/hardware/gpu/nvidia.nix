@@ -88,10 +88,8 @@ boot = {
           finegrained = device.gpu == "hybrid-nvidia";
         };
 
-        # use open source drivers by default, hosts may override this option if their gpu is
-        # not supported by the open source drivers
-        open = mkDefault true;
-        nvidiaSettings = false; # add nvidia-settings to pkgs, useless on nixos
+        open = mkDefault false;
+        nvidiaSettings = false;
         nvidiaPersistenced = true;
         forceFullCompositionPipeline = true;
       };
