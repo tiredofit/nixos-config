@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-SCRIPT_VERSION=1.5.1
+SCRIPT_VERSION=1.6.0
 
 INSTALL_BUILD_LOCAL=${INSTALL_BUILD_LOCAL:-"TRUE"}
 INSTALL_DEBUG=${INSTALL_DEBUG:-"FALSE"}
@@ -1901,6 +1901,21 @@ task_q_select_disktemplate() {
 }
 
 task_secret_rekey() {
+    rekey() {
+        for secret_path in $(find $1 -type d); do
+            for secret in ${secret_path}/*; do
+                if ! [[ $(basename "${secret}") =~ ssh_host.*\.pub|ssh.pub|.*\.nix ]] ; then
+                    print_debug "[secret_rekey] Rekeying ${secret}"
+                    if var_true "${secret_rekey_silent}"; then
+                        yes | silent sops updatekeys "${secret}"
+                    else
+                        sops updatekeys "${secret}"
+                    fi
+                fi
+            done
+        done
+    }
+
     if var_true "${secret_rekey_silent}"; then
         :
     else
@@ -1911,55 +1926,20 @@ task_secret_rekey() {
     case "${1}" in
         all )
             print_debug "[secret_rekey] Rekeying ALL"
-            for secret in "${_dir_flake}"/hosts/*/secrets/* ; do
-                if ! [[ $(basename "${secret}") =~ ssh_host.* ]] ; then
-                    print_debug "[secret_rekey] Rekeying ALL - ${secret}"
-                    if var_true "${secret_rekey_silent}"; then
-                        yes | silent sops updatekeys "${secret}"
-                    else
-                        sops updatekeys "${secret}"
-                    fi
-                fi
-            done
-            print_debug "[secret_rekey] Rekeying Users - users/secrets.yaml"
-            if var_true "${secret_rekey_silent}"; then
-                yes | silent sops updatekeys "${_dir_flake}"/users/secrets.yaml
-            else
-                sops updatekeys "${_dir_flake}"/users/secrets.yaml
-            fi
+            rekey "${_dir_flake}"/hosts/*/secrets/
+            rekey "${_dir_flake}"/users/
         ;;
         common )
-            for secret in "${_dir_flake}"/hosts/common/secrets/* ; do
-                if ! [[ $(basename "${secret}") =~ ssh_host.* ]] ; then
-                    print_debug "[secret_rekey] Rekeying Common - ${secret}"
-                    if var_true "${secret_rekey_silent}"; then
-                        yes | silent sops updatekeys "${secret}"
-                    else
-                        sops updatekeys "${secret}"
-                    fi
-                fi
-            done
+            print_debug "[secret_rekey] Rekeying Common"
+            rekey "${_dir_flake}"/hosts/common/secrets/
         ;;
         users )
             print_debug "[secret_rekey] Rekeying Users - users/secrets.yaml"
-            if var_true "${secret_rekey_silent}"; then
-                yes | silent sops updatekeys "${_dir_flake}"/users/secrets.yaml
-            else
-                sops updatekeys "${_dir_flake}"/users/secrets.yaml
-            fi
+            rekey "${_dir_flake}"/users/
         ;;
         * )
-            print_debug "[secret_rekey] Rekeying Wildcard"
-            for secret in "${_dir_flake}"/hosts/${1}/secrets/* ; do
-                if ! [[ $(basename "${secret}") =~ ssh_host.* ]] ; then
-                    print_debug "[secret_rekey] Rekeying Wildcard - host/secrets/${secret}"
-                    if var_true "${secret_rekey_silent}"; then
-                        yes | silent sops updatekeys "${secret}"
-                    else
-                        sops updatekeys "${secret}"
-                    fi
-                fi
-            done
+            print_debug "[secret_rekey] Rekeying Wildcard ${1}"
+            rekey "${_dir_flake}"/hosts/${1}/secrets/
         ;;
     esac
     if var_nottrue "${secret_rekey_silent}"; then wait_for_keypress; fi

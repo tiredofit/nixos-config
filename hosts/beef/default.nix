@@ -63,7 +63,7 @@
       gpu = "integrated-amd";
       raid.enable = true;
       sound = {
-        server = "pulseaudio";
+        server = "pipewire";
       };
     };
     network = {
