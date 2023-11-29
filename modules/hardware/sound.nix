@@ -4,7 +4,6 @@ let
   cfg = config.host.hardware.sound;
 
   script_sound-tool = pkgs.writeShellScriptBin "sound-tool" ''
-set -x
     if systemctl --user is-active pipewire >/dev/null 2>&1 && command -v "pw-dump" &>/dev/null && command -v "wpctl" &>/dev/null; then
         backend=pipewire
     elif systemctl --user is-active pulseaudio >/dev/null 2>&1 && command -v "pactl" &>/dev/null; then
@@ -170,7 +169,6 @@ set -x
             esac
         ;;
     esac
-    set +x
   '';
 in
   with lib;
