@@ -3,11 +3,15 @@
 let
   cfg = config.host.hardware.sound;
 
-  script_sound = pkgs.writeShellScriptBin "sound-tool" ''
-    if systemctl --user is-active pipewire >/dev/null 2>&1 && command -v "pw-dump" &>/dev/null && command -v "wpcli" &>/dev/null; then
+  script_sound-tool = pkgs.writeShellScriptBin "sound-tool" ''
+set -x
+    if systemctl --user is-active pipewire >/dev/null 2>&1 && command -v "pw-dump" &>/dev/null && command -v "wpctl" &>/dev/null; then
         backend=pipewire
     elif systemctl --user is-active pulseaudio >/dev/null 2>&1 && command -v "pactl" &>/dev/null; then
         backend=pulseaudio
+    else
+        echo "ERROR: Can't detect sound backend"
+        exit 1
     fi
 
     case $1 in
@@ -166,6 +170,7 @@ let
             esac
         ;;
     esac
+    set +x
   '';
 in
   with lib;
@@ -188,7 +193,7 @@ in
   config = {
     environment = mkIf cfg.enable {
       systemPackages = with pkgs; [
-        script_sound_cycle_default
+        script_sound-tool
       ];
     };
 
