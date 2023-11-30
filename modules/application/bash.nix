@@ -97,6 +97,22 @@ in
                   alias rsync="rsync -aXxtv"                                # Better copying with Rsync
               fi
 
+              if command -v "rg" &>/dev/null && command -v "fzf" &>/dev/null && command -v "bat" &>/dev/null; then
+                function frg {
+                  result=$(rg --ignore-case --color=always --line-number --no-heading "$@" |
+                    fzf --ansi \
+                        --color 'hl:-1:underline,hl+:-1:underline:reverse' \
+                        --delimiter ':' \
+                        --preview "bat --color=always {1} --theme='Solarized (light)' --highlight-line {2}" \
+                        --preview-window 'up,60%,border-bottom,+{2}+3/3,~3')
+                  file="''${result%%:*}"
+                  linenumber=$(echo "''${result}" | cut -d: -f2)
+                  if [ ! -z "$file" ]; then
+                          $EDITOR +"''${linenumber}" "$file"
+                  fi
+                }
+              fi
+
               if [ -d "$HOME/.bashrc.d" ] ; then
                 for script in $HOME/.bashrc.d/* ; do
                     source $script
