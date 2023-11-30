@@ -16,11 +16,83 @@ let
     case $1 in
         output )
             case $2 in
+                choose )
+                    if command -v "rofi" &>/dev/null && ! [ -t 0 ] ; then
+                        choose_menu="rofi"
+                        choose_menu_command="rofi -dmenu -i"
+                    elif command -v "dmenu" &>/dev/null && ! [ -t 0 ]; then
+                        choose_menu="dmenu"
+                        choose_menu_command='dmenu'
+                    else
+                        choose_menu="select"
+                    fi
+
+                    case $backend in
+                        pipewire )
+                            node=$(mktemp)
+                            pw-dump Node | ${pkgs.jq}/bin/jq -r '.[]|select(.info.props|.["media.class"] == "Audio/Sink" and has("device.api"))|.info.props["node.description"]' > $node
+
+                                if [ $(${pkgs.coreutils}/bin/wc -l "$node" | ${pkgs.gawk}/bin/awk '{print $1}') -lt 1 ] ; then
+                                    return 1
+                                    rm -rf "$node"
+                                fi
+
+                                if [ "$choose_menu" = "select" ] ; then
+                                    PS3="Choose an audio output "
+                                    IFS=$'\n'
+                                    select node_selected in $(<$node) ; do
+                                        node_selected=$node_selected
+                                        break
+                                    done
+                                else
+                                    node_selected="$(cat $node | $choose_menu_command -p 'Select Audio Output')"
+                                fi
+
+                                rm -rf "$node"
+                                id=$(pw-dump Node | ${pkgs.jq}/bin/jq --arg desc "$node_selected" -r '.[]|select(.info.props|."api.alsa.pcm.stream" == "playback" and ."node.description" == $desc)|.info.props["object.id"]')
+
+                                if [ -z "$id" ]; then
+                                    return 1
+                                fi
+
+                            wpctl set-default "$id"
+                        ;;
+                        pulseaudio )
+                            declare -A sinks
+                            sink_info=$(pactl list sinks)
+                            names=$(echo "$sink_info" | ${pkgs.gnused}/bin/sed -n 's/.*Name: \(.*\)/\1/p')
+                            descriptions=$(mktemp)
+                            echo "$sink_info" | ${pkgs.gnused}/bin/sed -n 's/.*Description: \(.*\)/\1/p' > "$descriptions"
+                            IFS=$'\n' read -r -d "" -a names_arr <<<"$names"
+                            IFS=$'\n' read -r -d "" -a descriptions_arr <<<"$(cat $descriptions)"
+
+                            for ((i = 0; i < ''${#descriptions_arr[@]}; i++)); do
+                                sinks["''${descriptions_arr[$i]}"]="''${names_arr[$i]}"
+                            done
+
+                            if [ "$choose_menu" = "select" ] ; then
+                                PS3="Choose an audio output "
+                                IFS=$'\n'
+                                select description in $(cat "$descriptions") ; do
+                                    description=$description
+                                    break
+                                done
+                            else
+                                description=$(echo "$descriptions" | $choose_menu_command)
+                            fi
+                            rm -rf "$descriptions"
+
+                            if [ -n "$description" ]; then
+                                pactl set-default-sink "''${sinks[''${description}]}"
+                            fi
+                        ;;
+                    esac
+                ;;
                 cycle )
                     case $backend in
                         pipewire )
                             ## Get current audio outputs and running status
-                            output=$(pw-dump | ${pkgs.jq}/bin/jq -r '.[] | select(.info.props."media.class" == "Audio/Sink") | .id, .info.props."node.description", .info.state')
+                            output=$(pw-dump | rm -rf "$node" -r '.[] | select(.info.props."media.class" == "Audio/Sink") | .id, .info.props."node.description", .info.state')
 
                             array=()
                             switch_next=0
