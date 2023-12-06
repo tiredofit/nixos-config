@@ -25,6 +25,7 @@
     };
     role = "server";
     service = {
+      syncthing.enable = true;
       vscode_server.enable = true;
     };
     network = {
