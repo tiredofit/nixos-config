@@ -9,6 +9,7 @@ with lib;
     ./logrotate.nix
     ./monit.nix
     ./ssh.nix
+    ./syncthing.nix
     ./vscode_server.nix
     ./zabbix_agent.nix
   ];
