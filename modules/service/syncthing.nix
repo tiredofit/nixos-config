@@ -19,9 +19,6 @@ in
     services = {
       syncthing = {
         enable = true;
-        settings = {
-          options.urAccepted = mkDefault "-1";
-        };
       };
     };
   };
