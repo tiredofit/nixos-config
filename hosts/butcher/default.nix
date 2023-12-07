@@ -6,6 +6,10 @@
     ../common
   ];
 
+  fileSystems = {
+      "/mnt/media".options = [ "compress=zstd" "noatime"  ];
+  };
+
   host = {
     container = {
       restic = {
