@@ -9,6 +9,7 @@ with lib;
     ./openldap.nix
     ./postfix-relay.nix
     ./restic.nix
+    ./s3ql.nix
     ./socket-proxy.nix
     ./tinc.nix
     ./traefik.nix
