@@ -49,7 +49,7 @@
       };
       graphics = {
         enable = true;
-        backend = "x";
+        backend = "wayland";
       };
     };
     filesystem = {

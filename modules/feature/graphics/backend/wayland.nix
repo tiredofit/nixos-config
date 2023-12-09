@@ -1,4 +1,4 @@
-{ config, lib, pkgs, specialArgs, ... }:
+{ config, inputs, lib, pkgs, specialArgs, ... }:
 with lib;
 let
   inherit (specialArgs) kioskUsername kioskURL;
@@ -109,11 +109,11 @@ in {
       ];
     }];
 
-    xdg = {
-      portal = mkIf (config.host.role != "kiosk") {
-        enable = true;
-        extraPortals = [ pkgs.xdg-desktop-portal-hyprland ];
-      };
-    };
+    #xdg = {
+    #  portal = mkIf (config.host.role != "kiosk") {
+    #    enable = true;
+    #    extraPortals = [ pkgs.xdg-desktop-portal-hyprland ];
+    #  };
+    #};
   };
 }
