@@ -62,7 +62,7 @@ in
       volumes = [
         "/var/local/data/_system/${container_name}/cache:/cache"
         "/var/local/data/_system/${container_name}/logs:/logs"
-        "/var/local/data/_system/${container_name}/restore:/restore"
+        "/var/local/data/_system/${container_name}:/mnt/restic-${container_name}/restore"
         "/:/rootfs:ro"
       ];
       environment = {
