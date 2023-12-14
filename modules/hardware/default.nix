@@ -7,6 +7,7 @@ with lib;
     ./bluetooth.nix
     ./cpu
     ./gpu
+    ./keyboard.nix
     ./monitors.nix
     ./printing.nix
     ./raid.nix

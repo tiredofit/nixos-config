@@ -61,6 +61,7 @@
     hardware = {
       cpu = "amd";
       gpu = "integrated-amd";
+      keyboard.enable = true;
       raid.enable = true;
       sound = {
         server = "pipewire";
