@@ -42,6 +42,7 @@
     feature = {
       gaming = {
         enable = true;
+        heroic.enable = true;
         steam = {
           enable = true;
           protonGE = true;

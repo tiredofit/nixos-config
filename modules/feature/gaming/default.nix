@@ -6,6 +6,7 @@ in
   with lib;
 {
   imports = [
+    ./heroic
     ./steam
   ];
 
