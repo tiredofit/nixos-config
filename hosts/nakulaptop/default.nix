@@ -14,13 +14,6 @@
 
   host = {
     feature = {
-      gaming = {
-        enable = true;
-        steam = {
-          enable = true;
-          protonGE = true;
-        };
-      };
       graphics = {
         enable = true;
         backend = "x";

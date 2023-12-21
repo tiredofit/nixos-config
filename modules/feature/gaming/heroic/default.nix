@@ -43,7 +43,7 @@ in
       then cfg.extraCompatPackages ++ [inputs.nix-gaming.packages.proton-ge]
       else cfg.extraCompatPackages;
     in
-      lib.mkIf (cfg.enable && config.host.feature.gaming.enable) {
+      lib.mkIf (cfg.enable) {
         environment.systemPackages = [
           heroic
         ];
