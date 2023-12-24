@@ -3,6 +3,7 @@
 
   imports = [
     ./gamemode
+    ./gamescope
     ./heroic
     ./steam
   ];

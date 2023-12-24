@@ -58,7 +58,7 @@ in {
           };
 
           displayManager = {
-            startx.enable = mkDefault true;
+            startx.enable = mkDefault false;
             lightdm = {
               enable = mkDefault false;
               greeters = {

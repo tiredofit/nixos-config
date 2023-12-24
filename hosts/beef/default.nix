@@ -42,6 +42,7 @@
     feature = {
       gaming = {
         gamemode.enable = true;
+        gamescope.enable = true;
         heroic.enable = true;
         steam = {
           enable = true;
