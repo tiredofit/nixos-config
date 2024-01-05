@@ -1,16 +1,16 @@
 {config, lib, pkgs, ...}:
 
 let
-  cfg = config.host.filesystem.btrfs;
+  cfg = config.host.filesystem.tmp,tmpfs;
 in
   with lib;
 {
   options = {
-    host.filesystem.btrfs = {
+    host.filesystem.tmp.tmpfs = {
       enable = mkOption {
         default = false;
         type = with types; bool;
-        description = "Enables settings for a BTRFS installation including snapshots";
+        description = "Enables tmpfs on /tmp mount during boot";
       };
       autoscrub = mkOption {
        default = true;

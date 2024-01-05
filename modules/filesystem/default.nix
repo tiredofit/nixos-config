@@ -7,5 +7,6 @@ with lib;
     ./encryption.nix
     ./impermanence.nix
     ./swap.nix
+    ./tmp.nix
   ];
 }
