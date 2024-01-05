@@ -52,7 +52,7 @@ in
           enable = mkDefault true;
           type = mkDefault "partition";
         };
-        tmp.tmpfs.enable = true;
+        tmp.tmpfs.enable = mkDefault true;
       };
       hardware = {
         bluetooth.enable = mkDefault true;    # Most wireless cards have bluetooth radios
