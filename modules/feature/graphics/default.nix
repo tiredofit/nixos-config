@@ -24,6 +24,11 @@
         default = null;
         description = "Backend of displayManager";
       };
+      greeter = mkOption {
+        type = types.enum ["gdm" "lightdm" null];
+        default = null;
+        description = "Greeter to use";
+      };
       monitors = mkOption {
         type = with types; listOf str;
         default = [];
