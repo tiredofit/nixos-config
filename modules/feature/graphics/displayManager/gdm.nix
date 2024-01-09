@@ -9,7 +9,7 @@ let
 in
 
 {
-  config = mkIf (graphics.enable && graphics.greeter == "gdm")) {
+  config = mkIf (graphics.enable && graphics.displayManager == "gdm")) {
     services = {
       xserver = {
         displayManager = {

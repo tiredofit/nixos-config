@@ -4,7 +4,7 @@
 
   imports = [
     ./backend
-    ./greeter
+    ./displayManager
   ];
 
   options = {
@@ -24,10 +24,10 @@
         default = null;
         description = "Backend of displayManager";
       };
-      greeter = mkOption {
-        type = types.enum ["gdm" "lightdm" null];
+      displayManager = mkOption {
+        type = types.enum ["gdm" "lightdm" "sddm" null];
         default = null;
-        description = "Greeter to use";
+        description = "Display Manager to use";
       };
       monitors = mkOption {
         type = with types; listOf str;
