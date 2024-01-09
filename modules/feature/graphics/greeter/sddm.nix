@@ -9,13 +9,13 @@ let
 in
 
 {
-  config = mkIf (graphics.enable && graphics.greeter == "gdm")) {
+  config = mkIf (graphics.enable && graphics.greeter == "sddm")) {
     services = {
       xserver = {
         displayManager = {
-          gdm = {
+          sddm = {
             enable = mkDefault true;
-            wayland = mkDefault wayland;
+            wayland.enable = mkDefault wayland;
           };
         };
       };

@@ -1,6 +1,5 @@
 {config, lib, ...}:
 {
-
   imports = [
     ./gdm.nix
     ./lightdm.nix
