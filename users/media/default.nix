@@ -38,7 +38,6 @@ in
 
       openssh.authorizedKeys.keys = [ (builtins.readFile ./ssh.pub) ];
       hashedPasswordFile = config.sops.secrets.media-password.path;
-      packages = [ pkgs.home-manager ];
     };
 
     sops.secrets.media-password = {

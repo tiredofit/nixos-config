@@ -15,7 +15,6 @@
     users.users.root = {
       shell = pkgs.bashInteractive;
       hashedPasswordFile = mkDefault config.sops.secrets.root-password.path;
-      packages = [ pkgs.home-manager ];
     };
 
     sops.secrets.root-password = {

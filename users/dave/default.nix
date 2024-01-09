@@ -39,7 +39,6 @@ in
 
       openssh.authorizedKeys.keys = [ (builtins.readFile ./ssh.pub) ];
       hashedPasswordFile = mkDefault config.sops.secrets.dave-password.path;
-      packages = [ pkgs.home-manager ];
     };
 
     sops.secrets.dave-password = {

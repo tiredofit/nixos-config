@@ -2,7 +2,6 @@
   with lib;
 {
   imports = [
-    inputs.home-manager.nixosModules.home-manager
     ./locale.nix
     ./nix.nix
     ../../users
@@ -29,7 +28,6 @@
   };
 
   hardware.enableRedistributableFirmware = mkDefault true;
-  home-manager.extraSpecialArgs = { inherit inputs outputs; };
 
   host = {
     application = {
@@ -62,6 +60,7 @@
       wget.enable = mkDefault true;
     };
     feature = {
+      home-manager.enable = mkDefault true;
       secrets.enable = mkDefault true;
     };
     network = {

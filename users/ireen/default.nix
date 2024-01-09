@@ -35,7 +35,6 @@ in
 
       openssh.authorizedKeys.keys = [ (builtins.readFile ./ssh.pub) ];
       hashedPasswordFile = config.sops.secrets.ireen-password.path;
-      packages = [ pkgs.home-manager ];
     };
 
     sops.secrets.ireen-password = {

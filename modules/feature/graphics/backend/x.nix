@@ -59,29 +59,10 @@ in {
 
           displayManager = {
             startx.enable = mkDefault false;
-            lightdm = {
-              enable = mkDefault false;
-              greeters = {
-                slick = {
-                  enable = mkDefault true;
-                  theme = {
-                    name = mkDefault "Adwaita-Dark";
-                  };
-                  cursorTheme = {
-                    name = mkDefault "Quintom_Snow";
-                    package = mkDefault pkgs.quintom-cursor-theme;
-                  };
-                };
-                gtk = {
-                    enable = mkDefault false;
-                };
-              };
-            };
             gdm = {
               enable = mkDefault true;
               wayland = mkDefault false;
             };
-            sddm.enable = mkDefault false;
           };
 
         layout = "us";
