@@ -6,9 +6,8 @@ in
 {
   imports = [
     inputs.home-manager.nixosModules.home-manager
-  ] ++ (builtins.attrValues outputs.nixosModules);
+  ];
 
-{
   options = {
     host.feature.home-manager = {
       enable = mkOption {
