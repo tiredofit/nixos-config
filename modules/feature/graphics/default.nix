@@ -4,6 +4,7 @@
 
   imports = [
     ./backend
+    ./greeter
   ];
 
   options = {
