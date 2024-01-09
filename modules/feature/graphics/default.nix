@@ -4,7 +4,7 @@
 
   imports = [
     ./backend
-    #./displayManager
+    ./displayManager
   ];
 
   options = {
@@ -24,11 +24,6 @@
         default = null;
         description = "Backend of displayManager";
       };
-      displayManager = mkOption {
-        type = types.enum ["gdm" "lightdm" "sddm" null];
-        default = null;
-        description = "Display Manager to use";
-      };
       monitors = mkOption {
         type = with types; listOf str;
         default = [];
@@ -39,11 +34,11 @@
 
   config = {
     hardware = {
-        opengl = mkIf ((config.host.feature.graphics.enable) && (config.host.feature.graphics.acceleration)) {
-          enable = true;
-          driSupport = true;
-          driSupport32Bit = true;
-        };
+      opengl = mkIf ((config.host.feature.graphics.enable) && (config.host.feature.graphics.acceleration)) {
+        enable = true;
+        driSupport = true;
+        driSupport32Bit = true;
+      };
     };
   };
 }

@@ -47,40 +47,13 @@ in {
         enable = true;
       });
 
-      greetd = (lib.mkIf (config.host.role != "kiosk") {
-        enable = true;
-        settings = {
-          default_session = {
-            command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time";
-            user = "greeter";
-          };
-        };
-      });
-
       xserver = lib.mkMerge [
         (lib.mkIf (config.host.role != "kiosk") {
           enable = true;
           desktopManager = {
             xterm.enable = false;
-            session = [
-              {
-                name = "home-manager";
-                start = ''
-                  ${pkgs.runtimeShell} $HOME/.hm-xsession &
-                  waitPID=$!
-                '';
-              }
-            ];
           };
 
-          displayManager = {
-            startx.enable = true;
-            lightdm.enable = false;
-            gdm = {
-              enable = false ;
-              wayland = true ;
-            };
-          };
           layout = "us";
           libinput.enable = true;
         })

@@ -1,6 +1,7 @@
-{ config, lib, pkgs, ... }:
+{ config, inputs, lib, pkgs, specialArgs, ... }:
 with lib;
 let
+  inherit (specialArgs) kioskUsername kioskURL;
   graphics = config.host.feature.graphics;
   wayland =
     if (graphics.backend == "wayland")
@@ -9,14 +10,11 @@ let
 in
 
 {
-  config = mkIf (graphics.enable && graphics.displayManager.manager == "gdm") {
+  config = mkIf (graphics.enable && graphics.displayManager.manager == "cage") {
     services = {
       xserver = {
         displayManager = {
-          gdm = {
-            enable = mkDefault true;
-            wayland = mkDefault wayland;
-          };
+
         };
       };
     };

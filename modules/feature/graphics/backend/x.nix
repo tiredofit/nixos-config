@@ -46,23 +46,6 @@ in {
           enable = true;
           desktopManager = {
             xterm.enable = false;
-            session = [
-              {
-                name = "home-manager";
-                start = ''
-                  ${pkgs.runtimeShell} $HOME/.hm-xsession &
-                  waitPID=$!
-                '';
-              }
-            ];
-          };
-
-          displayManager = {
-            startx.enable = mkDefault false;
-            gdm = {
-              enable = mkDefault true;
-              wayland = mkDefault false;
-            };
           };
 
         layout = "us";
@@ -76,6 +59,7 @@ in {
               user = "${kioskUsername}";
               enable = true;
             };
+
             defaultSession = "none+openbox";
             lightdm.enable = true;
             job.preStart = ''
@@ -85,7 +69,7 @@ in {
               xrandr --output HDMI-1 --mode 2560x1080
             '';
           };
-
+#
           layout = "us";
           libinput.enable = true;
           windowManager.openbox.enable = true;
