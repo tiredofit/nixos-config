@@ -11,10 +11,6 @@ in {
     programs = mkIf (config.host.role != "kiosk") {
       dconf.enable = mkDefault true;
       seahorse.enable = mkDefault true;
-      hyprland = {
-       enable = mkDefault true;
-       package = inputs.hyprland.packages.${pkgs.system}.hyprland;
-      };
     };
 
     security = mkIf (config.host.role != "kiosk") {
@@ -50,12 +46,5 @@ in {
         libinput.enable = mkDefault true;
       };
     };
-
-    #xdg = {
-    #  portal = mkIf (config.host.role != "kiosk") {
-    #    enable = true;
-    #    extraPortals = [ pkgs.xdg-desktop-portal-hyprland ];
-    #  };
-    #};
   };
 }

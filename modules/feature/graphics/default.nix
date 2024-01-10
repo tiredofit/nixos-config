@@ -4,6 +4,7 @@
   imports = [
     ./backend
     ./displayManager
+    ./windowManager
   ];
 
   options = {

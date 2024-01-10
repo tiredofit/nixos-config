@@ -70,8 +70,16 @@ in
               enable = mkDefault true;
               user = "${kioskUsername}";
             };
-            manager = "lightdm";
+            manager = mkIf (config.host.feature.graphics.backend == "x") "lightdm";
           };
+          windowManager = mkMerge [
+            (mkIf (config.host.feature.graphics.backend == "cage") {
+              manager = "wayland";
+            })
+            (mkIf (config.host.feature.graphics.backend == "x") {
+              manager = "openbox";
+            })
+          ];
         };
         powermanagement = {
           enable = mkDefault false;
@@ -129,8 +137,7 @@ in
     };
 
     services = {
-      cage = mkIf (config.host.feature.graphics.backend == "wayland") {
-        enable = true;
+      cage = {
         user = "${kioskUsername}";
         program = "${pkgs.firefox}/bin/firefox -kiosk -private-window ${kioskURL}";
       };
@@ -152,9 +159,9 @@ in
           layout = "us";
           libinput.enable = mkForce true;
 
-          windowManager = {
-            openbox.enable = mkForce true;
-          };
+          #windowManager = {
+          #  openbox.enable = mkForce true;
+          #};
 
           #job.preStart = ''
           #  #!/bin/sh
