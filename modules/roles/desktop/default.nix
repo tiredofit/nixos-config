@@ -55,6 +55,7 @@ in
         tmp.tmpfs.enable = mkDefault true;
       };
       hardware = {
+        android.enable = mkDefault true;
         bluetooth.enable = mkDefault true;    # Most wireless cards have bluetooth radios
         printing.enable = mkDefault true;     # If we don't have access to a physical printer we should be able to remotely print
         raid.enable = mkDefault false;

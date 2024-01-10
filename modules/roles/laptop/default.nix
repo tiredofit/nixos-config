@@ -38,6 +38,7 @@ in
         };
       };
       hardware = {
+        android.enable = mkDefault true;
         backlight.enable = mkDefault true;    # Most laptops have a backlight
         bluetooth.enable = mkDefault true;    # Most wireless cards have bluetooth radios
         raid.enable = mkDefault false;        #
