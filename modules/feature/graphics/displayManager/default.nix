@@ -5,19 +5,27 @@ in
   with lib;
 {
   imports = [
-    ./cage.nix
     ./gdm.nix
     ./greetd.nix
     ./lightdm.nix
-    ./openbox.nix
     ./sddm.nix
   ];
 
   options = {
     host.feature.graphics.displayManager = {
+      autoLogin = {
+        enable = mkOption {
+          default = false;
+          type = with types; bool;
+          description = "Automatically log a user into a session";
+        };
+        user = mkOption {
+          type = with types; str;
+          description = "User to auto login";
+        };
+      };
       manager = mkOption {
-        type = types.enum ["cage" "greetd" "gdm" "lightdm" "sddm" null];
-        ## TODO Finish CAGE
+        type = types.enum ["greetd" "gdm" "lightdm" "sddm" null];
         default = "lightdm";
         description = "Display Manager to use";
       };
@@ -44,6 +52,12 @@ in
       xserver = {
         desktopManager = {
           session = [ ] ++ config.host.feature.graphics.displayManager.session;
+        };
+        displayManager = mkIf (cfg.autoLogin.enable) {
+          autoLogin = {
+            enable = mkDefault true;
+            user = cfg.autoLogin.user;
+          };
         };
       };
     };
