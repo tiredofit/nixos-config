@@ -3,6 +3,7 @@
 with lib;
 {
   imports = [
+    ./android.nix
     ./backlight.nix
     ./bluetooth.nix
     ./cpu
