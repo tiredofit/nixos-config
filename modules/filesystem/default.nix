@@ -6,6 +6,7 @@ with lib;
     ./btrfs.nix
     ./encryption.nix
     ./impermanence.nix
+    ./ntfs.nix
     ./swap.nix
     ./tmp.nix
   ];
