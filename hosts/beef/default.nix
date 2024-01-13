@@ -59,6 +59,7 @@
       swap = {
         partition = "disk/by-uuid/0839e935-d57b-4384-9d48-f557d0250ec1";
       };
+      ntfs.enable = true;
       tmp.tmpfs.enable = true;
     };
     hardware = {
