@@ -17,8 +17,8 @@ in
 
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
-      yubikey-manager
-      yubikey-manager-qt
+      #yubikey-manager
+      #yubikey-manager-qt
       yubikey-personalization
       yubikey-personalization-gui
       yubico-piv-tool
