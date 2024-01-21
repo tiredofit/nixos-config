@@ -1,13 +1,13 @@
 let
-  rawdisk1 = "vda"; # CHANGE
-  rawdisk2 = "vdb"; # CHANGE
+  rawdisk1 = "/dev/vda"; # CHANGE THESE
+  rawdisk2 = "/dev/vdb"; # CHANGE THESE
   cryptdisk1 = "pool0_0";
   cryptdisk2 = "pool0_1";
 in {
   disko.devices = {
     disk = {
       ${rawdisk1} = {
-        device = "/dev/${rawdisk1}";
+        device = "${rawdisk1}";
         type = "disk";
         content = {
           type = "gpt";
@@ -45,7 +45,7 @@ in {
         };
       };
       ${rawdisk2} = {
-        device = "/dev/${rawdisk2}";
+        device = "${rawdisk2}";
         type = "disk";
         content = {
           type = "gpt";
