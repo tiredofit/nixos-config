@@ -1968,59 +1968,66 @@ task_ssh_to_host() {
 
 task_update_disk_prefix() {
     if [ -f "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix ] ; then
-        num_disks=$(lsblk -np --output TYPE |  grep -c -e ^NAME -e "disk")
-
-        if [ "$num_disks" -ge 2 ] ; then
-            echo "[update_disk_prefix] Multiple hard disks detrected"
-        fi
-
-        case ${num_disks} in
-            "0" )
-                print_error "No hard disks found"
-                read -n 1 -s -r -p "** Press any key to continue **"
-                return
-                ;;
-            "1" )
-                _rawdisk1=$(lsblk -np --output KNAME,SIZE,TYPE |  grep -e ^NAME -e "disk" | awk '{print $1}')
-                print_debug "[update_disk_prefix] Selecting ${_rawdisk1} for first disk"
-                ;;
-            * )
-		        COLUMNS=12
-                prompt="Which disk do you want to use?"
-                PS3="$prompt "
-        		select rawdisk in $(lsblk -np --output KNAME,SIZE,TYPE | grep -e ^NAME -e "disk" | awk '{print $1}' | tr "\n" " "); do
-                    _rawdisk1=${rawdisk}
-                    COLUMNS=$oldcolumns
-                    return
-                done
-                ;;
-        esac
-
-		sed -i "s|rawdisk1 = .*|rawdisk1 = \"${_rawdisk1}\";|g" "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix
+        read -e -i "$_rawdisk1" -p "$(echo -e ${cdgy}${cwh}** ${cdgy}Enter Disk Device 1 \(eg /dev/nvme0n1\: \)${coff}) " _rawdisk1
+        sed -i "s|rawdisk1 = .*|rawdisk1 = \"${_rawdisk1}\";|g" "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix
         if var_true "${disk_raid}" ; then
-            case ${num_disks} in
-                1 )
-                    print_error "You selected raid however there is only one hard disk"
-                    read -n 1 -s -r -p "** Press any key to continue **"
-                    return
-                    ;;
-                2 )
-                    _rawdisk2=$(lsblk -np --output KNAME,SIZE,TYPE |  grep -e ^NAME -e "disk" | awk '{print $1}' | grep -Pv "${_rawdisk1}")
-                    print_debug "[update_disk_prefix] Selecting ${_rawdisk1} for first disk"
-                    ;;
-                * )
-                    COLUMNS=12
-                    prompt="Which disk do you want to use for your 2nd RAID disk. (Primary is: ${_rawdisk1}) ?"
-                    PS3="$prompt "
-                    select rawdisk in $(lsblk -np --output KNAME,SIZE,TYPE | grep -e ^NAME -e "disk" | awk '{print $1}' | grep -Pv "${_rawdisk1}" | tr "\n" " "); do
-                        _rawdisk2=${rawdisk}
-                        COLUMNS=$oldcolumns
-                        return
-                    done
-                    ;;
-            esac
+            read -e -i "$_rawdisk2" -p "$(echo -e ${cdgy}${cwh}** ${cdgy}Enter Disk Device 2 \(eg /dev/vda2\: \)${coff}) " _rawdisk2
             sed -i "s|rawdisk2 = .*|rawdisk2 = \"${_rawdisk2}\";|g" "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix
         fi
+        ## TODO Connect remotely and grab details to perform autodetection
+        #num_disks=$(lsblk -np --output TYPE |  grep -c -e ^NAME -e "disk")
+        #
+        #if [ "$num_disks" -ge 2 ] ; then
+        #    echo "[update_disk_prefix] Multiple hard disks detrected"
+        #fi
+        #
+        #case ${num_disks} in
+        #    "0" )
+        #        print_error "No hard disks found"
+        #        read -n 1 -s -r -p "** Press any key to continue **"
+        #        return
+        #        ;;
+        #    "1" )
+        #        _rawdisk1=$(lsblk -np --output KNAME,SIZE,TYPE |  grep -e ^NAME -e "disk" | awk '{print $1}')
+        #        print_debug "[update_disk_prefix] Selecting ${_rawdisk1} for first disk"
+        #        ;;
+        #    * )
+		#        COLUMNS=12
+        #        prompt="Which disk do you want to use?"
+        #        PS3="$prompt "
+        #		select rawdisk in $(lsblk -np --output KNAME,SIZE,TYPE | grep -e ^NAME -e "disk" | awk '{print $1}' | tr "\n" " "); do
+        #            _rawdisk1=${rawdisk}
+        #            COLUMNS=$oldcolumns
+        #            return
+        #        done
+        #        ;;
+        #esac
+        #
+		#sed -i "s|rawdisk1 = .*|rawdisk1 = \"${_rawdisk1}\";|g" "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix
+        #if var_true "${disk_raid}" ; then
+        #    case ${num_disks} in
+        #        1 )
+        #            print_error "You selected raid however there is only one hard disk"
+        #            read -n 1 -s -r -p "** Press any key to continue **"
+        #            return
+        #            ;;
+        #        2 )
+        #            _rawdisk2=$(lsblk -np --output KNAME,SIZE,TYPE |  grep -e ^NAME -e "disk" | awk '{print $1}' | grep -Pv "${_rawdisk1}")
+        #            print_debug "[update_disk_prefix] Selecting ${_rawdisk1} for first disk"
+        #            ;;
+        #        * )
+        #            COLUMNS=12
+        #            prompt="Which disk do you want to use for your 2nd RAID disk. (Primary is: ${_rawdisk1}) ?"
+        #            PS3="$prompt "
+        #            select rawdisk in $(lsblk -np --output KNAME,SIZE,TYPE | grep -e ^NAME -e "disk" | awk '{print $1}' | grep -Pv "${_rawdisk1}" | tr "\n" " "); do
+        #                _rawdisk2=${rawdisk}
+        #                COLUMNS=$oldcolumns
+        #                return
+        #            done
+        #            ;;
+        #    esac
+        #    sed -i "s|rawdisk2 = .*|rawdisk2 = \"${_rawdisk2}\";|g" "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix
+        #fi
     fi
 }
 
