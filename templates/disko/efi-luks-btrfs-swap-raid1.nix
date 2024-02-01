@@ -7,7 +7,7 @@ in {
   disko.devices = {
     disk = {
       ${rawdisk1} = {
-        device = "/dev/${rawdisk1}";
+        device = "${rawdisk1}";
         type = "disk";
         content = {
           type = "gpt";
@@ -45,7 +45,7 @@ in {
         };
       };
       ${rawdisk2} = {
-        device = "/dev/${rawdisk2}";
+        device = "${rawdisk2}";
         type = "disk";
         content = {
           type = "gpt";
