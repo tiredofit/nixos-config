@@ -42,7 +42,14 @@ in
                   extraArgs = [ "-f" ];
                   subvolumes = {
                     "/root" = {
+                      mountOptions = [ "compress=zstd" "noatime" ];
+                    };
+                    "/root/active" = {
                       mountpoint = "/";
+                      mountOptions = [ "compress=zstd" "noatime" ];
+                    };
+                    "/root/snapshots" = {
+                      mountpoint = "/.snapshots";
                       mountOptions = [ "compress=zstd" "noatime" ];
                     };
                     "/home" = {

@@ -39,7 +39,14 @@ in
                 extraArgs = [ "-f" "-m raid1 -d raid1" "${rawdisk2}" ];
                 subvolumes = {
                   "/root" = {
+                    mountOptions = [ "compress=zstd" "noatime" ];
+                  };
+                  "/root/active" = {
                     mountpoint = "/";
+                    mountOptions = [ "compress=zstd" "noatime" ];
+                  };
+                  "/root/snapshots" = {
+                    mountpoint = "/.snapshots";
                     mountOptions = [ "compress=zstd" "noatime" ];
                   };
                   "/home" = {
