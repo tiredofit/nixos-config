@@ -46,4 +46,12 @@
       root.enable = false;
     };
   };
+
+  sops = {
+    secrets = {
+      homeassistant = {
+        sopsFile = ../../hosts/common/secrets/homeassistant/secrets.yaml;
+      };
+    };
+  };
 }
