@@ -42,8 +42,9 @@ in {
           xterm.enable = false;
         };
 
-        layout = mkDefault "us";
         libinput.enable = mkDefault true;
+
+        xkb.layout = mkDefault "us";
       };
     };
   };
