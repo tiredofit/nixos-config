@@ -25,7 +25,5 @@ in
     ];
 
     hardware.wirelessRegulatoryDatabase = true;
-
-    services.udev.packages = [ pkgs.crda ];
   };
 }
