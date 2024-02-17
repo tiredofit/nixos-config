@@ -22,7 +22,6 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    hardware.url = "github:nixos/nixos-hardware";
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -65,7 +64,7 @@
       formatter = forEachSystem (pkgs: pkgs.nixpkgs-fmt);
 
       nixosConfigurations = {
-        tentacle = lib.nixosSystem { # Server Added 2023-10-25 
+        tentacle = lib.nixosSystem { # Server Added 2023-10-25
           modules = [ ./hosts/tentacle ];
           specialArgs = { inherit inputs outputs; };
         };
