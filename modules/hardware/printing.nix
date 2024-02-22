@@ -25,17 +25,13 @@ in
           hplip
         ];
       };
-      # required for network discovery of printers
-      avahi = {
+
+      avahi = { # required for network discovery of printers
         enable = true;
-        # resolve .local domains for printers
-        nssmdns4 = true;
-        # pass avahi port(s) to the firewall
+        nssmdns4 = true; # resolve .local domains for printers
         openFirewall = true;
       };
     };
-
-
 
     host.filesystem.impermanence.directories = mkIf config.host.filesystem.impermanence.enable [
       "/var/lib/cups"          # CUPS
