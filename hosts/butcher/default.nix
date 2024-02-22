@@ -1,4 +1,4 @@
-{ inputs, pkgs, ...}: {
+{ inputs, lib, pkgs, ...}: {
 
   imports = [
     inputs.nur.nixosModules.nur
@@ -56,4 +56,16 @@
   #};
 
   networking.nameservers = [ "192.168.137.1" ];
+
+
+services.resolved = {
+  enable = lib.mkForce false;
+  dnssec = "false";
+  domains = [ "~." ];
+  fallbackDns = [ "192.168.137.1" ];
+  #fallbackDns = [ "1.1.1.1#one.one.one.one" "1.0.0.1#one.one.one.one" ];
+  #extraConfig = ''
+  #  DNSOverTLS=yes
+  #'';
+};
 }
