@@ -47,13 +47,13 @@
     };
   };
 
-  sops = {
-    secrets = {
-      homeassistant = {
-        sopsFile = ../../hosts/common/secrets/homeassistant/secrets.yaml;
-      };
-    };
-  };
+  #sops = {
+  #  secrets = {
+  #    homeassistant = {
+  #      sopsFile = ../../hosts/common/secrets/homeassistant/secrets.yaml;
+  #    };
+  #  };
+  #};
 
   networking.nameservers = [ "192.168.137.1" ];
 }
