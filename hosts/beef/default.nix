@@ -55,6 +55,7 @@
       };
     };
     filesystem = {
+      bcachefs.enable = true;
       encryption.enable = true;
       exfat.enable = true;
       ntfs.enable = true;
