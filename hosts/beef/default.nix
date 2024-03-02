@@ -53,6 +53,9 @@
         enable = true;
         backend = "x";
       };
+      virtualization = {
+        flatpak.enable = true;
+      };
     };
     filesystem = {
       bcachefs.enable = true;

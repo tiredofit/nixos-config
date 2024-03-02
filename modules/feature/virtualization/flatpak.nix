@@ -29,7 +29,7 @@ in
       };
     in {
       # Create an FHS mount to support flatpak host icons/fonts
-      "/usr/share/icons" = mkRoSymBind (config.system.path + "/share/icons");
+      #"/usr/share/icons" = mkRoSymBind (config.system.path + "/share/icons");
       "/usr/share/fonts" = mkRoSymBind (aggregatedFonts + "/share/fonts");
     };
 
@@ -39,5 +39,6 @@ in
 
     services.flatpak.enable = true;
     system.fsPackages = [ pkgs.bindfs ];
+    xdg.portal.enable = true;
   };
 }
