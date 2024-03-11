@@ -9,14 +9,14 @@ in {
         initrd.kernelModules = ["amdgpu"];
         kernelModules = ["amdgpu"];
         kernelPackages = pkgs.linuxPackages_latest;
-        kernelParams = mkIf device.gpu == "integrated-amd" [
+        kernelParams = mkIf (device.gpu == "integrated-amd") [
           "amdgpu.sg_display=0"];
       })
 
       (lib.mkIf (lib.versionAtLeast pkgs.linux.version "6.2") {
         initrd.kernelModules = ["amdgpu"];
         kernelModules = ["amdgpu"];
-        kernelParams = mkIf device.gpu == "integrated-amd" [
+        kernelParams = mkIf (device.gpu == "integrated-amd") [
           "amdgpu.sg_display=0"];
       })
     ];
