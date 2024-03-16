@@ -52,6 +52,11 @@ in
       };
       network = {
         firewall.fail2ban.enable = mkDefault true;
+        vpn = {
+          tailscale.enable = mkDefault false;
+          wireguard.enable = mkDefault true;
+          zerotier.enable = mkDefault false;
+        };
       };
       service = {
         logrotate.enable = mkDefault true;

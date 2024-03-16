@@ -71,7 +71,9 @@ in
           opensnitch.enable = mkDefault false;  # Only activated by opensnitch-ui
         };
         vpn = {
-          tailscale.enable = mkDefault true;
+          tailscale.enable = mkDefault false;
+          wireguard.enable = mkDefault true;
+          zerotier.enable = mkDefault false;
         };
       };
       service = {
