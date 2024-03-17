@@ -27,6 +27,7 @@ in
       ] ++ ifTheyExist [
         "adbusers"
         "deluge"
+        "dialout"
         "docker"
         "git"
         "input"
