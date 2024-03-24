@@ -41,17 +41,19 @@
     };
     feature = {
       gaming = {
-        gamemode.enable = true;
-        gamescope.enable = true;
-        heroic.enable = true;
+        gamemode.enable = false;
+        gamescope.enable = false;
+        heroic.enable = false;
         steam = {
-          enable = true;
-          protonGE = true;
+          enable = false;
+          protonGE = false;
         };
       };
       graphics = {
         enable = true;
-        backend = "x";
+        backend = "wayland";
+        displayManager.manager = "sddm";
+        windowManager.manager = "hyprland";
       };
       virtualization = {
         flatpak.enable = true;
