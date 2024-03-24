@@ -17,9 +17,20 @@ in
           sddm = {
             enable = mkDefault true;
             wayland.enable = mkDefault wayland;
+            theme = "where_is_my_sddm_theme";
           };
         };
       };
+    };
+
+    # catpuccin-sddm-corners, chili, elarun,. Elegant, maldives, maya, where_is_my_sddm_theme
+    environment = {
+      systemPackages = with pkgs; [
+        #catppuccin-sddm-corners
+        #elegant-sddm
+        #sddm-chili-theme
+        where-is-my-sddm-theme
+      ];
     };
   };
 }
