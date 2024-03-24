@@ -39,6 +39,14 @@ in
 
     services.flatpak.enable = true;
     system.fsPackages = [ pkgs.bindfs ];
-    xdg.portal.enable = true;
+
+    xdg.portal = {
+      enable = true;
+      extraPortals = with pkgs; [
+        xdg-desktop-portal-wlr
+        xdg-desktop-portal-gtk
+      ];
+      wlr.enable = true;
+    };
   };
 }
