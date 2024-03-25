@@ -5,5 +5,6 @@ with lib;
     ./docker.nix
     ./flatpak.nix
     ./virtd.nix
+    ./waydroid.nix
   ];
 }

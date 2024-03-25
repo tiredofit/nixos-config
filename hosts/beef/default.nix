@@ -57,6 +57,7 @@
       };
       virtualization = {
         flatpak.enable = true;
+        waydroid.enable = true;
       };
     };
     filesystem = {
