@@ -24,10 +24,9 @@ in
             };
             swap = {
               label = "swap";
-              size = "32G"; # SWAP - Do not Delete this comment
+              size = "32G";
               content = {
                 type = "swap";
-                resumeDevice = true;
               };
             };
             root = {

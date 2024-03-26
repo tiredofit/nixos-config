@@ -11,15 +11,32 @@
     feature = {
     };
     filesystem = {
-      encryption.enable = false;                 # This line can be removed if not needed as it is already default set by the role template
-      impermanence.enable = true;               # This line can be removed if not needed as it is already default set by the role template
+      encryption.enable = false;
+      impermanence.enable = true;
       swap = {
         partition = "disk/by-partlabel/swap";
       };
     };
     hardware = {
       cpu = "intel";
-      raid.enable = true;                      # This line can be removed if not needed as it is already default set by the role template
+      raid.enable = true;
+    };
+    container = {
+      restic = {
+        enable = true;
+        logship = "false";
+        monitor = "false";
+      };
+      socket-proxy = {
+        enable = true;
+        logship = "false";
+        monitor = "false";
+      };
+      traefik = {
+        enable = true;
+        logship = "false";
+        monitor = "false";
+      };
     };
     network = {
       hostname = "seed";
