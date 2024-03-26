@@ -1668,7 +1668,7 @@ EOF
                 if [ ! -f "${_dir_flake}"/hosts/"${deploy_host}"/default.nix ] ; then
                     task_hostmanagement_q_role
                     mkdir -p "${_dir_flake}"/hosts/"${deploy_host}"
-                    cp -R "${_dir_flake}"/templates/host/${template_role}.nix "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
+                    cp -R "${_dir_flake}"/deploy-templates/host/${template_role}.nix "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
                     silent git add "${_dir_flake}"/hosts/"${deploy_host}"
                     sed -i \
                             -e "s|hostname = \".*\";|hostname = \"${deploy_host}\";|g" \
@@ -1826,7 +1826,7 @@ task_parse_disk_config() {
 
     _template_chooser=$(mktemp)
 
-    find "${_dir_flake}"/templates/disko/*.nix -maxdepth 0 -type f | rev | cut -d / -f 1 | rev > "${_template_chooser}"
+    find "${_dir_flake}"/deploy-templates/disko/*.nix -maxdepth 0 -type f | rev | cut -d / -f 1 | rev > "${_template_chooser}"
 
     if var_false "${disk_btrfs}" ; then
         sed -i "/btrfs/d" "${_template_chooser}"
@@ -1872,7 +1872,7 @@ task_parse_disk_config() {
 
     if [ -z "${deploy_disk_template}" ] ; then
         deploy_disk_template="$(cat "${_template_chooser}")"
-        cp -i "${_dir_flake}"/templates/disko/${deploy_disk_template} "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix
+        cp -i "${_dir_flake}"/deploy-templates/disko/${deploy_disk_template} "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix
         task_update_disk_prefix
     fi
 
@@ -1895,7 +1895,7 @@ task_q_select_disktemplate() {
     done
     COLUMNS=$oldcolumns
     export deploy_disk_template=${opt}
-    cp -i "${_dir_flake}"/templates/disko/${deploy_disk_template} "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix
+    cp -i "${_dir_flake}"/deploy-templates/disko/${deploy_disk_template} "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix
     silent git add "${_dir_flake}"/hosts/"${deploy_host}"
     task_update_disk_prefix
 }
