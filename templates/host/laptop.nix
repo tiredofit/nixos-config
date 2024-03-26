@@ -31,7 +31,10 @@
     };
     network = {
       hostname = "laptop-template";
-      wired.enable = false;             # This line can be removed if not using wired networking
+      wired = {
+        enable = false;           # This line can be removed if not using wired networking
+        type = "dynamic";
+      };
     };
     role = "laptop";
     user = {
