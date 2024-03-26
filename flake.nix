@@ -92,24 +92,8 @@
           specialArgs = { inherit inputs outputs; };
         };
 
-        disko = lib.nixosSystem { # Disko
-          modules = [ ./hosts/disko ];
-          specialArgs = { inherit inputs outputs; };
-          system = "x86_64-linux";
-        };
-
         nakulaptop = lib.nixosSystem { # Laptop
           modules = [ ./hosts/nakulaptop ];
-          specialArgs = { inherit inputs outputs; };
-        };
-
-        selecta = lib.nixosSystem { # Production Station
-          modules = [ ./hosts/selecta ];
-          specialArgs = { inherit inputs outputs; };
-        };
-
-        soy = lib.nixosSystem { # VM
-          modules = [ ./hosts/soy ];
           specialArgs = { inherit inputs outputs; };
         };
       };
