@@ -9,6 +9,7 @@ keys:
   - &user_dave age1upzm9um3qljxlmxcg8vl35d7eyeqtnsfcnqlh3wtnj46dhfzwyrqa80avw
   - &user_ireen age1477n5xa2cr4tgdy80vxg24tsdcrcmzarn4ad99tjvrsjedq6sqpqsxyrms
   - &user_media age1zsws94zmm5axrtpswg2pwcfcn04zuwxtm8gm3z75frwvqtquz9rqgugv7f
+  - &host_seed age1uc47u2hcdw7lfjcg0vrgpzy4k4ygzmjyfzpjmlwamu0njjhgvy8qy6n70y
 creation_rules:
   - path_regex: hosts/common/secrets/.*
     key_groups:
@@ -23,6 +24,7 @@ creation_rules:
           - *user_ireen
           - *user_media
           - *host_tentacle
+          - *host_seed
   - path_regex: users/secrets.yaml
     key_groups:
       - age:
@@ -34,6 +36,7 @@ creation_rules:
           - *host_soy
           - *user_dave
           - *host_tentacle
+          - *host_seed
   - path_regex: hosts/beef/secrets/.*
     key_groups:
       - age:
@@ -70,5 +73,13 @@ creation_rules:
     key_groups:
       - age:
           - *host_tentacle
+          - *host_beef
+          - *user_dave
+  - path_regex: hosts/seed/secrets/.*
+    key_groups:
+      - age:
+          - *host_seed
+          - *host_beef
+          - *user_dave
           - *host_beef
           - *user_dave

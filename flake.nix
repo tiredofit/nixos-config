@@ -63,6 +63,11 @@
       formatter = forEachSystem (pkgs: pkgs.nixpkgs-fmt);
 
       nixosConfigurations = {
+        seed = lib.nixosSystem { # Server Added 2024-03-26 
+          modules = [ ./hosts/seed ];
+          specialArgs = { inherit inputs outputs; };
+        };
+
         tentacle = lib.nixosSystem { # Server Added 2023-10-25
           modules = [ ./hosts/tentacle ];
           specialArgs = { inherit inputs outputs; };
