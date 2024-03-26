@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-SCRIPT_VERSION=1.7.0
+SCRIPT_VERSION=1.8.0
 
 INSTALL_BUILD_LOCAL=${INSTALL_BUILD_LOCAL:-"TRUE"}
 INSTALL_DEBUG=${INSTALL_DEBUG:-"FALSE"}
@@ -1902,16 +1902,19 @@ task_q_select_disktemplate() {
 
 task_secret_rekey() {
     rekey() {
-        for secret_path in $(find $1 -type d); do
+        for secret_path in $(find "$@" -type d); do
             for secret in ${secret_path}/*; do
-                if ! [[ $(basename "${secret}") =~ ssh_host.*\.pub|ssh.pub|.*\.nix ]] ; then
-                    print_debug "[secret_rekey] Rekeying ${secret}"
-                    if var_true "${secret_rekey_silent}"; then
-                        yes | silent sops updatekeys "${secret}"
-                    else
-                        sops updatekeys "${secret}"
+                if [ ! -d "${secret}" ]; then
+                    if ! [[ $(basename "${secret}") =~ ssh_host.*\.pub|ssh.pub|.*\.nix ]] ; then
+                        print_debug "[secret_rekey] Rekeying ${secret}"
+                        if var_true "${secret_rekey_silent}"; then
+                            yes | silent sops updatekeys "${secret}"
+                        else
+                            sops updatekeys "${secret}"
+                        fi
                     fi
                 fi
+
             done
         done
     }
