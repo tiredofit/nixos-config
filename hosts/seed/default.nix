@@ -38,7 +38,7 @@
         monitor = "false";
       };
       traefik = {
-        enable = true;
+        enable = false;
         logship = "false";
         monitor = "false";
       };
