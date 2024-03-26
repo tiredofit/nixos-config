@@ -37,6 +37,11 @@
         logship = "false";
         monitor = "false";
       };
+      unbound = {
+        enable = true;
+        logship = "false";
+        monitor = "false";
+      };
     };
     network = {
       hostname = "seed";
