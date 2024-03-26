@@ -22,6 +22,11 @@
       raid.enable = true;
     };
     container = {
+      clamav = {
+        enable = true;
+        logship = "false";
+        monitor = "false";
+      };
       restic = {
         enable = true;
         logship = "false";
