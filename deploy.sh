@@ -1,10 +1,6 @@
 #!/usr/bin/env bash
 
-SCRIPT_VERSION=1.6.1
-
-## TODO
-## Static IP doesn't get added properly
-## Fix Template for test.enable
+SCRIPT_VERSION=1.7.0
 
 INSTALL_BUILD_LOCAL=${INSTALL_BUILD_LOCAL:-"TRUE"}
 INSTALL_DEBUG=${INSTALL_DEBUG:-"FALSE"}
@@ -1687,7 +1683,7 @@ EOF
                                 sed -i "/wired..* = .*;/d" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
                             ;;
                             static )
-                                sed "/hostname = \".*\";/a\      wired = {\n       enable = true;\n       type = \"static\";\n       ip = \"${_template_network_ip}/${_template_network_subnet}\";\n       gateway = \"${_template_network_gateway}\";\n       mac = \"${_template_network_mac}\";\n      };\n" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
+                                sed -i "/hostname = \".*\";/a\      wired = {\n       enable = true;\n       type = \"static\";\n       ip = \"${_template_network_ip}/${_template_network_subnet}\";\n       gateway = \"${_template_network_gateway}\";\n       mac = \"${_template_network_mac}\";\n      };\n" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
                                 sed -i "/wired..* = .*;/d" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
                             ;;
                         esac
