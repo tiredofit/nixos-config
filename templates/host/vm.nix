@@ -31,11 +31,11 @@
     };
     network = {
       hostname = "vm-template";
-      wired.enable = false;             # This line can be removed if not using wired networking
     };
     role = "vm";
     user = {
       root.enable = true;
+      dave.enable = true;
     };
   };
 }

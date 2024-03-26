@@ -31,10 +31,6 @@
     };
     network = {
       hostname = "desktop-template";
-      wired = {
-        enable = false;           # This line can be removed if not using wired networking
-        type = "static";
-      }.enable = false;
     };
     role = "desktop";
     user = {

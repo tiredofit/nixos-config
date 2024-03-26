@@ -23,13 +23,6 @@
     };
     network = {
       hostname = "server-template";
-      wired = {
-        enable = true;             # This line can be removed if not using wired networking
-        type = "dynamic";
-        ip = "000.000.000.000/0";
-        gateway = "000.000.000.000";
-        mac = "A1:B2:C3:D4:E5";
-      };
     };
     role = "server";
     user = {
