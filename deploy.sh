@@ -2,13 +2,17 @@
 
 SCRIPT_VERSION=1.6.1
 
+## TODO
+## Static IP doesn't get added properly
+## Fix Template for test.enable
+
 INSTALL_BUILD_LOCAL=${INSTALL_BUILD_LOCAL:-"TRUE"}
 INSTALL_DEBUG=${INSTALL_DEBUG:-"FALSE"}
 INSTALL_REBOOT=${INSTALL_REBOOT:-"FALSE"}
 LOG_LEVEL=NOTICE
 REMOTE_USER=${REMOTE_USER:-"$(whoami)"}
-SECRET_USER="dave"
-SECRET_HOST="beef"
+SECRET_USER="$(whoami)"
+SECRET_HOST="$(hostname)"
 SSH_PORT=${SSH_PORT:-"22"}
 
 if [ -f ".deploy.env" ] ; then source .deploy.env ; fi
