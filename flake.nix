@@ -41,7 +41,8 @@
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    vscode-server.url = "github:nix-community/nixos-vscode-server";
+    #vscode-server.url = "github:nix-community/nixos-vscode-server";
+    vscode-server.url = "github:Ten0/nixos-vscode-server/support_new_vscode_versions";
   };
 
   outputs = { self, nixpkgs, ... }@inputs:
@@ -63,7 +64,7 @@
       formatter = forEachSystem (pkgs: pkgs.nixpkgs-fmt);
 
       nixosConfigurations = {
-        seed = lib.nixosSystem { # Server Added 2024-03-26 
+        seed = lib.nixosSystem { # Server Added 2024-03-26
           modules = [ ./hosts/seed ];
           specialArgs = { inherit inputs outputs; };
         };
