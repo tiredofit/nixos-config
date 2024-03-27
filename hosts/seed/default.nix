@@ -60,9 +60,14 @@
 
     };
     role = "server";
+    service = {
+      vscode_server.enable = true;
+    };
     user = {
       root.enable = true;
       dave.enable = true;
     };
   };
+
+
 }
