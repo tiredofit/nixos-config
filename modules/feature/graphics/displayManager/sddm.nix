@@ -17,7 +17,7 @@ in
           sddm = {
             enable = mkDefault true;
             wayland.enable = mkDefault wayland;
-            theme = "where_is_my_sddm_theme";
+            theme = "chili";
           };
         };
       };
@@ -28,8 +28,8 @@ in
       systemPackages = with pkgs; [
         #catppuccin-sddm-corners
         #elegant-sddm
-        #sddm-chili-theme
-        where-is-my-sddm-theme
+        sddm-chili-theme
+        #where-is-my-sddm-theme
       ];
     };
   };
