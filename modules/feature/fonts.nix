@@ -19,7 +19,6 @@ in
   config = mkIf cfg.enable {
   # all fonts are linked to /nix/var/nix/profiles/system/sw/share/X11/fonts
     fonts = mkIf graphics.enable {
-      # use fonts specified by user rather than default ones
       enableDefaultPackages = false;
       fontDir.enable = true;
 
