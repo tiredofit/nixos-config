@@ -261,8 +261,8 @@ in
   };
 
   config = {
-    environment = mkIf cfg.enable {
-      systemPackages = with pkgs; [
+    environment = {
+      systemPackages = mkIf cfg.enable [
         script_sound-tool
       ];
     };
@@ -281,15 +281,29 @@ in
       })
      ];
 
+
     hardware.pulseaudio = mkIf (cfg.enable && cfg.server == "pulseaudio") {
       enable = true;
     };
+
 
     services.pipewire = mkIf (cfg.enable && cfg.server == "pipewire") {
       enable = true;
       alsa.enable = true;
       alsa.support32Bit = true;
       pulse.enable = true;
+      wireplumber = {
+        enable = true;
+        configPackages = [
+          (pkgs.writeTextFile {
+             name = "disable-suspend";
+             text = ''
+               session.suspend-timeout-seconds = 0
+             '';
+             destination = "/share/wireplumber/main.lua.d/90-suspend-timeout.lua";
+          })
+        ];
+      };
     };
 
     security.rtkit = mkIf (cfg.enable && cfg.server == "pipewire") {
