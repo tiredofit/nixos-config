@@ -897,7 +897,7 @@ in
       docker = {
         enable = true;
         enableOnBoot = false;
-        package = pkgs.docker_25;
+        package = pkgs.docker_26;
         logDriver = "local";
         storageDriver = docker_storage_driver;
       };
