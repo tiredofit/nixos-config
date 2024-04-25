@@ -12,13 +12,11 @@ in
 {
   config = mkIf (graphics.enable && graphics.displayManager.manager == "sddm") {
     services = {
-      xserver = {
-        displayManager = {
-          sddm = {
-            enable = mkDefault true;
-            wayland.enable = mkDefault wayland;
-            theme = "chili";
-          };
+      displayManager = {
+        sddm = {
+          enable = mkDefault true;
+          wayland.enable = mkDefault wayland;
+          theme = "chili";
         };
       };
     };
