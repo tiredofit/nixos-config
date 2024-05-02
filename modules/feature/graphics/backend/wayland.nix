@@ -36,14 +36,13 @@ in {
         enable = mkDefault true;
       };
 
+      libinput.enable = mkDefault true;
+
       xserver = {
         enable = mkDefault true;
         desktopManager = {
           xterm.enable = false;
         };
-
-        libinput.enable = mkDefault true;
-
         xkb.layout = mkDefault "us";
       };
     };
