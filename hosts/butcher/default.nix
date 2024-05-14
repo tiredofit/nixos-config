@@ -17,6 +17,16 @@
         logship = "false";
         monitor = "false";
       };
+      socket-proxy = {
+        enable = true;
+        logship = "false";
+        monitor = "false";
+      };
+      traefik = {
+        enable = true;
+        logship = "false";
+        monitor = "false";
+      };
     };
     filesystem = {
       encryption.enable = false;
