@@ -48,8 +48,7 @@
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    #vscode-server.url = "github:nix-community/nixos-vscode-server";
-    vscode-server.url = "github:Ten0/nixos-vscode-server/support_new_vscode_versions";
+    vscode-server.url = "github:nix-community/nixos-vscode-server";
   };
 
   outputs = { self, nixpkgs, ... }@inputs:
