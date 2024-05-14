@@ -40,6 +40,7 @@
       };
     };
     feature = {
+      appimage.enable = true;
       gaming = {
         gamemode.enable = false;
         gamescope.enable = false;
