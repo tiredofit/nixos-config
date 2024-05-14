@@ -9,6 +9,7 @@ with lib;
     ./graphics
     ./powermanagement
     ./virtualization
+    ./appimage.nix
     ./cross_compilation.nix
     ./home_manager.nix
     ./fonts.nix
