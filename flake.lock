@@ -382,16 +382,15 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1711042850,
+        "lastModified": 1713958148,
         "narHash": "sha256-8PDNi/dgoI2kyM7uSiU4eoLBqUKoA+3TXuz+VWmuCOc=",
-        "owner": "Ten0",
+        "owner": "nix-community",
         "repo": "nixos-vscode-server",
-        "rev": "b02b3cceaae22fb66c00f03f1aff705e9711956e",
+        "rev": "fc900c16efc6a5ed972fb6be87df018bcf3035bc",
         "type": "github"
       },
       "original": {
-        "owner": "Ten0",
-        "ref": "support_new_vscode_versions",
+        "owner": "nix-community",
         "repo": "nixos-vscode-server",
         "type": "github"
       }
