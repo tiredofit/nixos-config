@@ -296,21 +296,6 @@
         "type": "indirect"
       }
     },
-    "nur": {
-      "locked": {
-        "lastModified": 1716909828,
-        "narHash": "sha256-5+u1gmdj+1z5BlbrTeQ3pwJcMOnTnMMtMyjgeiugDJs=",
-        "owner": "nix-community",
-        "repo": "NUR",
-        "rev": "a569fb54cfba9894b0ecb6ffbe2141b18c37d773",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nix-community",
-        "repo": "NUR",
-        "type": "github"
-      }
-    },
     "root": {
       "inputs": {
         "disko": "disko",
@@ -320,7 +305,6 @@
         "impermanence": "impermanence",
         "nix-gaming": "nix-gaming",
         "nixpkgs": "nixpkgs",
-        "nur": "nur",
         "sops-nix": "sops-nix",
         "vscode-server": "vscode-server"
       }
