@@ -1,7 +1,6 @@
 { inputs, lib, pkgs, ...}: {
 
   imports = [
-    inputs.nur.nixosModules.nur
     ./hardware-configuration.nix
     ../common
   ];
