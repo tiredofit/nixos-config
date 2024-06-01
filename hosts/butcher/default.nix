@@ -26,6 +26,11 @@
         logship = "false";
         monitor = "false";
       };
+      cloudflare-companion = {
+        enable = true;
+        logship = "false";
+        monitor = "false";
+      };
     };
     filesystem = {
       encryption.enable = false;

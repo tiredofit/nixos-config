@@ -37,6 +37,11 @@
         logship = "false";
         monitor = "false";
       };
+      cloudflare-companion = {
+        enable = true;
+        logship = "false";
+        monitor = "false";
+      };
     };
     feature = {
       appimage.enable = true;
