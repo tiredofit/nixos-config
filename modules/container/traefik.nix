@@ -5,7 +5,7 @@ let
   container_description = "Enables reverse proxy container";
   container_image_registry = "docker.io";
   container_image_name = "tiredofit/traefik";
-  container_image_tag = "2.11";
+  container_image_tag = "3.0";
   tcc_container_name = "cloudflare-companion";
   tcc_container_description = "Enables ability to create CNAMEs with traefik container";
   tcc_container_image_registry = "docker.io";
@@ -200,6 +200,7 @@ in
       };
       environmentFiles = [
         config.sops.secrets."common-container-${tcc_container_name}".path
+        config.sops.secrets."host-container-${tcc_container_name}".path
       ];
       extraOptions = [
         "--hostname=${hostname}.vpn.${config.host.network.domainname}"
@@ -223,6 +224,11 @@ in
       "common-container-${tcc_container_name}" = {
         format = "dotenv";
         sopsFile = ../../hosts/common/secrets/container/container-${container_name}-${tcc_container_name}.env;
+        restartUnits = [ "docker-${tcc_container_name}.service" ];
+      };
+      "host-container-${tcc_container_name}" = {
+        format = "dotenv";
+        sopsFile = ../../hosts/${hostname}/secrets/container/container-${container_name}-${tcc_container_name}.env;
         restartUnits = [ "docker-${tcc_container_name}.service" ];
       };
     };

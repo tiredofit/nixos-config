@@ -61,14 +61,6 @@
     };
   };
 
-  #sops = {
-  #  secrets = {
-  #    homeassistant = {
-  #      sopsFile = ../../hosts/common/secrets/homeassistant/secrets.yaml;
-  #    };
-  #  };
-  #};
-
   networking.nameservers = [ "192.168.137.1" ];
 
 
@@ -77,9 +69,5 @@ services.resolved = {
   dnssec = "false";
   domains = [ "~." ];
   fallbackDns = [ "192.168.137.1" ];
-  #fallbackDns = [ "1.1.1.1#one.one.one.one" "1.0.0.1#one.one.one.one" ];
-  #extraConfig = ''
-  #  DNSOverTLS=yes
-  #'';
 };
 }
