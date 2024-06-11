@@ -32,7 +32,7 @@ in
 
     programs = {
       bash = {
-        enableCompletion = true ;
+        completion.enable = true ;
         inherit shellAliases;
         shellInit = ''
               ## History
