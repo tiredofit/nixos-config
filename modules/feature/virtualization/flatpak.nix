@@ -46,7 +46,7 @@ in
       #  xdg-desktop-portal-wlr
       #  xdg-desktop-portal-gtk
       #];
-      wlr.enable = mkIf (config.host.feature.graphics.enable && config.host.feature.graphics.backend == "wayland") true;
+      #wlr.enable = mkIf (config.host.feature.graphics.enable && config.host.feature.graphics.backend == "wayland") true;
     };
   };
 }
