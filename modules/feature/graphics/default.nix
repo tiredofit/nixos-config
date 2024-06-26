@@ -34,10 +34,9 @@
 
   config = {
     hardware = {
-      opengl = mkIf ((config.host.feature.graphics.enable) && (config.host.feature.graphics.acceleration)) {
+      graphics = mkIf ((config.host.feature.graphics.enable) && (config.host.feature.graphics.acceleration)) {
         enable = true;
-        driSupport = true;
-        driSupport32Bit = true;
+        enable32Bit = true;
       };
     };
   };
