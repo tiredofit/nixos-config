@@ -6,19 +6,27 @@ in {
   config = mkIf (device.gpu == "amd" || device.gpu == "hybrid-amd" || device.gpu == "integrated-amd")  {
     boot = lib.mkMerge [
       (lib.mkIf (lib.versionAtLeast pkgs.linux.version "6.2") {
-        initrd.kernelModules = ["amdgpu"];
-        kernelModules = ["amdgpu"];
-        kernelParams = mkIf (device.gpu == "integrated-amd") [
-          "amdgpu.sg_display=0"];
+        initrd.kernelModules = [
+          "amdgpu"
+        ];
+        kernelModules = [
+          "amdgpu"
+        ];
+        kernelParams = mkIf (device.gpu == "integrated-amd")
+        [
+          "amdgpu.sg_display=0"
+        ];
       })
     ];
 
-    hardware.opengl.extraPackages = with pkgs; [
+    hardware.graphics.extraPackages = with pkgs; [
       amdvlk
       rocmPackages.clr
       rocmPackages.clr.icd
     ];
 
-    services.xserver.videoDrivers = ["amdgpu"];
+    services.xserver.videoDrivers = [
+      "amdgpu"
+    ];
   };
 }
