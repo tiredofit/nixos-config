@@ -62,6 +62,11 @@
       formatter = forEachSystem (pkgs: pkgs.nixpkgs-fmt);
 
       nixosConfigurations = {
+        expedition = lib.nixosSystem { # Server Added 2024-07-04 
+          modules = [ ./hosts/expedition ];
+          specialArgs = { inherit inputs outputs; };
+        };
+
         seed = lib.nixosSystem { # Server Added 2024-03-26
           modules = [ ./hosts/seed ];
           specialArgs = { inherit inputs outputs; };
