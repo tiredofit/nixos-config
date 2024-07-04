@@ -31,6 +31,11 @@
         logship = "false";
         monitor = "false";
       };
+      zabbix-proxy = {
+        enable = true;
+        logship = "false";
+        monitor = "false";
+      };
     };
     filesystem = {
       encryption.enable = false;
