@@ -60,6 +60,11 @@
         mac = "2A:BE:78:89:51:A5";
       };
     };
+    service = {
+      zabbix_agent = {
+        enable = true;
+      };
+    };
     user = {
       dave.enable = true;
       root.enable = false;
