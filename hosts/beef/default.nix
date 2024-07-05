@@ -20,7 +20,7 @@
       restic = {
         enable = true;
         logship = "false";
-        monitor = "false";
+        monitor = "true";
       };
       socket-proxy = {
         enable = true;
@@ -97,6 +97,13 @@
       };
     };
     role = "desktop";
+    service = {
+      zabbix_agent = {
+        enable = true;
+        listenIP = "192.168.23.23";
+        serverActive = "10.121.15.60:10051";
+      };
+    };
     user = {
       dave.enable = true;
       root.enable = true;

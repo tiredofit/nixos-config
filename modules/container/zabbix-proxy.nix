@@ -74,7 +74,7 @@ in
         "CONTAINER_NAME" = "${hostname}-${container_name}";
         "CONTAINER_ENABLE_MONITORING" = cfg.monitor;
         "CONTAINER_ENABLE_LOGSHIPPING" = cfg.logship;
-
+        "ZABBIX_PROXY_HOSTNAME" = "${hostname}-${container_name}";
         #"ZABBIX_PROXY_SERVER" = "zabbix.example.com";                    # hosts/common/secrets/container-zabbix-proxy.env
         #"ZABBIX_PROXY_SERVER_PORT" = "10051";                            # hosts/common/secrets/container-zabbix-proxy.env
         "ZABBIX_PROXY_LISTEN_PORT" = cfg.option.zabbix_proxy_listen_port;

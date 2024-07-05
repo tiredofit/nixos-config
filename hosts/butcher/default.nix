@@ -14,27 +14,27 @@
       restic = {
         enable = true;
         logship = "false";
-        monitor = "false";
+        monitor = "true";
       };
       socket-proxy = {
         enable = true;
         logship = "false";
-        monitor = "false";
+        monitor = "true";
       };
       traefik = {
         enable = true;
         logship = "false";
-        monitor = "false";
+        monitor = "true";
       };
       cloudflare-companion = {
         enable = true;
         logship = "false";
-        monitor = "false";
+        monitor = "true";
       };
       zabbix-proxy = {
         enable = true;
         logship = "false";
-        monitor = "false";
+        monitor = "true";
       };
     };
     filesystem = {
@@ -63,6 +63,8 @@
     service = {
       zabbix_agent = {
         enable = true;
+        listenIP = "192.168.137.5";
+        serverActive = "10.121.15.109:10051";
       };
     };
     user = {

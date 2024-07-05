@@ -11,27 +11,32 @@
       llng-handler = {
         enable = true;
         logship = "false";
-        monitor = "false";
+        monitor = "true";
       };
       restic = {
         enable = true;
         logship = "false";
-        monitor = "false";
+        monitor = "true";
       };
       socket-proxy = {
         enable = true;
         logship = "false";
-        monitor = "false";
+        monitor = "true";
       };
       traefik = {
         enable = true;
         logship = "false";
-        monitor = "false";
+        monitor = "true";
       };
       unbound = {
         enable = true;
         logship = "false";
-        monitor = "false";
+        monitor = "true";
+      };
+      zabbix-proxy = {
+        enable = true;
+        logship = "false";
+        monitor = "true";
       };
     };
     feature = {
@@ -63,6 +68,13 @@
       };
     };
     role = "server";
+    service = {
+      zabbix_agent = {
+        enable = true;
+        listenIP = "10.121.15.63";
+        serverActive = "10.121.15.63:10051";
+      };
+    };
     user = {
       root.enable = true;
       dave.enable = true;
