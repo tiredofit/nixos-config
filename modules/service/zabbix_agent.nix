@@ -55,7 +55,7 @@ in
           BufferSend = mkDefault 5;
           BufferSize = mkDefault 100;
           ControlSocket = cfg.controlSocket;
-          DebugLevel = mkDefault 2;
+          DebugLevel = mkDefault 4;
           Hostname = mkDefault config.networking.fqdn ;
           LogFile = mkDefault "/var/log/zabbix/zabbix_agentd.log";
           LogFileSize = mkDefault 0;
@@ -76,6 +76,10 @@ in
         RuntimeDirectory = "zabbix_agent";
         RuntimeDirectoryMode = "0750";
       };
+    };
+
+    users.users.zabbix-agent = mkIf config.host.feature.virtualization.docker.enable {
+      extraGroups = [ "docker" ];
     };
   };
 }

@@ -11,34 +11,35 @@
       clamav = {
         enable = true;
         logship = "false";
-        monitor = "false";
+        monitor = "true";
       };
       restic = {
         enable = true;
         logship = "false";
-        monitor = "false";
+        monitor = "true";
       };
       socket-proxy = {
         enable = true;
         logship = "false";
-        monitor = "false";
+        monitor = "true";
       };
       traefik = {
         enable = true;
         logship = "false";
-        monitor = "false";
+        monitor = "true";
       };
       cloudflare-companion = {
         enable = true;
-        logship = "false";
+        logship = "true";
         monitor = "false";
       };
       unbound = {
         enable = true;
-        monitor = "false";
+        monitor = "true";
+        logship = "false";
       };
       zabbix-proxy = {
-        enable = true;
+        enable = false;
         logship = "false";
         monitor = "false";
       };
@@ -80,6 +81,8 @@
       vscode_server.enable = true;
       zabbix_agent = {
         enable = true;
+        listenIP = "10.121.15.109";
+        serverActive = "10.121.15.109:10051";
       };
     };
     user = {
