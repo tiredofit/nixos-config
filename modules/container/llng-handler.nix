@@ -91,8 +91,8 @@ in
         "--network-alias=${hostname}-${container_name}"
       ];
       networks = [
+        "services"      # Make this the first network
         "proxy"
-        "services"
       ];
       autoStart = mkDefault true;
       log-driver = mkDefault "local";
