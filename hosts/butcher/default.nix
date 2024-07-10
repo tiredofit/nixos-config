@@ -59,6 +59,15 @@
         gateway = "192.168.137.1";
         mac = "2A:BE:78:89:51:A5";
       };
+      vpn = {
+        zerotier = {
+          enable = true;
+          networks = [
+            "/var/run/secrets/zerotier/networks"
+          ];
+          port = 9994;
+        };
+      };
     };
     service = {
       zabbix_agent = {
