@@ -21,7 +21,7 @@ in
     '';
 
     environment.systemPackages = with pkgs; [
-      impala
+      #impala # 24.11
       iw
     ];
 
