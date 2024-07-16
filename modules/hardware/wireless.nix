@@ -21,6 +21,7 @@ in
     '';
 
     environment.systemPackages = with pkgs; [
+      impala
       iw
     ];
 
