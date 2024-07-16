@@ -6,9 +6,7 @@ in {
   config = mkIf (device.gpu == "amd" || device.gpu == "hybrid-amd" || device.gpu == "integrated-amd")  {
     boot = lib.mkMerge [
       (lib.mkIf (lib.versionAtLeast pkgs.linux.version "6.2") {
-        initrd.kernelModules = [
-          "amdgpu"
-        ];
+
         kernelModules = [
           "amdgpu"
         ];
@@ -19,7 +17,8 @@ in {
       })
     ];
 
-    hardware.graphics.extraPackages = with pkgs; [
+    ## 24.11 Change to hardware.graphics.extraPackages
+    hardware.opengl.extraPackages = with pkgs; [
       amdvlk
       rocmPackages.clr
       rocmPackages.clr.icd

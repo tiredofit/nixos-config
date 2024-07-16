@@ -34,9 +34,12 @@
 
   config = {
     hardware = {
-      graphics = mkIf ((config.host.feature.graphics.enable) && (config.host.feature.graphics.acceleration)) {
-        enable = true;
-        enable32Bit = true;
+      ## 24.11 - Rename hardware.opengl. to hardware.graphics.
+      opengl = mkIf ((config.host.feature.graphics.enable) && (config.host.feature.graphics.acceleration)) {
+        #enable = true;
+        #enable32Bit = true;    # 24.11
+        driSupport = true;      # 24.11 - Remove in favour of enable
+        driSupport32Bit = true; # 24.11 - Remove in favor of enable 32Bit
       };
     };
   };

@@ -9,7 +9,7 @@ in
     programs = {
       hyprland = {
         enable = mkDefault true;
-        package = inputs.hyprland.packages.${pkgs.system}.hyprland;
+        #package = inputs.hyprland.packages.${pkgs.system}.hyprland;
       };
     };
   };

@@ -32,7 +32,8 @@ in
 
     programs = {
       bash = {
-        completion.enable = true ;
+        enableCompletion = true ; # 24.11 - Phasing out in place of completion.enable
+        #completion.enable = true;
         inherit shellAliases;
         shellInit = ''
               ## History
