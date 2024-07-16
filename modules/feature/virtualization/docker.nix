@@ -393,7 +393,7 @@ in
         };
       };
 
-      systemPackages = with pkgs; [ docker-compose ];
+      systemPackages = with pkgs.unstable ; [ docker-compose ];
     };
 
     host = {
