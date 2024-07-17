@@ -55,6 +55,7 @@ in
     services = {
       openssh = {
         enable = true;
+        package = pkgs.unstable.openssh;
         hostKeys =
           if config.host.filesystem.impermanence.enable
           then
