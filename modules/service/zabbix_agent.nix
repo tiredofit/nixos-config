@@ -44,6 +44,7 @@ in
     services = {
       zabbixAgent = {
         enable = true;
+        package = pkgs.unstable.zabbix.agent;
         listen = {
           ip = mkDefault cfg.listenIP ;
           port = mkDefault cfg.listenPort;
