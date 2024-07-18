@@ -52,10 +52,15 @@ in
   };
 
   config = mkIf cfg.enable {
+    programs = {
+      ssh = {
+        package = pkgs.unstable.openssh;
+      };
+    };
+
     services = {
       openssh = {
         enable = true;
-        package = pkgs.unstable.openssh;
         hostKeys =
           if config.host.filesystem.impermanence.enable
           then
