@@ -44,13 +44,12 @@ in
     services = {
       zabbixAgent = {
         enable = true;
-        package = pkgs.unstable.zabbix.agent;
         listen = {
           ip = mkDefault cfg.listenIP ;
           port = mkDefault cfg.listenPort;
         };
         openFirewall = mkDefault true;
-        package = mkDefault pkgs.zabbix.agent2;
+        package = mkDefault pkgs.unstable.zabbix.agent2;
         server = mkDefault cfg.server;
         settings = {
           BufferSend = mkDefault 5;
