@@ -2,9 +2,10 @@
 
 Here are my [NixOS](https://nixos.org/) configurations.
 
-These allows for system portability and configuration from machine to machine with a small amount of changes (usually disks, partitions, or hardware changes) once and enjoy a many times forward. The configurations allow for a base system to be installed, with a core amount of applications to operate. They shine when you add something like [Home Manager](https://nix-community.github.io/home-manager/) is installed to allow for discrete per-user configuration of the environment. If you are looking for that configuration head on over to my [Nix Home Manager | Dotfiles Repository](https://github.com/tiredofit/home).
+I'm using this for consistent configuration and portability from machine to machine with a small amount of changes (usually disks, partitions, or hardware changes)
 
-If you would like to base your own configuration from this, you will need to be able to use [Nix flakes](https://nixos.wiki/wiki/Flakes).
+The configurations allow for a base system to be installed, with a core amount of applications to operate, you could add to it, but I feel that this configuration shines when you pair it with something like [Home Manager](https://nix-community.github.io/home-manager/) for discrete per-er configuration of their environment. Head on overto my [Nix Home Manager | Dotfiles Repository](https://github.com/tiredofit/home) to get an understanding on how I "daily drive" my userspace environments.
+
 
 **Highlights**:
 
@@ -13,8 +14,9 @@ If you would like to base your own configuration from this, you will need to be 
 - Toggled **full disk encryption**
 - Support for **RAID** configurations
 - Toggled options for hardware, applications, and features, like VPNs
-- Much, much more 
 - Deployment of secrets using **sops-nix**
+- Much, much more
+
 
 - I ~blew~spent the summer of 2023 moving into this configuration after waving a fond farewell to near 2 decades of running Arch Linux. This, as with life, is still WIP. I documented the process on the [Tired of IT! NixOS](https://notes.tiredofit.ca/books/linux/chapter/nixos) chapter on my website.
 
@@ -118,4 +120,4 @@ I document the process of getting encrypted secrets created and keeping up to da
 
 # License
 
-Do you what you'd like and I hope that this inspires you for your own configurations as many others have myself.
+Do you what you'd like and I hope that this inspires you for your own configurations as many others have myself attribution would be appreciated.
