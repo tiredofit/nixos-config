@@ -403,7 +403,9 @@ in
             "/var/lib/docker" # Docker
           ];
       };
-      service = { docker_container_manager.enable = true; };
+      service = {
+        docker_container_manager.enable = true;
+      };
     };
 
     programs = {
@@ -897,7 +899,7 @@ in
       docker = {
         enable = true;
         enableOnBoot = false;
-        package = pkgs.docker_26;
+        package = pkgs.docker_27;
         logDriver = "local";
         storageDriver = docker_storage_driver;
       };
