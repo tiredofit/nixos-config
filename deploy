@@ -102,6 +102,66 @@ output_on() {
     fi
 }
 
+check_dependencies() {
+    set +e
+    if ! type "yq" > /dev/null 2>&1 ; then
+        print_error "[check_dependencies] yq > 4.x not found"
+        os=$(cat /etc/os-release |grep ^ID= | cut -d = -f 2)
+        case $os in
+            "debian" )
+                debian_version=$(cat /etc/os-release |grep ^VERSION_ID= | cut -d = -f 2 | cut -d '"' -f 2)
+                case $debian_version in
+                    *)
+                        #print_debug "[check_dependencies] Debian ${debian_version} detected"
+                        :
+                    ;;
+                esac
+            ;;
+        esac
+        exit 99
+    fi
+
+    if ! type "ssh-to-age" > /dev/null 2>&1 ; then
+        print_error "[check_dependencies] ssh-to-age not found"
+        os=$(cat /etc/os-release |grep ^ID= | cut -d = -f 2)
+        case $os in
+            "debian" )
+                debian_version=$(cat /etc/os-release |grep ^VERSION_ID= | cut -d = -f 2 | cut -d '"' -f 2)
+                case $debian_version in
+                    *)
+                        #
+                        :
+                    ;;
+                esac
+            ;;
+        esac
+        exit 99
+    fi
+
+    if ! type "git" > /dev/null 2>&1 ; then
+        print_warn "[check_dependencies] git not found"
+        os=$(cat /etc/os-release |grep ^ID= | cut -d = -f 2)
+        case $os in
+            "debian" )
+                debian_version=$(cat /etc/os-release |grep ^VERSION_ID= | cut -d = -f 2 | cut -d '"' -f 2)
+                case $debian_version in
+                    *)
+                        print_debug "[check_dependencies] Debian ${debian_version} detected"
+                        silent apt-get update
+                        silent apt-get install -y git
+                    ;;
+                esac
+            ;;
+            "arch" )
+                sed -i "s|SigLevel .* = Required DatabaseOptional|SigLevel = Never|g" /etc/pacman.conf
+                silent pacman -Syy git --noconfirm
+            ;;
+        esac
+    fi
+
+    set -e
+}
+
 ### Text Coloration
 print_debug() {
     output_off
