@@ -92,7 +92,12 @@ in
 #
              #] ++ cfg.dns ;
              routes = mkIf (cfg.type == "static") [
-               { routeConfig.Gateway =  cfg.gateway ; }
+               {
+                 routeConfig = {
+                   Gateway = cfg.gateway;
+                   GatewayOnLink = true;
+                 };
+               }
              ];
              linkConfig.RequiredForOnline = mkIf (cfg.type == "static") "routable" ;
            };
