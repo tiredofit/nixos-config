@@ -3,6 +3,7 @@
 with lib;
 {
   imports = [
+    ./bridge.nix
     ./firewall
     ./domainname.nix
     ./hostname.nix
