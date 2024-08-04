@@ -8,11 +8,11 @@ in
     (modulesPath + "/installer/scan/not-detected.nix")
   ];
 
-  config = mkIf (role == "minimal") {
+  config = mkIf (role == "console") {
     host = {
       feature = {
         boot = {
-          efi.enable = mkDefault false;
+          efi.enable = mkDefault true;
           graphical.enable = mkDefault false;
         };
         fonts = {
@@ -24,33 +24,34 @@ in
         };
       };
       filesystem = {
-        btrfs.enable = mkDefault false;
+        btrfs.enable = mkDefault true;
         encryption.enable = mkDefault false;
         impermanence = {
-          enable = mkDefault false;
+          enable = mkDefault true;
           directories = [
             "/mnt/"
           ];
         };
         swap = {
+          type = "partition";
           enable = mkDefault false;
         };
       };
       hardware = {
-        bluetooth.enable = mkDefault false;
+        bluetooth.enable = mkDefault true;
         printing.enable = mkDefault false;
         raid.enable = mkDefault false;
         scanning.enable = mkDefault false;
-        sound.enable = mkDefault false;
+        sound.enable = mkDefault true;
         webcam.enable = mkDefault false;
-        wireless.enable = mkDefault false;
+        wireless.enable = mkDefault true;
         yubikey.enable = mkDefault false;
       };
       network = {
         firewall.fail2ban.enable = mkDefault false;
       };
       service = {
-        #logrotate.enable = mkDefault false;
+        logrotate.enable = mkDefault true;
         ssh = {
           enable = mkDefault true;
           harden = mkDefault true;

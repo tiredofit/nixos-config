@@ -3,6 +3,7 @@
 with lib;
 {
   imports = [
+    ./console
     ./desktop
     ./kiosk
     ./laptop
@@ -14,6 +15,7 @@ with lib;
   options = {
     host.role = mkOption {
       type = types.enum [
+        "console"   # Portable Gaming machine
         "desktop"   # Typical Workstation
         "hybrid"    # A mixture of a laptop or desktop - Special purpose
         "kiosk"     # Does one thing and one thing well
