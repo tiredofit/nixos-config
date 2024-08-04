@@ -6,6 +6,7 @@ in
 {
   imports = [
     ./cage.nix
+    ./gnome.nix
     ./hyprland.nix
     ./openbox.nix
   ];
@@ -13,7 +14,7 @@ in
   options = {
     host.feature.graphics.windowManager = {
       manager = mkOption {
-        type = types.enum ["cage" "hyprland" "openbox" null];
+        type = types.enum ["cage" "cinnamon" "gnome" "hyprland" "openbox" null];
         default = null;
         description = "Window Manager to use";
       };
