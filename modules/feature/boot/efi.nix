@@ -16,7 +16,7 @@ in
       };
       loader = mkOption {
         default = "grub";
-        type = types.enum [ "grub" ];
+        type = types.enum [ "grub" "systemd" ];
         description = "Enables booting via Grub";
         ## TODO Consider creating top level boot.nix feature and integrating systemd-boot or none (pi)
       };
@@ -27,7 +27,10 @@ in
     boot = {
       loader = {
         efi = {
-          canTouchEfiVariables = false;
+          canTouchEfiVariables = mkDefault false;
+          systemd-boot = mkIf (cfg.loader == "systemd") {
+            enable = true;
+          };
         };
         grub = mkIf (cfg.loader == "grub") {
           enable = mkDefault true;
@@ -35,10 +38,10 @@ in
           efiSupport = cfg.efi.enable;
           enableCryptodisk = mkDefault false;
           useOSProber = mkDefault false;
-          efiInstallAsRemovable = true;
-          #theme = null;
-          #backgroundColor = null;
-          #splashImage = null
+          efiInstallAsRemovable = mkDefault true;
+          #theme = mkDefault null;
+          #backgroundColor = mkDefault null;
+          #splashImage = mkDault null
         };
       };
     };
