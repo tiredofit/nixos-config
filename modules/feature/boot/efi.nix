@@ -26,7 +26,6 @@ in
   config = mkIf cfg.efi.enable {
     boot = {
       loader = {
-        boot.loader.systemd-boot.enable
         efi = {
           canTouchEfiVariables = mkDefault false;
         };
