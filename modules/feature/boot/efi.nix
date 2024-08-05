@@ -26,11 +26,9 @@ in
   config = mkIf cfg.efi.enable {
     boot = {
       loader = {
+        boot.loader.systemd-boot.enable
         efi = {
           canTouchEfiVariables = mkDefault false;
-          systemd-boot = mkIf (cfg.loader == "systemd") {
-            enable = true;
-          };
         };
         grub = mkIf (cfg.loader == "grub") {
           enable = mkDefault true;
@@ -42,6 +40,9 @@ in
           #theme = mkDefault null;
           #backgroundColor = mkDefault null;
           #splashImage = mkDault null
+        };
+        systemd-boot = mkIf (cfg.loader == "systemd") {
+          enable = mkDefault true;
         };
       };
     };
