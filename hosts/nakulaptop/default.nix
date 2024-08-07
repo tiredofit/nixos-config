@@ -5,14 +5,15 @@
     ../common
   ];
 
-  boot = {
-    kernelParams = [
-      "quiet"
-    ];
-  };
-
   host = {
     feature = {
+      boot = {
+        kernel = {
+          parameters = [
+            "quiet"
+          ];
+        };
+      };
       graphics = {
         enable = true;
         backend = "x";

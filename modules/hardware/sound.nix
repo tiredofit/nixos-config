@@ -254,7 +254,7 @@ in
       };
       server = mkOption {
         type = types.str;
-        default = "pulseaudio";
+        default = "pipewire";
         description = "Which sound server (pulseaudio/pipewire)";
       };
     };
@@ -274,19 +274,18 @@ in
       })
 
       (lib.mkIf (cfg.enable && cfg.server == "pipewire") {
-        enable = false;
+        enable = mkForce false;
       })
 
      (lib.mkIf (! cfg.enable ) {
         enable = false;
       })
-     ];
+    ];
 
 
     hardware.pulseaudio = mkIf (cfg.enable && cfg.server == "pulseaudio") {
-      enable = true;
+      enable = MkDefault true;
     };
-
 
     services.pipewire = mkIf (cfg.enable && cfg.server == "pipewire") {
       enable = true;

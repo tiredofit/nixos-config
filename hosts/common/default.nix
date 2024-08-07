@@ -9,9 +9,6 @@
 
   boot = {
     initrd = {
-      compressor = mkDefault "zstd";
-      compressorArgs = mkDefault ["-19"];
-
       systemd = {
         strip = mkDefault true;                         # Saves considerable space in initrd
       };
@@ -19,7 +16,6 @@
     kernel.sysctl = {
       "vm.dirty_ratio" = mkDefault 6;                   # sync disk when buffer reach 6% of memory
     };
-    kernelPackages = mkDefault pkgs.linuxPackages_latest;         # Latest kernel
   };
 
   environment = {

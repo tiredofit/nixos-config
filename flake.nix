@@ -16,7 +16,6 @@
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
       "nix-gaming.cachix.org-1:nbjlureqMbRAxR1gJ/f3hxemL9svXaZF/Ees8vCUUs4="
       "nixpkgs-wayland.cachix.org-1:3lwxaILxMRkVhehr5StQprHdEo4IrE8sRho9R9HOLYA="
-      #"hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
     ];
   };
 
@@ -31,9 +30,6 @@
       url = "github:nix-community/home-manager/release-24.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    #hyprland = {
-    #  url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
-    #};
     impermanence = {
       url = "github:nix-community/impermanence";
     };
@@ -80,11 +76,6 @@
       formatter = forEachSystem (pkgs: pkgs.nixpkgs-fmt);
 
       nixosConfigurations = {
-        play = lib.nixosSystem { # Minimal Added 2024-08-04 
-          modules = [ ./hosts/play ];
-          specialArgs = { inherit inputs outputs; };
-        };
-
         expedition = lib.nixosSystem { # Server Added 2024-07-04
           modules = [ ./hosts/expedition ];
           specialArgs = { inherit inputs outputs; };

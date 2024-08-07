@@ -65,5 +65,3 @@ creation_rules:
           - *host_expedition
           - *host_beef
           - *user_dave
-          - *host_beef
-          - *user_dave

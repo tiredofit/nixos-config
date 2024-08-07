@@ -16,6 +16,8 @@ in
   };
 
   config = mkIf cfg.enable {
-    boot.kernelParams = ["uvcvideo"];
+    boot.kernelParams = [
+      "uvcvideo"
+    ];
   };
 }

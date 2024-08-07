@@ -18,12 +18,12 @@ in
         description = "Whether to enable the Linux kernel. This is useful for systemd-like containers which do not require a kernel.";
       };
       modules = mkOption {
-        type = types.listOf types.anything;
+        type = types.listOf types.str;
         default = [];
         description = "The set of kernel modules to be loaded in the second stage of the boot process";
       };
       modulesBlacklist = mkOption {
-        type = types.listOf types.anything;
+        type = types.listOf types.str;
         default = [];
         description = "List of names of kernel modules that should not be loaded automatically by the hardware probing code.";
       };
@@ -33,7 +33,10 @@ in
         description = "Kernel package";
       };
       parameters = mkOption {
-        type = types.listOf types.anything;
+        type = types.listOf (types.strMatching ''([^"[:space:]]|"[^"]*")+'' // {
+          name = "parameters";
+          description = "string, with spaces inside double quotes";
+        });
         default = [];
         description = "Parameters added to the kernel command line.";
       };
@@ -49,7 +52,7 @@ in
 
       blacklistedKernelModules = [] ++ cfg.modulesBlacklist;
       kernelModules = [] ++ cfg.modules;
-      kernelPackages = mkDefault pkgs.linuxPackages_latest; ## TODO This should read the value of package pkgs.linuxPackages_${cfg.package} somehow
+      kernelPackages = pkgs.linuxPackages_latest; ## TODO This should read the value of package pkgs.linuxPackages_${cfg.package} somehow
       kernelParams = [] ++ cfg.parameters;
     };
   };

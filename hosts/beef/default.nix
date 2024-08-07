@@ -6,13 +6,9 @@
   ];
 
   boot = {
-    kernelParams = [
-      "quiet"
-      "video=DP-3:2560x1440@120"
-      "video=DP-2:2560x1440@120"
-      "video=HDMI-1:2560x1440@120"
-      "amdgpu.sg_display=0"
-    ];
+    #kernelParams = [
+
+    #];
   };
 
   host = {
@@ -45,6 +41,16 @@
     };
     feature = {
       appimage.enable = true;
+      boot = {
+        kernel = {
+          parameters = [
+            "quiet"
+            "video=DP-3:2560x1440@120"
+            "video=DP-2:2560x1440@120"
+            "video=HDMI-1:2560x1440@120"
+          ];
+        };
+      };
       gaming = {
         gamemode.enable = false;
         gamescope.enable = false;

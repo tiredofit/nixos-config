@@ -9,7 +9,7 @@ in
       enable = mkOption {
         default = false;
         type = with types; bool;
-        description = "Enable MEdia";
+        description = "Enable Media";
       };
     };
   };

@@ -17,7 +17,6 @@ imports = [
       generic-extlinux-compatible.enable = true;
       grub.enable = false;
     };
-    kernelParams = [ "video=2560x1080@60" ];
   };
 
   environment.systemPackages = with pkgs; [
@@ -30,6 +29,14 @@ imports = [
 
   host = {
     feature = {
+      boot = {
+        kernel = {
+          parameters = [
+            "quiet"
+            "video=2560x1080@60"
+          ];
+        };
+      };
       graphics = {
         enable = true;
         backend = "x";

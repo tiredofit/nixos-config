@@ -41,12 +41,14 @@ in
     system.fsPackages = [ pkgs.bindfs ];
 
     xdg.portal = {
-      enable = true;
+      enable = mkDefault true;
+      config.common = mkDefault {
+        "org.freedesktop.impl.portal.Secret" = [ "gnome-keyring" ];
+        "org.freedesktop.portal.FileChooser" = [ "xdg-desktop-portal-gtk" ];
+      };
       #extraPortals = with pkgs; [
-      #  xdg-desktop-portal-wlr
-      #  xdg-desktop-portal-gtk
+      #   xdg-desktop-portal-gtk
       #];
-      #wlr.enable = mkIf (config.host.feature.graphics.enable && config.host.feature.graphics.backend == "wayland") true;
     };
   };
 }
