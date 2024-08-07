@@ -40,7 +40,7 @@ in
     };
   };
 
-  config = mkIf cfg.enable
+  config = mkIf cfg.enable {
     boot = {
       kernel = {
         enable = cfg.boot;
