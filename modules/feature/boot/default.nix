@@ -4,5 +4,6 @@
   imports = [
     ./efi.nix
     ./graphical.nix
+    ./kernel.nix
   ];
 }
