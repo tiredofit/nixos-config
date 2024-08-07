@@ -40,11 +40,14 @@ in
   config = mkIf cfg.enable {
     boot = {
       initrd = {
-        enable = cfg.boot;
-        kernelModules = [] ++ cfg.modules;
-
         compressor = mkDefault cfg.compression.type;
         compressorArgs = mkDefault [ "-19" ];
+
+        enable = mkDefault cfg.boot;
+
+        kernelModules = [] ++ cfg.modules;
+
+        ## TODO - Bring over Systemd setttings
       };
     };
   };
