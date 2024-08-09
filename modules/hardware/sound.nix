@@ -296,10 +296,6 @@ in
       })
     ];
 
-    #hardware.pulseaudio = mkIf (cfg.enable && cfg.server == "pulseaudio") {
-    #  enable = mkForce true;
-    #};
-
     services.pipewire = mkIf (cfg.enable && cfg.server == "pipewire") {
       enable = mkForce true;
       alsa = {
