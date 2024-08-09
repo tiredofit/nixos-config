@@ -270,7 +270,7 @@ in
     # 24.11 - This whole section is due to be removed
     sound = lib.mkMerge [
       (lib.mkIf (cfg.enable && cfg.server == "pulseaudio") {
-        enable = true;
+        enable = MkForce true;
       })
 
       (lib.mkIf (cfg.enable && cfg.server == "pipewire") {
@@ -282,13 +282,12 @@ in
       })
     ];
 
-
     hardware.pulseaudio = mkIf (cfg.enable && cfg.server == "pulseaudio") {
-      enable = MkDefault true;
+      enable = mkForce true;
     };
 
     services.pipewire = mkIf (cfg.enable && cfg.server == "pipewire") {
-      enable = true;
+      enable = mkForce true;
       alsa.enable = true;
       alsa.support32Bit = true;
       pulse.enable = true;
