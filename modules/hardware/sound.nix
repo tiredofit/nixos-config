@@ -288,8 +288,10 @@ in
 
     services.pipewire = mkIf (cfg.enable && cfg.server == "pipewire") {
       enable = mkForce true;
-      alsa.enable = true;
-      alsa.support32Bit = true;
+      alsa = {
+        enable = true;
+        support32Bit = true;
+      };
       pulse.enable = true;
       wireplumber = {
         enable = true;
