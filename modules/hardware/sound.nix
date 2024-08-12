@@ -306,13 +306,13 @@ in
       wireplumber = {
         enable = true;
         configPackages = [
-          (pkgs.writeTextFile {
-             name = "disable-suspend";
-             text = ''
-               session.suspend-timeout-seconds = 0
-             '';
-             destination = "/share/wireplumber/main.lua.d/90-suspend-timeout.lua";
-          })
+          #(pkgs.writeTextFile {
+          #   name = "disable-suspend";
+          #   text = ''
+          #     session.suspend-timeout-seconds = 0
+          #   '';
+          #   destination = "/share/wireplumber/main.lua.d/90-suspend-timeout.lua";
+          #})
         ];
       };
     };

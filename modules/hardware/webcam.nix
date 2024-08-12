@@ -20,12 +20,14 @@ in
       "uvcvideo"
     ];
 
-    services.pipewire = mkIf (config.host.hardware.sound.enable && cfg.host.hardware.sound.server == "pipewire") {
-      extraConfig = {
-        "10-disable-camera" = {
-            "wireplumber.profiles" = {
-            main."monitor.libcamera" = "disabled";
-            };
+    services.pipewire = mkIf (config.host.hardware.sound.enable && config.host.hardware.sound.server == "pipewire") {
+      wireplumber = {
+        extraConfig = {
+          "10-disable-camera" = {
+              "wireplumber.profiles" = {
+              main."monitor.libcamera" = "disabled";
+              };
+          };
         };
       };
     };
