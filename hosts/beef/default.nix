@@ -91,6 +91,9 @@
       };
     };
     network = {
+      firewall = {
+        opensnitch.enable = false;
+      };
       hostname = "beef";
       vpn = {
         zerotier = {
