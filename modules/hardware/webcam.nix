@@ -25,7 +25,7 @@ in
         extraConfig = {
           "10-disable-camera" = {
               "wireplumber.profiles" = {
-              main."monitor.libcamera" = "disabled";
+                main."monitor.libcamera" = "disabled";
               };
           };
         };
