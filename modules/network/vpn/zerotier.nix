@@ -52,7 +52,7 @@ in
   config = mkIf cfg.enable {
     services.zerotierone = {
       enable = true;
-      package = pkgs.unstable.zerotierone;
+      #package = pkgs.unstable.zerotierone;
       port = cfg.port;
     };
 
