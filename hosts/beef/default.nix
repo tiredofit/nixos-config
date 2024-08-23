@@ -5,12 +5,6 @@
     ../common
   ];
 
-  boot = {
-    #kernelParams = [
-
-    #];
-  };
-
   host = {
     container = {
       restic = {

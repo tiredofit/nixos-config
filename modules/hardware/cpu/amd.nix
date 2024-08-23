@@ -21,6 +21,9 @@ in {
     #    kernelParams = [ "amd_pstate=active" "kvm-amd" ];
     #  })
     #];
-  nixpkgs.hostPlatform = "x86_64-linux";
+
+    nixpkgs = {
+      hostPlatform = "x86_64-linux";
+    };
   };
 }
