@@ -2,12 +2,15 @@
   description = "Tired of I.T! NixOS Configuration";
 
   nixConfig = {
-    experimental-features = [ "nix-command" "flakes" ];
+    experimental-features = [
+      "flakes"
+      "nix-command"
+    ];
     extra-substituters = [
       "https://cache.nixos.org"
       "https://nix-community.cachix.org"
-      "https://nix-gaming.cachix.org"
-      "https://nixpkgs-wayland.cachix.org"
+      #"https://nix-gaming.cachix.org"
+      #"https://nixpkgs-wayland.cachix.org"
       #"https://hyprland.cachix.org"
 
     ];
@@ -33,14 +36,6 @@
     impermanence = {
       url = "github:nix-community/impermanence";
     };
-    #nix-gaming = {
-    #  url = "github:fufexan/nix-gaming";
-    #  inputs.nixpkgs.follows = "nixpkgs";
-    #};
-    #nixpkgs-wayland = {
-    #  url = "github:nix-community/nixpkgs-wayland";
-    #  inputs.nixpkgs.follows = "nixpkgs";
-    #};
     sops-nix = {
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -53,15 +48,15 @@
       inherit (self) outputs;
       lib = nixpkgs.lib;
       systems = [
-        "x86_64-linux"
         "aarch64-linux"
+        "x86_64-linux"
       ];
       forEachSystem = f: lib.genAttrs systems (sys: f pkgsFor.${sys});
       pkgsFor = lib.genAttrs systems (system: import nixpkgs {
         inherit system;
         config.allowUnfree = true;
             overlays = [
-              inputs.nixpkgs-wayland.overlay
+              #inputs.nixpkgs-wayland.overlay
               outputs.overlays.additions
               outputs.overlays.modifications
               outputs.overlays.unstable-packages
@@ -70,27 +65,12 @@
     in
     {
       inherit lib;
+      formatter = forEachSystem (pkgs: pkgs.nixpkgs-fmt);
       nixosModules = import ./modules;
       overlays = import ./overlays {inherit inputs;};
       packages = forEachSystem (pkgs: import ./pkgs { inherit pkgs; });
-      formatter = forEachSystem (pkgs: pkgs.nixpkgs-fmt);
 
       nixosConfigurations = {
-        expedition = lib.nixosSystem { # Server Added 2024-07-04
-          modules = [ ./hosts/expedition ];
-          specialArgs = { inherit inputs outputs; };
-        };
-
-        seed = lib.nixosSystem { # Server Added 2024-03-26
-          modules = [ ./hosts/seed ];
-          specialArgs = { inherit inputs outputs; };
-        };
-
-        tentacle = lib.nixosSystem { # Server Added 2023-10-25
-          modules = [ ./hosts/tentacle ];
-          specialArgs = { inherit inputs outputs; };
-        };
-
         beef = lib.nixosSystem { # Workstation
           modules = [ ./hosts/beef ];
           specialArgs = { inherit inputs outputs; };
@@ -110,8 +90,23 @@
           specialArgs = { inherit inputs outputs; };
         };
 
+        expedition = lib.nixosSystem { # Server Added 2024-07-04
+          modules = [ ./hosts/expedition ];
+          specialArgs = { inherit inputs outputs; };
+        };
+
         nakulaptop = lib.nixosSystem { # Laptop
           modules = [ ./hosts/nakulaptop ];
+          specialArgs = { inherit inputs outputs; };
+        };
+
+        seed = lib.nixosSystem { # Server Added 2024-03-26
+          modules = [ ./hosts/seed ];
+          specialArgs = { inherit inputs outputs; };
+        };
+
+        tentacle = lib.nixosSystem { # Server Added 2023-10-25
+          modules = [ ./hosts/tentacle ];
           specialArgs = { inherit inputs outputs; };
         };
       };
