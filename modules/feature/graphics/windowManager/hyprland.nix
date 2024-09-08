@@ -9,8 +9,8 @@ in
     programs = {
       hyprland = {
         enable = mkDefault true;
-        package = pkgs.unstable.hyprland;
-        portalPackage = pkgs.unstable.xdg-desktop-portal-hyprland;
+        package = pkgs.hyprland;
+        portalPackage = pkgs.xdg-desktop-portal-hyprland;
         #package = inputs.hyprland.packages.${pkgs.system}.hyprland;
       };
     };
@@ -25,8 +25,8 @@ in
         "org.freedesktop.portal.FileChooser" = [ "xdg-desktop-portal-gtk" ];
       };
       extraPortals = [
-        pkgs.unstable.xdg-desktop-portal-hyprland
-        pkgs.unstable.xdg-desktop-portal-gtk
+        pkgs.xdg-desktop-portal-hyprland
+        pkgs.xdg-desktop-portal-gtk
       ];
     };
   };
