@@ -21,7 +21,8 @@ in {
     ];
 
     ## 24.11 Change to hardware.graphics.extraPackages
-    hardware.opengl.extraPackages = with pkgs; [
+    #hardware.opengl.extraPackages = with pkgs; [
+    hardware.graphics.extraPackages = with pkgs; [
       amdvlk
       rocmPackages.clr
       rocmPackages.clr.icd
