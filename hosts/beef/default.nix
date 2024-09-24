@@ -38,20 +38,10 @@
       boot = {
         kernel = {
           parameters = [
-            "quiet"
             "video=DP-3:2560x1440@120"
             "video=DP-2:2560x1440@120"
             "video=HDMI-1:2560x1440@120"
           ];
-        };
-      };
-      gaming = {
-        gamemode.enable = false;
-        gamescope.enable = false;
-        heroic.enable = false;
-        steam = {
-          enable = false;
-          protonGE = false;
         };
       };
       graphics = {
@@ -66,7 +56,6 @@
       };
     };
     filesystem = {
-      bcachefs.enable = true;
       encryption.enable = true;
       exfat.enable = true;
       ntfs.enable = true;
