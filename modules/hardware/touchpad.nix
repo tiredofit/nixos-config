@@ -34,7 +34,7 @@ in
 
     hardware.i2c.enable = mkIf cfg.asus-touchpad-numpad.enable true;
     services = {
-      xserver.libinput = {
+      libinput = {
         enable = true;
         mouse = {
           accelProfile = mkDefault "flat";
