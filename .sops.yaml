@@ -1,67 +1,23 @@
 keys:
-  - &host_beef age1wq5xj5mwv9xk4tp26cxc4xqjq9xd9hwqv0zeemawl2cc8sarmqesw366dh
-  - &host_butcher age1nleq0q2kzh2zn4pyr0dcy0zjnsr6sx8c5ttjahhfttkltsr2s3ksahhpkx
-  - &host_nakulaptop age1m6gzjlvx5paan69evccl6kywj0ghdk46prumx4jn4hxcrxd4re6qckdl9w
-  - &host_tentacle age190tmygg8xmn9tkj4yjgemvdd8s4tnmycr9n4qfrr0l97zxfq3gjs36xsn8
-  - &user_dave age1upzm9um3qljxlmxcg8vl35d7eyeqtnsfcnqlh3wtnj46dhfzwyrqa80avw
-  - &user_ireen age1477n5xa2cr4tgdy80vxg24tsdcrcmzarn4ad99tjvrsjedq6sqpqsxyrms
-  - &user_media age1zsws94zmm5axrtpswg2pwcfcn04zuwxtm8gm3z75frwvqtquz9rqgugv7f
-  - &host_seed age1uc47u2hcdw7lfjcg0vrgpzy4k4ygzmjyfzpjmlwamu0njjhgvy8qy6n70y
-  - &host_expedition age13uqlmzsyxdxxxkvsql7utjeqyt969jdjl6nh6d0gdqdvz6re05fq6t8xge
+  - &host_sisyphos age16s5cavv4c89q9ddclfpfy0v8ph96g4k6wdjhe3rhyszx4yxueqlqs2epkj
+  - &user_alex age17xyhmmzcpx7npah2sm23u3gwpt6kmxx85eyhprl3njjnnqjwvdrqzxxu0w
+  - &tmp_wsl age18duwfsye9q6hfd7uc2vmy0vdhw2uju5zu58rl34sy39zycwypqfq9qrgx7
 creation_rules:
+  - path_regex: hosts/sisyphos/secrets/.*
+    key_groups:
+      - age:
+        - *host_sisyphos
+        - *user_alex
+        - *tmp_wsl
   - path_regex: hosts/common/secrets/.*
     key_groups:
       - age:
-          - *host_beef
-          - *host_butcher
-          - *host_nakulaptop
-          - *user_dave
-          - *user_ireen
-          - *user_media
-          - *host_tentacle
-          - *host_seed
-          - *host_expedition
+          - *host_sisyphos
+          - *user_alex
+          - *tmp_wsl
   - path_regex: users/secrets.yaml
     key_groups:
       - age:
-          - *host_beef
-          - *host_butcher
-          - *host_nakulaptop
-          - *user_dave
-          - *host_tentacle
-          - *host_seed
-          - *host_expedition
-  - path_regex: hosts/beef/secrets/.*
-    key_groups:
-      - age:
-          - *host_beef
-          - *user_dave
-  - path_regex: hosts/butcher/secrets/.*
-    key_groups:
-      - age:
-          - *host_butcher
-          - *user_dave
-  - path_regex: hosts/nakulaptop/secrets/.*
-    key_groups:
-      - age:
-          - *host_nakulaptop
-          - *user_dave
-          - *user_ireen
-  - path_regex: hosts/tentacle/secrets/.*
-    key_groups:
-      - age:
-          - *host_tentacle
-          - *host_beef
-          - *user_dave
-  - path_regex: hosts/seed/secrets/.*
-    key_groups:
-      - age:
-          - *host_seed
-          - *host_beef
-          - *user_dave
-  - path_regex: hosts/expedition/secrets/.*
-    key_groups:
-      - age:
-          - *host_expedition
-          - *host_beef
-          - *user_dave
+          - *host_sisyphos
+          - *user_alex
+          - *tmp_wsl

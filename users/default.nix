@@ -3,9 +3,7 @@
 with lib;
 {
   imports = [
-    ./dave
-    ./ireen
-    ./media
+    ./alex
     ./root
   ];
 }

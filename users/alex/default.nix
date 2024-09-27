@@ -5,20 +5,20 @@ in
   with lib;
 {
   options = {
-    host.user.media = {
+    host.user.alex = {
       enable = mkOption {
         default = false;
         type = with types; bool;
-        description = "Enable Media";
+        description = "Enable Alex";
       };
     };
   };
 
-  config = mkIf config.host.user.media.enable {
-    users.users.media = {
+  config = mkIf config.host.user.alex.enable {
+    users.users.alex = {
       isNormalUser = true;
       shell = pkgs.bashInteractive;
-      uid = 7777;
+      uid = 2323;
       group = "users" ;
       extraGroups = [
         "wheel"
@@ -27,22 +27,24 @@ in
       ] ++ ifTheyExist [
         "adbusers"
         "deluge"
+        "dialout"
         "docker"
         "git"
         "input"
         "libvirtd"
+        "lp"
         "mysql"
         "network"
         "podman"
       ];
 
       openssh.authorizedKeys.keys = [ (builtins.readFile ./ssh.pub) ];
-      hashedPasswordFile = config.sops.secrets.media-password.path;
+      hashedPasswordFile = mkDefault config.sops.secrets.alex-password.path;
     };
 
-    sops.secrets.media-password = {
-      sopsFile = ../secrets.yaml;
-      neededForUsers = true;
+    sops.secrets.alex-password = {
+      sopsFile = mkDefault ../secrets.yaml;
+      neededForUsers = mkDefault true;
     };
   };
 }
