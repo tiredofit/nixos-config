@@ -72,11 +72,6 @@
       packages = forEachSystem (pkgs: import ./pkgs { inherit pkgs; });
 
       nixosConfigurations = {
-        beef = lib.nixosSystem { # Workstation
-          modules = [ ./hosts/beef ];
-          specialArgs = { inherit inputs outputs; };
-        };
-
         sisyphos = lib.nixosSystem {
           modules = [ ./hosts/sisyphos ];
           specialArgs = {inherit inputs outputs; };
