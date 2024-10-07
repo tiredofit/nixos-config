@@ -44,7 +44,7 @@
     vscode-server.url = "github:nix-community/nixos-vscode-server";
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, ... }@inputs:
+  outputs = inputs @ { self, nixpkgs, nixpkgs-unstable, ...}:
     let
       inherit (self) outputs;
       lib = nixpkgs.lib;
@@ -56,21 +56,21 @@
       pkgsFor = lib.genAttrs systems (system: import nixpkgs {
         inherit system;
         config.allowUnfree = true;
-            overlays = [
-              inputs.nixpkgs-wayland.overlay
-              outputs.overlays.additions
-              outputs.overlays.modifications
-              outputs.overlays.unstable-packages
+        overlays = [
+            outputs.overlays.additions
+            outputs.overlays.modifications
+            outputs.overlays.unstable-packages
         ];
       });
     in
     {
       inherit lib;
       formatter = forEachSystem (pkgs: pkgs.nixpkgs-fmt);
+      docs = forEachSystem (pkgs: pkgs.callPackage ./docs/mkDocs.nix {inherit inputs;});
+
       nixosModules = import ./modules;
       overlays = import ./overlays {inherit inputs;};
       packages = forEachSystem (pkgs: import ./pkgs { inherit pkgs; });
-
       nixosConfigurations = {
         beef = lib.nixosSystem { # Workstation
           modules = [ ./hosts/beef ];
