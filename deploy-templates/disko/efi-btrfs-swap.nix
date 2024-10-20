@@ -63,6 +63,10 @@ in
                     mountpoint = "/nix";
                     mountOptions = [ "compress=zstd" "noatime" ];
                   };
+                  "/var_lib_docker" = {
+                    mountpoint = "/var/lib/docker";
+                    mountOptions = [ "compress=zstd" "noatime" ];
+                  };
                   "/var_local" = {
                     mountOptions = [ "compress=zstd" "noatime" ];
                   };
