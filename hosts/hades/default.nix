@@ -2,6 +2,7 @@
 
   imports = [
     ./hardware-configuration.nix
+    ./efi-btrfs-swap.nix
     ../common
   ];
 

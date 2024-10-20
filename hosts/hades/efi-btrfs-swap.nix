@@ -1,5 +1,5 @@
 let
-  rawdisk1 = "/dev/vda"; # CHANGE
+  rawdisk1 = "/dev/nvme0n1"; # CHANGE
 in
 {
   disko.devices = {
