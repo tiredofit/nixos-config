@@ -32,6 +32,7 @@ in
       "/home".options = [ "subvol=home/active" "compress=zstd" "noatime"  ];
       "/home/.snapshots".options = [ "subvol=home/snapshots" "compress=zstd" "noatime"  ];
       "/nix".options = [ "subvol=nix" "compress=zstd" "noatime"  ];
+      "/var/lib/docker".options = [ "subvol=var_lib_docker" "compress=zstd" "noatime"  ];
       "/var/local".options = [ "subvol=var_local/active" "compress=zstd" "noatime"  ];
       "/var/local/.snapshots".options = [ "subvol=var_local/snapshots" "compress=zstd" "noatime"  ];
       "/var/log".options = [ "subvol=var_log" "compress=zstd" "noatime"  ];
