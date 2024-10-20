@@ -42,11 +42,6 @@
       fsType = "btrfs";
       options = [ "subvol=home/snapshots" ];
     };
-    "/mnt/data" = {
-      device = "/dev/disk/by-uuid/412946e6-1d5b-44df-ba8e-06b60d3a0804";
-      fsType = "btrfs";
-      options = [ "subvol=__active" ];
-    };
     "/nix" = {
       device = "/dev/disk/by-uuid/18e470a3-4942-4e28-8c26-9e9d1663dae7";
       fsType = "btrfs";
