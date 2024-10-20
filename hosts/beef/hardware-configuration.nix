@@ -67,6 +67,11 @@
       fsType = "btrfs";
       options = [ "subvol=persist/snapshots" ];
     };
+    "/var/lib/docker" = {
+      device = "/dev/disk/by-uuid/2116df83-e8d7-4dfb-85ba-0c3d602c7d90";
+      fsType = "btrfs";
+      options = [ "subvol=var_lib_docker" ];
+    };
     "/var/local" = {
       device = "/dev/disk/by-uuid/2116df83-e8d7-4dfb-85ba-0c3d602c7d90";
       fsType = "btrfs";
