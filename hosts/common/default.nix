@@ -60,7 +60,7 @@
       secrets.enable = mkDefault true;
     };
     network = {
-      domainname = mkDefault "tiredofit.ca";
+      domainname = mkDefault "gallien";
     };
     service = {
       logrotate = {

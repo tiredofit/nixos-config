@@ -36,7 +36,7 @@ in {
           xterm.enable = mkDefault false;
         };
 
-        xkb.layout = mkDefault "us";
+        xkb.layout = mkDefault "de";
       };
     };
   };

@@ -76,6 +76,10 @@
           modules = [ ./hosts/sisyphos ];
           specialArgs = {inherit inputs outputs; };
         };
+        hades = lib.nixosSystem {
+          modules = [ ./hosts/hades ];
+          specialArgs = {inherit inputs outputs; };
+        };
       };
     };
 }

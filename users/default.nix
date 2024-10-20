@@ -5,5 +5,6 @@ with lib;
   imports = [
     ./alex
     ./root
+    ./josy
   ];
 }
