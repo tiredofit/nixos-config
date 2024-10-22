@@ -11,13 +11,6 @@
         "sd_mod"
         "sr_mod"
       ];
-      luks = {
-        devices = {
-          "pool0_0" = {
-            device = "/dev/disk/by-uuid/d1dd4e01-d147-41af-91b4-e736bf96bf78";
-          };
-        };
-      };
     };
   };
 
