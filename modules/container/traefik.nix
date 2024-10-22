@@ -141,7 +141,7 @@ in
       extraOptions = [
         "--hostname=${hostname}.vpn.${config.host.network.domainname}"
         "--cpus=0.5"
-        "--memory=256M"
+        "--memory=384M"
         "--network-alias=${hostname}-${container_name}"
       ];
       networks = [
