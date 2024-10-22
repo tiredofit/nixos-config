@@ -78,7 +78,7 @@ in
 
       ];
       extraOptions = [
-        "--memory=2G"
+        "--memory=2.5G"
         "--memory-reservation=512M"
 
         "--network-alias=${hostname}-clamav"
