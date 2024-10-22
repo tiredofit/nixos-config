@@ -37,15 +37,15 @@
       };
     };
     filesystem = {
-      encryption.enable = true;                 # This line can be removed if not needed as it is already default set by the role template
-      impermanence.enable = true;               # This line can be removed if not needed as it is already default set by the role template
+      encryption.enable = true;
+      impermanence.enable = true;
       swap = {
         partition = "disk/by-partlabel/swap";
       };
     };
     hardware = {
       cpu = "amd";
-      raid.enable = true;                      # This line can be removed if not needed as it is already default set by the role template
+      raid.enable = true;
     };
     network = {
       hostname = "seed";
@@ -54,7 +54,7 @@
        type = "static";
        ip = "148.113.187.218/32";
        gateway = "100.64.0.1";
-       mac = "0f:7c:16:f1:1a:fe";
+       mac = "04:7c:16:f1:1a:fe";
       };
     };
     role = "server";
