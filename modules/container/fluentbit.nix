@@ -4,7 +4,7 @@ let
   container_name = "fluentbit";
   container_description = "Enables fluentbit log forwarding container";
   container_image_registry = "docker.io";
-  container_image_name = "tiredofit/alpine";
+  container_image_name = "docker.io/tiredofit/alpine";
   container_image_tag = "3.19";
   cfg = config.host.container.${container_name};
   hostname = config.host.network.hostname;

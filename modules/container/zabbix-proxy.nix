@@ -4,7 +4,7 @@ let
   container_name = "zabbix-proxy";
   container_description = "Enables Zabbix proxy monitoring container";
   container_image_registry = "docker.io";
-  container_image_name = "tiredofit/zabbix";
+  container_image_name = "docker.io/tiredofit/zabbix";
   container_image_tag = "latest";
   cfg = config.host.container.${container_name};
   hostname = config.host.network.hostname;

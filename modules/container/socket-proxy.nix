@@ -4,7 +4,7 @@ let
   container_name = "socket-proxy";
   container_description = "Enables docker.sock proxy container";
   container_image_registry = "docker.io";
-  container_image_name = "tiredofit/socket-proxy";
+  container_image_name = "docker.io/tiredofit/socket-proxy";
   container_image_tag = "latest";
   cfg = config.host.container.${container_name};
   hostname = config.host.network.hostname;

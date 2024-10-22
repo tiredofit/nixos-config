@@ -4,12 +4,12 @@ let
   container_name = "traefik";
   container_description = "Enables reverse proxy container";
   container_image_registry = "docker.io";
-  container_image_name = "tiredofit/traefik";
+  container_image_name = "docker.io/tiredofit/traefik";
   container_image_tag = "2.11";
   tcc_container_name = "cloudflare-companion";
   tcc_container_description = "Enables ability to create CNAMEs with traefik container";
   tcc_container_image_registry = "docker.io";
-  tcc_container_image_name = "tiredofit/traefik-cloudflare-companion";
+  tcc_container_image_name = "docker.io/tiredofit/traefik-cloudflare-companion";
   tcc_container_image_tag = "latest";
 
   cfg = config.host.container.${container_name};

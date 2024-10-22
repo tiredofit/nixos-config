@@ -4,7 +4,7 @@ let
   container_name = "llng-handler";
   container_description = "Enables authentication handling container";
   container_image_registry = "docker.io";
-  container_image_name = "tiredofit/lemonldap";
+  container_image_name = "docker.io/tiredofit/lemonldap";
   container_image_tag = "latest";
   cfg = config.host.container.${container_name};
   hostname = config.host.network.hostname;
