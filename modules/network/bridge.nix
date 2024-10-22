@@ -1,10 +1,9 @@
-{config, lib, pkgs, ...}:
+{ config, lib, pkgs, ... }:
 
 let
   cfg = config.host.network.bridge;
-in
-  with lib;
-{
+  wiredcfg = config.host.network.wired;
+in with lib; {
   options = {
     host.network.bridge = {
       enable = mkOption {
@@ -26,32 +25,30 @@ in
   };
 
   config = mkIf cfg.enable {
-    assertions = [
-    ];
+    assertions = [ ];
 
     systemd = {
       network = {
         enable = true;
         netdevs = {
-            "20-${cfg.name}" = {
-              netdevConfig = {
-                Kind = "bridge";
-                Name = "br0";
-              };
+          "20-${cfg.name}" = {
+            netdevConfig = {
+              Kind = "bridge";
+              Name = "br0";
+              MACAddress = wiredcfg.mac;
             };
+          };
         };
 
-        networks =
-          let
-            fn = ifnames: o: listToAttrs (map (ifn: lib.nameValuePair "10-${ifn}" o) ifnames);
-          in
-            fn [ cfg.interfaces ] {
-              matchConfig.Name = "${n}";
-              networkConfig.Bridge = "${cfg.name}";
-              linkConfig = {
-                RequiredForOnline = "enslaved";
-              };
-        };
+        networks = let
+          fn = ifnames: o:
+            listToAttrs
+            (map (ifn: lib.nameValuePair "10-${ifn}" (o ifn)) ifnames);
+        in fn cfg.interfaces (ifn: {
+          matchConfig.Name = ifn;
+          networkConfig.Bridge = cfg.name;
+          linkConfig = { RequiredForOnline = "enslaved"; };
+        });
       };
     };
   };

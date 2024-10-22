@@ -156,8 +156,7 @@ in
 
     host.filesystem.impermanence.directories = mkIf ((config.host.filesystem.impermanence.enable) && (config.networking.networkmanager.enable)) [
       "/etc/NetworkManager"              # NetworkManager TODO Potentially should be its own module but at least it is limited in this config
-      "/var/lib/NetworkManager"           # NetworkManager
-
+      "/var/lib/NetworkManager"          # NetworkManager
     ];
 
     services = mkIf cfg_impermanence.enable {

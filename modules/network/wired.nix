@@ -89,7 +89,7 @@ in
              #  "1.0.0.1"
              #];
              #dns = mkIf (cfg.type == "static") [
-#
+             #
              #] ++ cfg.dns ;
              routes = mkIf (cfg.type == "static") [{
                 Gateway = cfg.gateway;

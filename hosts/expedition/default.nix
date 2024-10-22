@@ -58,13 +58,19 @@
       raid.enable = true;
     };
     network = {
+      bridge = {
+        enable = true;
+        interfaces = [
+          "enp3s0f0"
+        ];
+      };
       hostname = "expedition";
       wired = {
-       enable = true;
-       type = "static";
-       ip = "51.79.77.189/24";
-       gateway = "51.79.77.254";
-       mac = "d8:5e:d3:e9:10:45";
+        enable = true;
+        type = "static";
+        ip = "51.79.77.189/24";
+        gateway = "51.79.77.254";
+        mac = "d8:5e:d3:e9:10:45";
       };
       vpn = {
         zerotier = {
