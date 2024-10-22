@@ -9,17 +9,6 @@
   host = {
     feature = {
     };
-    filesystem = {
-      encryption.enable = false;
-      impermanence.enable = true;
-      swap = {
-        partition = "disk/by-partlabel/swap";
-      };
-    };
-    hardware = {
-      cpu = "intel";
-      raid.enable = true;
-    };
     container = {
       clamav = {
         enable = true;
@@ -37,7 +26,7 @@
         monitor = "false";
       };
       traefik = {
-        enable = false;
+        enable = true;
         logship = "false";
         monitor = "false";
       };
@@ -47,16 +36,26 @@
         monitor = "false";
       };
     };
+    filesystem = {
+      encryption.enable = true;                 # This line can be removed if not needed as it is already default set by the role template
+      impermanence.enable = true;               # This line can be removed if not needed as it is already default set by the role template
+      swap = {
+        partition = "disk/by-partlabel/swap";
+      };
+    };
+    hardware = {
+      cpu = "amd";
+      raid.enable = true;                      # This line can be removed if not needed as it is already default set by the role template
+    };
     network = {
       hostname = "seed";
       wired = {
        enable = true;
        type = "static";
-       ip = "149.56.29.182/24";
-       gateway = "149.56.29.254";
-       mac = "a8:a1:59:c2:28:e6";
+       ip = "148.113.187.218/32";
+       gateway = "100.64.0.1";
+       mac = "0f:7c:16:f1:1a:fe";
       };
-
     };
     role = "server";
     service = {
@@ -67,5 +66,4 @@
       dave.enable = true;
     };
   };
-
 }

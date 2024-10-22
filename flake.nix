@@ -72,6 +72,11 @@
       overlays = import ./overlays {inherit inputs;};
       packages = forEachSystem (pkgs: import ./pkgs { inherit pkgs; });
       nixosConfigurations = {
+        seed = lib.nixosSystem { # Server Added 2024-10-22 
+          modules = [ ./hosts/seed ];
+          specialArgs = { inherit inputs outputs; };
+        };
+
         beef = lib.nixosSystem { # Workstation
           modules = [ ./hosts/beef ];
           specialArgs = { inherit inputs outputs; };
@@ -98,11 +103,6 @@
 
         nakulaptop = lib.nixosSystem { # Laptop
           modules = [ ./hosts/nakulaptop ];
-          specialArgs = { inherit inputs outputs; };
-        };
-
-        seed = lib.nixosSystem { # Server Added 2024-03-26
-          modules = [ ./hosts/seed ];
           specialArgs = { inherit inputs outputs; };
         };
 
