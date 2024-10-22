@@ -435,7 +435,8 @@ flake_tools() {
         ;;
         "update" )
             print_info "Updating Nix Flake"
-            sudo nix flake update "${_dir_flake}"/ --extra-experimental-features "nix-command flakes"
+            #sudo nix flake update "${_dir_flake}"/ --extra-experimental-features "nix-command flakes"
+            sudo nix flake update "${_dir_flake}"/
         ;;
         "upgrade" )
             print_info "Upgrading System"
