@@ -72,41 +72,32 @@
       overlays = import ./overlays {inherit inputs;};
       packages = forEachSystem (pkgs: import ./pkgs { inherit pkgs; });
       nixosConfigurations = {
-        seed = lib.nixosSystem { # Server Added 2024-10-22 
-          modules = [ ./hosts/seed ];
-          specialArgs = { inherit inputs outputs; };
-        };
-
-        beef = lib.nixosSystem { # Workstation
+        beef = lib.nixosSystem {
           modules = [ ./hosts/beef ];
           specialArgs = { inherit inputs outputs; };
         };
 
-        beer = lib.nixosSystem { # Bar
-          modules = [ ./hosts/beer ];
-          specialArgs = {
-            inherit inputs outputs;
-            kioskUsername = "dave";
-            kioskURL = "https://beer.tiredofit.ca";
-          };
-        };
-
-        butcher = lib.nixosSystem { # Local Server
+        butcher = lib.nixosSystem {
           modules = [ ./hosts/butcher ];
           specialArgs = { inherit inputs outputs; };
         };
 
-        expedition = lib.nixosSystem { # Server Added 2024-07-04
+        expedition = lib.nixosSystem {
           modules = [ ./hosts/expedition ];
           specialArgs = { inherit inputs outputs; };
         };
 
-        nakulaptop = lib.nixosSystem { # Laptop
+        nakulaptop = lib.nixosSystem {
           modules = [ ./hosts/nakulaptop ];
           specialArgs = { inherit inputs outputs; };
         };
 
-        tentacle = lib.nixosSystem { # Server Added 2023-10-25
+        seed = lib.nixosSystem {
+          modules = [ ./hosts/seed ];
+          specialArgs = { inherit inputs outputs; };
+        };
+
+        tentacle = lib.nixosSystem {
           modules = [ ./hosts/tentacle ];
           specialArgs = { inherit inputs outputs; };
         };
