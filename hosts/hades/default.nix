@@ -1,8 +1,8 @@
 { config, inputs, pkgs, ...}: {
 
   imports = [
-    ./hardware-configuration.nix
-    ./efi-btrfs-swap.nix
+    inputs.disko.nixosModules.disko
+    ./disks.nix
     ../common
   ];
 
@@ -24,6 +24,17 @@
         flatpak.enable = true;
         waydroid.enable = true;
       };
+      gaming = {
+        steam = {
+          enable = true;
+          protonGE = true;
+        };
+        heroic = {
+          enable = true;
+          protonGE = true;
+        };
+        gamemode.enable = true;
+      };
     };
     filesystem = {
       encryption.enable = false;
@@ -43,18 +54,7 @@
       sound = {
         server = "pipewire";
       };
-    };
-    gaming = {
-      steam = {
-        enable = true;
-        protonGe = true;
-      };
-      heroic = {
-        enable = true;
-        protonGe = true;
-      };
-      gamemode.enable = true;
-
+      raid.enable = false;
     };
     network = {
       hostname = "hades";
@@ -66,6 +66,8 @@
       root.enable = true;
     };
   };
+
+  users.mutableUsers = true;
 
   services.xserver = {
     enable = true;

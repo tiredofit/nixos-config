@@ -1,36 +1,20 @@
 keys:
-  - &host_sisyphos age16s5cavv4c89q9ddclfpfy0v8ph96g4k6wdjhe3rhyszx4yxueqlqs2epkj
-  - &host_hades age1heaaganlcdw9xn3f4p3ty82fcamfj58vxdsszw5em4mrnrg273aq7sxe36
-  - &user_alex age17xyhmmzcpx7npah2sm23u3gwpt6kmxx85eyhprl3njjnnqjwvdrqzxxu0w
-  - &user_josy age1xvvwmtx59z2t52pvkw93xjwd3hv2w3nsqfnv09r6ljr0d90ddc2qsh9779
-  - &tmp_wsl age18duwfsye9q6hfd7uc2vmy0vdhw2uju5zu58rl34sy39zycwypqfq9qrgx7
+  - &wsl_alex age1xmhmr66cem078nhlj2lp4g6xj0qqs57z5767k98qhqgpanatxaps6mclgs
 
 creation_rules:
   - path_regex: hosts/sisyphos/secrets/.*
     key_groups:
       - age:
-        - *host_sisyphos
-        - *user_alex
-        - *tmp_wsl
+        - *wsl_alex
   - path_regex: hosts/hades/secrets/.*
     key_groups:
       - age:
-        - *host_hades
-        - *user_alex
-        - *user_josy
-        - *tmp_wsl
+        - *wsl_alex
   - path_regex: hosts/common/secrets/.*
     key_groups:
       - age:
-          - *host_sisyphos
-          - *host_hades
-          - *user_alex
-          - *tmp_wsl
+          - *wsl_alex
   - path_regex: users/secrets.yaml
     key_groups:
       - age:
-          - *host_sisyphos
-          - *host_hades
-          - *user_alex
-          - *user_josy
-          - *tmp_wsl
+          - *wsl_alex

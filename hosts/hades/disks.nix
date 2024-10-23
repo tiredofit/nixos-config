@@ -1,5 +1,5 @@
 let
-  rawdisk1 = "/dev/nvme0n1"; # CHANGE
+  rawdisk1 = "/dev/nvme1n1";
 in
 {
   disko.devices = {
@@ -38,14 +38,10 @@ in
                 extraArgs = [ "-f" ];
                 subvolumes = {
                   "/root" = {
-                    mountOptions = [ "compress=zstd" "noatime" ];
-                  };
-                  "/root/active" = {
                     mountpoint = "/";
                     mountOptions = [ "compress=zstd" "noatime" ];
                   };
-                  "/root/snapshots" = {
-                    mountpoint = "/.snapshots";
+                  "/root-blank" = {
                     mountOptions = [ "compress=zstd" "noatime" ];
                   };
                   "/home" = {
@@ -61,6 +57,17 @@ in
                   };
                   "/nix" = {
                     mountpoint = "/nix";
+                    mountOptions = [ "compress=zstd" "noatime" ];
+                  };
+                  "/persist" = {
+                    mountOptions = [ "compress=zstd" "noatime" ];
+                  };
+                  "/persist/active" = {
+                    mountpoint = "/persist";
+                    mountOptions = [ "compress=zstd" "noatime" ];
+                  };
+                  "/persist/snapshots" = {
+                    mountpoint = "/persist/.snapshots";
                     mountOptions = [ "compress=zstd" "noatime" ];
                   };
                   "/var_local" = {

@@ -40,7 +40,7 @@ in
 
       openssh.authorizedKeys.keys = [ (builtins.readFile ./ssh.pub) ];
       #hashedPasswordFile = mkDefault config.sops.secrets.alex-password.path;
-      initialPassword = "12345"
+      initialPassword = "12345";
     };
 
     sops.secrets.alex-password = {

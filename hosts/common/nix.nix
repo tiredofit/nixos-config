@@ -19,7 +19,7 @@
     settings = {
       accept-flake-config = true;
       auto-optimise-store = mkDefault true;
-      experimental-features = [ "nix-command" "flakes" "repl-flake" ];
+      experimental-features = [ "nix-command" "flakes" ];
       # show more log lines for failed builds
       log-lines = 30;
       # Free up to 10GiB whenever there is less than 5GB left.
@@ -31,7 +31,7 @@
       warn-dirty = false;
     };
 
-    package = pkgs.nixFlakes;
+    package = pkgs.nixVersions.stable;
     registry = lib.mapAttrs (_: value: { flake = value; }) inputs;
     nixPath = [ "nixpkgs=${inputs.nixpkgs.outPath}" ];
   };

@@ -18,7 +18,7 @@ in
     users.users.josy = {
       isNormalUser = true;
       shell = pkgs.bashInteractive;
-      uid = 2323;
+      uid = 2324;
       group = "users" ;
       extraGroups = [
         "wheel"
@@ -39,7 +39,8 @@ in
       ];
 
       openssh.authorizedKeys.keys = [ (builtins.readFile ./ssh.pub) ];
-      hashedPasswordFile = mkDefault config.sops.secrets.josy-password.path;
+      #hashedPasswordFile = mkDefault config.sops.secrets.josy-password.path;
+      initialPassword = "12345";
     };
 
     sops.secrets.josy-password = {
