@@ -36,6 +36,7 @@
     feature = {
       appimage.enable = true;
       boot = {
+        #graphical.enable = true;
         kernel = {
           parameters = [
             "video=DP-3:2560x1440@120"
