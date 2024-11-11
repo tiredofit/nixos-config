@@ -35,6 +35,7 @@ in
         "lp"
         "mysql"
         "network"
+        "networkmanager"
         "podman"
       ];
 

@@ -31,6 +31,7 @@ in
         "input"
         "lp"
         "network"
+        "networkmanager"
       ];
 
       openssh.authorizedKeys.keys = [ (builtins.readFile ./ssh.pub) ];
