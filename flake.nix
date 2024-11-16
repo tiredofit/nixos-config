@@ -33,7 +33,7 @@
       url = "github:nix-community/impermanence";
     };
     sops-nix = {
-      url = "github:Mic92/sops-nix";
+      url = "github:Mic92/sops-nix/c5ae1e214ff935f2d3593187a131becb289ea639";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     vscode-server.url = "github:nix-community/nixos-vscode-server";
