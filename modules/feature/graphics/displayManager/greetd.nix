@@ -23,12 +23,17 @@ with lib;
     security.pam.services.greetd.enableGnomeKeyring = true;
 
     services = {
+      displayManager = {
+        sddm = {
+          enable = mkForce false;
+        };
+      };
       greetd = {
         enable = mkDefault true;
         settings = {
           default_session = {
             command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time";
-            user = "greeter";
+            #user = "greeter";
           };
         };
         ## TODO - Finish this later
@@ -40,9 +45,6 @@ with lib;
             enable = mkForce false;
           };
           lightdm = {
-            enable = mkForce false;
-          };
-          sddm = {
             enable = mkForce false;
           };
           startx.enable = config.services.xserver.enable;
