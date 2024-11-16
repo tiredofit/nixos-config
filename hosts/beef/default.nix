@@ -36,7 +36,6 @@
     feature = {
       appimage.enable = true;
       boot = {
-        #graphical.enable = true;
         kernel = {
           parameters = [
             "video=DP-3:2560x1440@120"
@@ -48,7 +47,7 @@
       graphics = {
         enable = true;
         backend = "wayland";
-        displayManager.manager = "sddm";
+        displayManager.manager = "greetd";
         windowManager.manager = "hyprland";
       };
       virtualization = {
