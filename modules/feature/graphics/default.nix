@@ -1,4 +1,4 @@
-{config, lib, ...}:
+{config, lib, pkgs, ...}:
   with lib;
 {
   imports = [
@@ -38,6 +38,16 @@
         enable = true;
         enable32Bit = true;
       };
+    };
+
+    environment = {
+      systemPackages = with pkgs; mkIf (config.host.feature.graphics.enable) [
+        libva
+        libva-utils
+        vulkan-loader
+        vulkan-tools
+        vulkan-validation-layers
+      ];
     };
   };
 }
