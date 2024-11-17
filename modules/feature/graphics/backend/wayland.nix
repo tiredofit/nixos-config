@@ -39,7 +39,7 @@ in {
       libinput.enable = mkDefault true;
 
       xserver = {
-        enable = mkDefault true;
+        enable = mkDefault false;
         desktopManager = {
           xterm.enable = false;
         };

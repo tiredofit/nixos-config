@@ -67,15 +67,6 @@ boot = {
           WLR_DRM_DEVICES = mkDefault "/dev/dri/card1:/dev/dri/card0";
         })
       ];
-      systemPackages = with pkgs; mkIf (config.host.feature.graphics.enable) [
-        libva
-        libva-utils
-        vulkan-loader
-        vulkan-tools
-        vulkan-validation-layers
-      #] ++  mkIf device.gpu == "hybrid-nvidia"  [ ## TODO Fix
-      #  "nvidia-offload"
-      ];
     };
 
     hardware = {

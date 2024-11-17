@@ -24,10 +24,10 @@ in
         #"org.freedesktop.impl.portal.Screenshot" = [ "wlr" ];
         "org.freedesktop.portal.FileChooser" = [ "xdg-desktop-portal-shana" ];
       };
-      extraPortals = [
-        pkgs.xdg-desktop-portal-wlr
-        pkgs.xdg-desktop-portal-gtk
-        pkgs.xdg-desktop-portal-shana
+      extraPortals = with pkgs; [
+        xdg-desktop-portal-gtk
+        xdg-desktop-portal-shana
+        xdg-desktop-portal-wlr
       ];
     };
   };

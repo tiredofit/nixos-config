@@ -14,9 +14,9 @@ in {
       })
     ];
 
-    host.feature.boot.kernel.parameters = mkIf (device.gpu == "integrated-amd") [
-      "amdgpu.sg_display=0"
-    ];
+    #host.feature.boot.kernel.parameters = mkIf (device.gpu == "integrated-amd") [
+    #  "amdgpu.sg_display=0"
+    #];
 
     hardware = {
       graphics = {
