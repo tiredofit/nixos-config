@@ -37,6 +37,9 @@
       appimage.enable = true;
       boot = {
         kernel = {
+          modulesBlacklist = [
+            "snd_hda_codec_hdmi"
+          ];
           parameters = [
             "video=DP-3:2560x1440@120"
             "video=DP-2:2560x1440@120"
