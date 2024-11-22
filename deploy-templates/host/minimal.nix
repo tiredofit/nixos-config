@@ -1,4 +1,4 @@
-{ config, inputs, pkgs, ...}: {
+{ config, inputs, lib, pkgs, ...}: {
 
   imports = [
     inputs.disko.nixosModules.disko
@@ -22,7 +22,7 @@
     };
     role = "minimal";
     user = {
-      root.enable = true;
+      root.enable = lib.mkDefault true;
     };
   };
 }
