@@ -42,6 +42,7 @@
       inetutils.enable = mkDefault true;
       iotop.enable = mkDefault true;
       kitty.enable = mkDefault true;
+      lazydocker.enable = mkDefault true;
       less.enable = mkDefault true;
       links.enable = mkDefault true;
       lsof.enable = mkDefault true;

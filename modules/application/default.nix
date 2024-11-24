@@ -19,6 +19,7 @@ with lib;
     ./inetutils.nix
     ./iotop.nix
     ./kitty.nix
+    ./lazydocker.nix
     ./less.nix
     ./links.nix
     ./lsof.nix
