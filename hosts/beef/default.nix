@@ -5,6 +5,9 @@
     ../common
   ];
 
+  boot.blacklistedKernelModules = [
+    "snd_hda_codec_hdmi"
+  ];
   host = {
     container = {
       restic = {
