@@ -1,11 +1,13 @@
-{ config, outputs, lib, pkgs, ... }:
+{ config, inputs, outputs, lib, pkgs, self, ... }:
   with lib;
 {
   imports = [
+    inputs.nix-modules.nixosModules
     ./locale.nix
     ./nix.nix
     ../../users
-  ] ++ (builtins.attrValues outputs.nixosModules);
+  ];
+
 
   boot = {
     initrd = {
@@ -24,7 +26,6 @@
   };
 
   hardware.enableRedistributableFirmware = mkDefault true;
-
   host = {
     application = {
       bash.enable = mkDefault true;
@@ -56,6 +57,7 @@
       tmux.enable = mkDefault true;
       wget.enable = mkDefault true;
     };
+    configDir = self.outPath;
     feature = {
       home-manager.enable = mkDefault true;
       secrets.enable = mkDefault true;

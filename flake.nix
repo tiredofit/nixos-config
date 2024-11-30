@@ -18,8 +18,8 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
-    #nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nix-modules.url = "github:tiredofit/nix-modules";
     disko = {
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -62,7 +62,7 @@
       formatter = forEachSystem (pkgs: pkgs.nixpkgs-fmt);
       docs = forEachSystem (pkgs: pkgs.callPackage ./docs/mkDocs.nix {inherit inputs;});
 
-      nixosModules = import ./modules;
+      #nixosModules = import ./modules;
       overlays = import ./overlays {inherit inputs;};
       packages = forEachSystem (pkgs: import ./pkgs { inherit pkgs; });
       nixosConfigurations = {
