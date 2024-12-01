@@ -1,22 +1,7 @@
 #  NixOS Configurations
 
 Here are my [NixOS](https://nixos.org/) configurations.
-
 I'm using this for consistent configuration and portability from machine to machine with a small amount of changes (usually disks, partitions, or hardware changes)
-
-The configurations allow for a base system to be installed, with a core amount of applications to operate, you could add to it, but I feel that this configuration shines when you pair it with something like [Home Manager](https://nix-community.github.io/home-manager/) for discrete per-er configuration of their environment. Head on overto my [Nix Home Manager | Dotfiles Repository](https://github.com/tiredofit/home) to get an understanding on how I "daily drive" my userspace environments.
-
-
-**Highlights**:
-
-  BTRFS subvolume implementation with **hourly automatic snapshots**
-- **Impermanence** toggled for a clean installation on each reboot
-- Toggled **full disk encryption**
-- Support for **RAID** configurations
-- Toggled options for hardware, applications, and features, like VPNs
-- Deployment of secrets using **sops-nix**
-- Much, much more
-
 
 - I ~blew~spent the summer of 2023 moving into this configuration after waving a fond farewell to near 2 decades of running Arch Linux. This, as with life, is still WIP. I documented the process on the [Tired of IT! NixOS](https://notes.tiredofit.ca/books/linux/chapter/nixos) chapter on my website.
 
@@ -30,14 +15,6 @@ The configurations allow for a base system to be installed, with a core amount o
     - `secrets`: Secrets that are specific to the 'host_a' host
   - `...`: And so on as above with other hosts
 - `lib`: Helpers, functions, libraries and timesavers
-- `modules`: Modules that are specific to this implementation and allow for toggled configuration
-  - `application`: Applications accessible to all users of system
-  - `container`: Containers using some sort of OCI container engine
-  - `features`: Features such as virtualization, gaming, cross compilation
-  - `filesystem`: Encryption, impermanence, BTRFS options
-  - `hardware`: Bluetooth, Printing, Sound, Wireless
-  - `network`: Firewalls and VPNs
-  - `service`: Miscellanious daemons
 - `overlays`: Ammendments and updates to packages that exist in the nix ecosphere
 - `pkgs`: Custom packages, services, scripts that are specific to this installation
 - `users`: Individual User folders
@@ -81,42 +58,6 @@ nixos-install --root /mnt --flake /mnt/etc/nixos#<host>
   - Build locally and remotely update an in place system via SSH
 
 ### Configuring a system
-
-Features are toggleable via the `host` configuration options. Have a look insie the `modules/nixos` folder for options available.
-
-For example to have a base AMD system using with an integrated GPU using BTRFS as a file system that allowed SSH, Docker, and a hardware webcam it would be configured as such:
-
-```
-  host = {
-    hardware = {
-      cpu = "amd";
-      graphics = {
-        acceleration = true;
-        displayServer = "x";
-        gpu = "integrated-amd";
-      };
-      webcam.enable = true;
-    };
-    network = {
-      hostname = "samplehostname" ;
-      domainname = "tiredofit.ca" ;
-    };
-    role = server;
-  };
-```
-
-This very much relies on the `modules/roles` folder and sets defaults per role, which can be overridden in each hosts unique configuration.
-
-### Keep it up to date
-
-```
-sudo nix flake update /etc/nixos/
-sudo nixos-rebuild switch --flake /etc/nixos/#<host>
-```
-
-### Managing Secrets
-
-I document the process of getting encrypted secrets created and keeping up to date on my website. [Tired of IT! Secrets Management](https://notes.tiredofit.ca/books/linux/page/secrets-management).
 
 # License
 
