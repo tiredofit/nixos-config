@@ -68,32 +68,32 @@
       nixosConfigurations = {
         beef = lib.nixosSystem {
           modules = [ ./hosts/beef ];
-          specialArgs = { inherit inputs outputs; };
+          specialArgs = { inherit self inputs outputs; };
         };
 
         butcher = lib.nixosSystem {
           modules = [ ./hosts/butcher ];
-          specialArgs = { inherit inputs outputs; };
+          specialArgs = { inherit self inputs outputs; };
         };
 
         expedition = lib.nixosSystem {
           modules = [ ./hosts/expedition ];
-          specialArgs = { inherit inputs outputs; };
+          specialArgs = { inherit self inputs outputs; };
         };
 
         nakulaptop = lib.nixosSystem {
           modules = [ ./hosts/nakulaptop ];
-          specialArgs = { inherit inputs outputs; };
+          specialArgs = { inherit self inputs outputs; };
         };
 
         seed = lib.nixosSystem {
           modules = [ ./hosts/seed ];
-          specialArgs = { inherit inputs outputs; };
+          specialArgs = { inherit self inputs outputs; };
         };
 
         tentacle = lib.nixosSystem {
           modules = [ ./hosts/tentacle ];
-          specialArgs = { inherit inputs outputs; };
+          specialArgs = { inherit self inputs outputs; };
         };
       };
     };
