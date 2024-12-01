@@ -86,7 +86,7 @@
       hostname = "beef";
       vpn = {
         zerotier = {
-          enable = false;
+          enable = true;
           networks = [
             "/var/run/secrets/zerotier/networks"
           ];

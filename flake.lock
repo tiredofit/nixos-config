@@ -160,11 +160,11 @@
         "vscode-server": "vscode-server"
       },
       "locked": {
-        "lastModified": 1733016730,
-        "narHash": "sha256-/E6iOZaecWcyGUEcitrXzn+G7hjelXow/gFI7xGSVvU=",
+        "lastModified": 1733018365,
+        "narHash": "sha256-lQSIqBDjxlNcOXdd6ap76nnDCNam3ort6vBB8fry4dM=",
         "owner": "tiredofit",
         "repo": "nix-modules",
-        "rev": "7da191ae4ebee2ece294c35e75a4738490e26c86",
+        "rev": "df9b2ce6f240590d6f3dcf89dde6c10d84c5949b",
         "type": "github"
       },
       "original": {
