@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, ... }:
 let
   ifTheyExist = groups: builtins.filter (group: builtins.hasAttr group config.users.groups) groups;
 in
@@ -26,8 +26,6 @@ in
         "audio"
       ] ++ ifTheyExist [
         "adbusers"
-        "docker"
-        "git"
         "input"
         "lp"
         "network"
