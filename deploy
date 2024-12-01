@@ -1742,7 +1742,7 @@ EOF
                     sed -i "/nixosConfigurations = {/a\\
         ${deploy_host} = lib.nixosSystem { # ${template_role^} Added $(date +"%Y-%m-%d") \n\
           modules = [ .\/hosts\/${deploy_host} ];\n\
-          specialArgs = { inherit inputs outputs; };\n\
+          specialArgs = { inherit self inputs outputs; };\n\
         };\n" \
                     "${_dir_flake}"/flake.nix
                     silent git add "${_dir_flake}"/flake.nix
