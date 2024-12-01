@@ -84,11 +84,10 @@
 
   networking.nameservers = [ "192.168.137.1" ];
 
-
-services.resolved = {
-  enable = lib.mkForce false;
-  dnssec = "false";
-  domains = [ "~." ];
-  fallbackDns = [ "192.168.137.1" ];
-};
+  services.resolved = {
+    enable = lib.mkForce false;
+    dnssec = "false";
+    domains = [ "~." ];
+    fallbackDns = [ "192.168.137.1" ];
+  };
 }
