@@ -57,8 +57,6 @@ nixos-install --root /mnt --flake /mnt/etc/nixos#<host>
   - Remotely install a new system based on configuration via SSH
   - Build locally and remotely update an in place system via SSH
 
-### Configuring a system
-
 # License
 
 Do you what you'd like and I hope that this inspires you for your own configurations as many others have myself attribution would be appreciated.
