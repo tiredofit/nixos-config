@@ -60,9 +60,7 @@
     {
       inherit lib;
       formatter = forEachSystem (pkgs: pkgs.nixpkgs-fmt);
-      docs = forEachSystem (pkgs: pkgs.callPackage ./docs/mkDocs.nix {inherit inputs;});
 
-      #nixosModules = import ./modules;
       overlays = import ./overlays {inherit inputs;};
       packages = forEachSystem (pkgs: import ./pkgs { inherit pkgs; });
       nixosConfigurations = {
