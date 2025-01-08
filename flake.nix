@@ -84,6 +84,11 @@
           specialArgs = { inherit self inputs outputs; };
         };
 
+        nomad = lib.nixosSystem {
+          modules = [ ./hosts/nomad ];
+          specialArgs = { inherit self inputs outputs; };
+        };
+
         seed = lib.nixosSystem {
           modules = [ ./hosts/seed ];
           specialArgs = { inherit self inputs outputs; };
