@@ -3,15 +3,6 @@
 {
   boot = {
     initrd = {
-      availableKernelModules = [
-        "nvme"
-        "xhci_pci"
-        "ahci"
-        "usbhid"
-        "uas"
-        "sd_mod"
-        "rtsx_usb_sdmmc"
-      ];
       luks = {
         devices = {
           "pool0_0" = {
@@ -78,6 +69,4 @@
       options = [ "subvol=var_log" ];
     };
   };
-
-  nixpkgs.hostPlatform = "x86_64-linux";
 }
