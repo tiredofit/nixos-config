@@ -28,6 +28,12 @@
       };
     };
     hardware = {
+      backlight = {
+        keys = {
+          down = 232;
+          up = 233;
+        };
+      };
       cpu = "amd";
       gpu = "integrated-amd";
       sound = {
