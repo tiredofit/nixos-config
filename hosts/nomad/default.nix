@@ -6,7 +6,15 @@
   ];
 
   host = {
+    container = {
+      restic = {
+        enable = true;
+        logship = "false";
+        monitor = "true";
+      };
+    };
     feature = {
+
       appimage.enable = true;
       graphics = {
         enable = true;
