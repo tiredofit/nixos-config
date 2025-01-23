@@ -14,8 +14,8 @@
       };
     };
     feature = {
-
       appimage.enable = true;
+      development.crosscompilation.enable = true;
       graphics = {
         enable = true;
         backend = "wayland";
