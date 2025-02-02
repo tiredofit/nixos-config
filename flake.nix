@@ -17,7 +17,9 @@
   };
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    #nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
+    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-24.11";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     nix-modules.url = "github:tiredofit/nix-modules";
     disko = {
@@ -38,7 +40,7 @@
     vscode-server.url = "github:nix-community/nixos-vscode-server";
   };
 
-  outputs = inputs @ { self, nixpkgs, nixpkgs-unstable, ...}:
+  outputs = inputs @ { self, nixpkgs, nixpkgs-stable, nixpkgs-unstable, ...}:
     let
       inherit (self) outputs;
       lib = nixpkgs.lib;
@@ -53,6 +55,7 @@
         overlays = [
             outputs.overlays.additions
             outputs.overlays.modifications
+            outputs.overlays.stable-packages
             outputs.overlays.unstable-packages
         ];
       });
