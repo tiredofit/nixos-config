@@ -32,6 +32,7 @@
         enable = true;
         logship = "false";
         monitor = "true";
+        image.update = false;
       };
       zabbix-proxy = {
         enable = true;
