@@ -88,7 +88,7 @@
         };
 
         nomad = lib.nixosSystem {
-          modules = [ ./hosts/nomad ];
+          modules = [ ./hosts/nomad ./modules];
           specialArgs = { inherit self inputs outputs; };
         };
 
