@@ -46,6 +46,15 @@
     };
     network = {
       hostname = "nomad";
+      vpn = {
+        zerotier = {
+          enable = true;
+          networks = [
+            "/var/run/secrets/zerotier/networks"
+          ];
+          port = 9994;
+        };
+      };
     };
     role = "laptop";
     user = {
