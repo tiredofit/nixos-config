@@ -70,6 +70,7 @@
     };
     role = "server";
     service = {
+      iodine.enable = true;
       zabbix_agent = {
         enable = true;
         listenIP = "10.121.15.63";

@@ -84,6 +84,7 @@
     };
     role = "server";
     service = {
+      iodine.enable = true;
       vscode_server.enable = true;
       zabbix_agent = {
         enable = true;

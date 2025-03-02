@@ -1,3 +1,3 @@
 {
-# Visit https://github.com/tiredofit/nix-modules
+## Visit https://github.com/tiredofit/nix-modules
 }
