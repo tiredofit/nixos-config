@@ -76,11 +76,11 @@
     },
     "nix-modules": {
       "locked": {
-        "lastModified": 1740958512,
-        "narHash": "sha256-1qmDgSoqSDhdmeGAY50emPrFryPRO92yNli+V6DA6QQ=",
+        "lastModified": 1740958893,
+        "narHash": "sha256-iBtEiAbzd8+XuOAqnHm2xFyzzNkEbXxA8f+t7Q+gmy4=",
         "owner": "tiredofit",
         "repo": "nix-modules",
-        "rev": "40c7af9ac2e2536c6093790ea7fcc3303ccfd508",
+        "rev": "317be57b12ab8104508c8a9968d43343e6411b95",
         "type": "github"
       },
       "original": {
