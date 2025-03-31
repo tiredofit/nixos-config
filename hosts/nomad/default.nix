@@ -6,6 +6,9 @@
   ];
 
   host = {
+    application = {
+      openbao.enable = true;
+    };
     container = {
       restic = {
         enable = true;
@@ -57,6 +60,11 @@
       };
     };
     role = "laptop";
+    service = {
+      coredns = {
+        enable = true;
+      };
+    };
     user = {
       dave.enable = true;
       root.enable = true;
