@@ -28,6 +28,11 @@
         logship = "false";
         monitor = "true";
       };
+      traefik-internal = {
+        enable = true;
+        logship = "false";
+        monitor = "false";
+      };
       cloudflare-companion = {
         enable = true;
         logship = "true";
