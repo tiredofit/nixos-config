@@ -19,6 +19,7 @@
     settings = {
       accept-flake-config = true;
       auto-optimise-store = mkDefault true;
+      download-buffer-size = mkDefault 524288000;
       experimental-features = [ "nix-command" "flakes" ];
       log-lines = 30;
       # Free up to 10GiB whenever there is less than 5GB left.
