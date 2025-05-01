@@ -28,6 +28,9 @@
       virtualization = {
         flatpak.enable = true;
         waydroid.enable = true;
+        virtd = {
+          daemon.enable = true;
+        };
       };
     };
     filesystem = {
