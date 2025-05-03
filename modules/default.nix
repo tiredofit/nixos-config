@@ -1,3 +1,8 @@
+{lib, ...}:
+
+with lib;
 {
-## Visit https://github.com/tiredofit/nix-modules
+  imports = [
+    ./zerotier-systemd-manager.nix
+  ];
 }
