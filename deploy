@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 
-SCRIPT_VERSION=1.8.0
+SCRIPT_VERSION=1.9.0
 
 INSTALL_BUILD_LOCAL=${INSTALL_BUILD_LOCAL:-"TRUE"}
 INSTALL_DEBUG=${INSTALL_DEBUG:-"FALSE"}
 INSTALL_REBOOT=${INSTALL_REBOOT:-"FALSE"}
+NIXOSANYWHERE_VERSION=${NIXOSANYWHERE_VERSION:-""}
 LOG_LEVEL=NOTICE
 REMOTE_USER=${REMOTE_USER:-"$(whoami)"}
 SECRET_USER="$(whoami)"
@@ -517,7 +518,7 @@ Reboot remote host after install
 Set Allow more debug verbosity
 EOF
     echo -e "${coff}"
-    read -p "$(echo -e ${cdgy}\(${cwh}L${cdgy}\) Local Build: ${INSTALL_BUILD_LOCAL^}\\n\(${cwh}R${cdgy}\) Reboot after installation: ${INSTALL_REBOOT^}\\n\(${cwh}D${cdgy}\) Debug Installation: ${INSTALL_DEBUG^}\\n\\n\(${cwh}B${cdgy}\) Back to main menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_hostexecution
+    read -p "$(echo -e ${cdgy}\(${cwh}N${cdgy}\) NixOS Anywhere Version: ${NIXOSANYWHERE_VERSION}\\n\(${cwh}L${cdgy}\) Local Build: ${INSTALL_BUILD_LOCAL^}\\n\(${cwh}R${cdgy}\) Reboot after installation: ${INSTALL_REBOOT^}\\n\(${cwh}D${cdgy}\) Debug Installation: ${INSTALL_DEBUG^}\\n\\n\(${cwh}B${cdgy}\) Back to main menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_hostexecution
     case "${q_menu_hostexecution,,}" in
         "l" | "build" )
             if var_true "${INSTALL_BUILD_LOCAL}" ; then
@@ -525,6 +526,10 @@ EOF
             else
                 INSTALL_BUILD_LOCAL=TRUE
             fi
+            menu_execute_options
+        ;;
+        "n" | "nixosanywhereversion" )
+            read -e -p "$(echo -e ${clg}** ${cdgy}What version of NixOS Anywhere would you like to use?:\ ${coff})" NIXOSANYWHERE_VERSION
             menu_execute_options
         ;;
         "r" | "reboot" )
@@ -1810,9 +1815,9 @@ task_install_host() {
 
     ## TODO
     ## We use sudo here as we're generating secrets and setting them as root and when nixosanywhere rsyncs them over it can't read them..
-    ## Potential PR to the nixos project to execute a "pre-hook" bash script before the installation process actually occurs.
+    ## Potential PR to the nixos-anywhere project to execute a "pre-hook" bash script before the installation process actually occurs.
     if var_true "${INSTALL_DEBUG}" ; then set -x ; fi
-    sudo nix run github:numtide/nixos-anywhere -- \
+    sudo nix run github:nix-community/nixos-anywhere/${NIXOSANYWHERE_VERSION} -- \
                                                 --ssh-port ${SSH_PORT} ${feature_build_remote} ${feature_debug} ${feature_reboot} ${feature_ssh_key} \
                                                 ${feature_luks} --extra-files "${_dir_remote_rootfs}" \
                                                 --flake "${_dir_flake}"/#${deploy_host} \
