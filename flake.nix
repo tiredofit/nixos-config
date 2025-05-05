@@ -67,6 +67,11 @@
       overlays = import ./overlays {inherit inputs;};
       packages = forEachSystem (pkgs: import ./pkgs { inherit pkgs; });
       nixosConfigurations = {
+        entropy = lib.nixosSystem { # Server Added 2025-05-05 
+          modules = [ ./hosts/entropy ];
+          specialArgs = { inherit self inputs outputs; };
+        };
+
         beef = lib.nixosSystem {
           modules = [ ./hosts/beef ];
           specialArgs = { inherit self inputs outputs; };
