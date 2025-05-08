@@ -67,11 +67,17 @@
       coredns = {
         enable = true;
       };
+      zt-dns-companion = {
+        enable = true;
+      };
     };
     user = {
       dave.enable = true;
       root.enable = true;
     };
   };
-}
 
+  services.resolved = {
+    enable = true;
+  };
+}
