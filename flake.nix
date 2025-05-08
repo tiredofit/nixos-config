@@ -38,6 +38,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     vscode-server.url = "github:nix-community/nixos-vscode-server";
+    zt-dns-companion = {
+      url = "github:nfrastack/zt-dns-companion";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs @ { self, nixpkgs, nixpkgs-stable, nixpkgs-unstable, ...}:
@@ -64,10 +68,11 @@
       inherit lib;
       formatter = forEachSystem (pkgs: pkgs.nixpkgs-fmt);
 
-      overlays = import ./overlays {inherit inputs;};
+      overlays = import ./overlays {inherit inputs; additions = final: prev: {
+      };};
       packages = forEachSystem (pkgs: import ./pkgs { inherit pkgs; });
       nixosConfigurations = {
-        entropy = lib.nixosSystem { # Server Added 2025-05-05 
+        entropy = lib.nixosSystem { # Server Added 2025-05-05
           modules = [ ./hosts/entropy ];
           specialArgs = { inherit self inputs outputs; };
         };
@@ -106,6 +111,11 @@
           modules = [ ./hosts/tentacle ];
           specialArgs = { inherit self inputs outputs; };
         };
+      };
+
+      profiles = lib.mkOption {
+        type = with lib.types; attrsOf (attrsOf anything);
+        default = {};
       };
     };
 }
