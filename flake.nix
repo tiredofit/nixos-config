@@ -17,8 +17,6 @@
   };
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    #nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-24.11";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     nix-modules.url = "github:tiredofit/nix-modules";
@@ -26,9 +24,13 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    home-manager = {
+    home-manager-stable = {
       url = "github:nix-community/home-manager/release-24.11";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs.follows = "nixpkgs-stable";
+    };
+    home-manager-unstable = {
+      url = "github:nix-community/home-manager/master";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     impermanence = {
       url = "github:nix-community/impermanence";
@@ -52,8 +54,25 @@
         "aarch64-linux"
         "x86_64-linux"
       ];
-      forEachSystem = f: lib.genAttrs systems (sys: f pkgsFor.${sys});
-      pkgsFor = lib.genAttrs systems (system: import nixpkgs {
+
+      # Create package sets for each system
+      forAllSystems = f: lib.genAttrs systems (system: f system);
+
+      # Create a stable/unstable overlay
+      nixpkgsSelection = { stable, unstable }: final: prev: {
+        stable = import stable {
+          inherit (prev) system;
+          config = prev.config;
+          overlays = [];
+        };
+        unstable = import unstable {
+          inherit (prev) system;
+          config = prev.config;
+          overlays = [];
+        };
+      };
+
+      pkgsFor = forAllSystems (system: import nixpkgs {
         inherit system;
         config.allowUnfree = true;
         overlays = [
@@ -63,6 +82,8 @@
             outputs.overlays.unstable-packages
         ];
       });
+
+      forEachSystem = f: lib.genAttrs systems (sys: f pkgsFor.${sys});
     in
     {
       inherit lib;
@@ -71,45 +92,106 @@
       overlays = import ./overlays {inherit inputs; additions = final: prev: {
       };};
       packages = forEachSystem (pkgs: import ./pkgs { inherit pkgs; });
+
+      # Function to create a NixOS system configuration with selectable nixpkgs branch
+      mkSystem = { hostPath, packages ? "stable", system ? "x86_64-linux", extraModules ? [] }:
+        let
+          # Directly select the appropriate nixpkgs input
+          selectedNixpkgs = if packages == "stable"
+                            then nixpkgs-stable
+                            else nixpkgs-unstable;
+
+          # Select the matching home-manager version
+          selectedHomeManager = if packages == "stable"
+                               then inputs.home-manager-stable
+                               else inputs.home-manager-unstable;
+
+          # Pre-configure the nixpkgs for our system
+          systemPkgs = import selectedNixpkgs {
+            inherit system;
+            config = {
+              allowUnfree = true;
+              allowBroken = false;
+              allowUnsupportedSystem = true;
+            };
+            overlays = builtins.attrValues outputs.overlays ++ [
+              # Add stable/unstable overlay
+              (final: prev: {
+                stable = import nixpkgs-stable {
+                  inherit system;
+                  config.allowUnfree = true;
+                  overlays = [];
+                };
+                unstable = import nixpkgs-unstable {
+                  inherit system;
+                  config.allowUnfree = true;
+                  overlays = [];
+                };
+              })
+            ];
+          };
+        in
+        lib.nixosSystem {
+          modules = [
+            # Include the selected home-manager directly to avoid circular dependencies
+            selectedHomeManager.nixosModules.home-manager
+            hostPath
+            # Add documentation about package selection
+            {
+              # Store package branch selection info in a safe location
+              _module.args.nixpkgsBranch = packages;
+            }
+          ] ++ extraModules;
+          specialArgs = {
+            inherit self inputs outputs;
+            # Pass the selected home-manager as a special arg for convenience
+            home-manager = selectedHomeManager;
+          };
+          inherit (systemPkgs) system;
+          pkgs = systemPkgs;
+        };
+
       nixosConfigurations = {
-        entropy = lib.nixosSystem { # Server Added 2025-05-05
-          modules = [ ./hosts/entropy ];
-          specialArgs = { inherit self inputs outputs; };
+        beef = self.mkSystem {
+          hostPath = ./hosts/beef;
+          packages = "unstable";
         };
 
-        beef = lib.nixosSystem {
-          modules = [ ./hosts/beef ];
-          specialArgs = { inherit self inputs outputs; };
+        butcher = self.mkSystem {
+          hostPath = ./hosts/butcher;
+          packages = "stable";
         };
 
-        butcher = lib.nixosSystem {
-          modules = [ ./hosts/butcher ];
-          specialArgs = { inherit self inputs outputs; };
+        entropy = self.mkSystem {
+          hostPath = ./hosts/entropy;
+          packages = "stable";
         };
 
-        expedition = lib.nixosSystem {
-          modules = [ ./hosts/expedition ];
-          specialArgs = { inherit self inputs outputs; };
+        expedition = self.mkSystem {
+          hostPath = ./hosts/expedition;
+          packages = "unstable";
         };
 
-        nakulaptop = lib.nixosSystem {
-          modules = [ ./hosts/nakulaptop ];
-          specialArgs = { inherit self inputs outputs; };
+        nakulaptop = self.mkSystem {
+          hostPath = ./hosts/nakulaptop;
+          packages = "stable";
         };
 
-        nomad = lib.nixosSystem {
-          modules = [ ./hosts/nomad ./modules];
-          specialArgs = { inherit self inputs outputs; };
+        nomad = self.mkSystem {
+          hostPath = ./hosts/nomad;
+          packages = "unstable";
+          extraModules = [ ./modules ];
         };
 
-        seed = lib.nixosSystem {
-          modules = [ ./hosts/seed ];
-          specialArgs = { inherit self inputs outputs; };
+        seed = self.mkSystem {
+          hostPath = ./hosts/seed;
+          packages = "stable";
         };
 
-        tentacle = lib.nixosSystem {
-          modules = [ ./hosts/tentacle ];
-          specialArgs = { inherit self inputs outputs; };
+        tentacle = self.mkSystem {
+          hostPath = ./hosts/tentacle;
+          packages = "unstable";
+          system = "aarch64-linux";
         };
       };
 

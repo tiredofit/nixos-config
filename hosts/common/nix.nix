@@ -36,17 +36,6 @@
     nixPath = [ "nixpkgs=${inputs.nixpkgs.outPath}" ];
   };
 
-  nixpkgs = {
-    overlays = builtins.attrValues outputs.overlays;
-    config = {
-      allowBroken = mkDefault false;
-      allowUnfree = mkDefault true;
-      allowUnsupportedSystem = mkDefault true;
-      permittedInsecurePackages = [
-      ];
-    };
-  };
-
   programs = {
     bash = {
       shellInit = ''
