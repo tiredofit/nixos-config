@@ -2,7 +2,6 @@ keys:
   - &host_beef age1wq5xj5mwv9xk4tp26cxc4xqjq9xd9hwqv0zeemawl2cc8sarmqesw366dh
   - &host_butcher age1nleq0q2kzh2zn4pyr0dcy0zjnsr6sx8c5ttjahhfttkltsr2s3ksahhpkx
   - &host_entropy age10r9fcpj4z6nc9p5n3e6eqdy9kkmvp0kafpj02qwyvwnhs3ev2pts8qawyt
-  - &host_expedition age13uqlmzsyxdxxxkvsql7utjeqyt969jdjl6nh6d0gdqdvz6re05fq6t8xge
   - &host_nakulaptop age1m6gzjlvx5paan69evccl6kywj0ghdk46prumx4jn4hxcrxd4re6qckdl9w
   - &host_nomad age1y2f4jzfqjscgvwe3w3q8jmadtvxlsudk3c49lhqtdvatu7fwtdusez9fm9
   - &host_seed age16wsn8f4wrk4f8ssk76h8hd57e4mquychcju0ny5qhvkzvq0teplqrct0yd
@@ -15,7 +14,6 @@ creation_rules:
       - age:
           - *host_beef
           - *host_butcher
-          - *host_expedition
           - *host_entropy
           - *host_nakulaptop
           - *host_nomad
@@ -29,7 +27,6 @@ creation_rules:
           - *host_beef
           - *host_butcher
           - *host_entropy
-          - *host_expedition
           - *host_nakulaptop
           - *host_tentacle
           - *host_seed
@@ -44,12 +41,6 @@ creation_rules:
     key_groups:
       - age:
           - *host_butcher
-          - *user_dave
-  - path_regex: hosts/expedition/secrets/.*
-    key_groups:
-      - age:
-          - *host_expedition
-          - *host_beef
           - *user_dave
   - path_regex: hosts/entropy/secrets/.*
     key_groups:

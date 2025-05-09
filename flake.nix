@@ -167,11 +167,6 @@
           packages = "unstable";
         };
 
-        expedition = self.mkSystem {
-          hostPath = ./hosts/expedition;
-          packages = "unstable";
-        };
-
         nakulaptop = self.mkSystem {
           hostPath = ./hosts/nakulaptop;
           packages = "unstable";
