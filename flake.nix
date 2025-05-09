@@ -159,12 +159,12 @@
 
         butcher = self.mkSystem {
           hostPath = ./hosts/butcher;
-          packages = "stable";
+          packages = "unstable";
         };
 
         entropy = self.mkSystem {
           hostPath = ./hosts/entropy;
-          packages = "stable";
+          packages = "unstable";
         };
 
         expedition = self.mkSystem {
@@ -174,7 +174,7 @@
 
         nakulaptop = self.mkSystem {
           hostPath = ./hosts/nakulaptop;
-          packages = "stable";
+          packages = "unstable";
         };
 
         nomad = self.mkSystem {
@@ -185,7 +185,7 @@
 
         seed = self.mkSystem {
           hostPath = ./hosts/seed;
-          packages = "stable";
+          packages = "unstable";
         };
 
         tentacle = self.mkSystem {
