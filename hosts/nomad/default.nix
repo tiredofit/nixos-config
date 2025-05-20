@@ -49,6 +49,7 @@
       sound = {
         server = "pipewire";
       };
+      firmware.enable = true;
     };
     network = {
       hostname = "nomad";
@@ -64,6 +65,17 @@
     };
     role = "laptop";
     service = {
+      container-dns-companion = {
+        enable = true;
+        general = {
+          log_level = "debug";
+        };
+        polls = {
+          docker = {
+            type = "docker";
+          };
+        };
+      };
       coredns = {
         enable = true;
       };
@@ -75,9 +87,5 @@
       dave.enable = true;
       root.enable = true;
     };
-  };
-
-  services.resolved = {
-    enable = true;
   };
 }

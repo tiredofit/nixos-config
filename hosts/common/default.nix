@@ -12,7 +12,7 @@
   boot = {
     initrd = {
       systemd = {
-        strip = mkDefault true;                         # Saves considerable space in initrd
+        #strip = mkDefault true;                         # Saves considerable space in initrd
       };
     };
     kernel.sysctl = {
