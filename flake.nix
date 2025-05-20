@@ -44,6 +44,10 @@
       url = "github:nfrastack/zt-dns-companion";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    container-dns-companion = {
+      url = "path:/home/dave/src/gh/container-dns-companion";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs @ { self, nixpkgs, nixpkgs-stable, nixpkgs-unstable, ...}:
@@ -93,20 +97,16 @@
       };};
       packages = forEachSystem (pkgs: import ./pkgs { inherit pkgs; });
 
-      # Function to create a NixOS system configuration with selectable nixpkgs branch
       mkSystem = { hostPath, packages ? "stable", system ? "x86_64-linux", extraModules ? [] }:
         let
-          # Directly select the appropriate nixpkgs input
           selectedNixpkgs = if packages == "stable"
                             then nixpkgs-stable
                             else nixpkgs-unstable;
 
-          # Select the matching home-manager version
           selectedHomeManager = if packages == "stable"
                                then inputs.home-manager-stable
                                else inputs.home-manager-unstable;
 
-          # Pre-configure the nixpkgs for our system
           systemPkgs = import selectedNixpkgs {
             inherit system;
             config = {
@@ -115,7 +115,6 @@
               allowUnsupportedSystem = true;
             };
             overlays = builtins.attrValues outputs.overlays ++ [
-              # Add stable/unstable overlay
               (final: prev: {
                 stable = import nixpkgs-stable {
                   inherit system;
@@ -133,18 +132,14 @@
         in
         lib.nixosSystem {
           modules = [
-            # Include the selected home-manager directly to avoid circular dependencies
             selectedHomeManager.nixosModules.home-manager
             hostPath
-            # Add documentation about package selection
             {
-              # Store package branch selection info in a safe location
               _module.args.nixpkgsBranch = packages;
             }
           ] ++ extraModules;
           specialArgs = {
             inherit self inputs outputs;
-            # Pass the selected home-manager as a special arg for convenience
             home-manager = selectedHomeManager;
           };
           inherit (systemPkgs) system;
