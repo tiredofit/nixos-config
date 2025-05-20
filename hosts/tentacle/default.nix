@@ -70,12 +70,24 @@
     };
     role = "server";
     service = {
-      iodine.enable = true;
+      container-dns-companion = {
+        enable = true;
+        general = {
+          log_level = "debug";
+        };
+        polls = {
+          docker = {
+            type = "docker";
+          };
+        };
+      };
+      iodine.enable = false;
       zabbix_agent = {
         enable = true;
         listenIP = "10.121.15.63";
         serverActive = "10.121.15.63:10051";
       };
+
     };
     user = {
       root.enable = true;

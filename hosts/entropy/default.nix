@@ -89,6 +89,17 @@
     };
     role = "server";
     service = {
+      container-dns-companion = {
+        enable = true;
+        general = {
+          log_level = "debug";
+        };
+        polls = {
+          docker = {
+            type = "docker";
+          };
+        };
+      };
       vscode_server.enable = true;
       #zabbix_agent = {
       #  enable = true;
