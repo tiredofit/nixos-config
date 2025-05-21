@@ -59,7 +59,18 @@
     };
     role = "server";
     service = {
-      iodine.enable = true;
+      container-dns-companion = {
+        enable = true;
+        general = {
+          log_level = "debug";
+        };
+        polls = {
+          docker = {
+            type = "docker";
+          };
+        };
+      };
+      iodine.enable = false;
       vscode_server.enable = true;
     };
     user = {
