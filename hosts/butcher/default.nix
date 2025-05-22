@@ -27,7 +27,7 @@
         monitor = "true";
       };
       cloudflare-companion = {
-        enable = true;
+        enable = false;
         logship = "false";
         monitor = "true";
       };

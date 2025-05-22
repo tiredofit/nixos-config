@@ -67,6 +67,7 @@
         polls = {
           docker = {
             type = "docker";
+            expose_containers = true;
           };
         };
       };

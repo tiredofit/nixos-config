@@ -34,7 +34,7 @@
         monitor = "false";
       };
       cloudflare-companion = {
-        enable = true;
+        enable = false;
         logship = "false";
         monitor = "false";
       };
@@ -92,11 +92,12 @@
       container-dns-companion = {
         enable = true;
         general = {
-          log_level = "debug";
+          log_level = "trace";
         };
         polls = {
           docker = {
             type = "docker";
+            expose_containers = true;
           };
         };
       };

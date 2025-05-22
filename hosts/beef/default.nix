@@ -31,7 +31,7 @@
         monitor = "false";
       };
       cloudflare-companion = {
-        enable = true;
+        enable = false;
         logship = "false";
         monitor = "false";
       };
