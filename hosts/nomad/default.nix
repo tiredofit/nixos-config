@@ -65,7 +65,7 @@
     };
     role = "laptop";
     service = {
-      container-dns-companion = {
+      dns-companion = {
         enable = true;
         general = {
           log_level = "debug";

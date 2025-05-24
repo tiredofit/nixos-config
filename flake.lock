@@ -1,22 +1,5 @@
 {
   "nodes": {
-    "container-dns-companion": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 0,
-        "narHash": "sha256-b/vT24TZyi+d3xz04zy9mcU8nsnSqx0jl+Y3mahnOD8=",
-        "path": "/home/dave/src/gh/container-dns-companion",
-        "type": "path"
-      },
-      "original": {
-        "path": "/home/dave/src/gh/container-dns-companion",
-        "type": "path"
-      }
-    },
     "disko": {
       "inputs": {
         "nixpkgs": [
@@ -35,6 +18,23 @@
         "owner": "nix-community",
         "repo": "disko",
         "type": "github"
+      }
+    },
+    "dns-companion": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 0,
+        "narHash": "sha256-Hnnd3D9f00ppLFrO8tdV23KLKFM5XC7ihnfHbwRS3zE=",
+        "path": "/home/dave/src/gh/dns-companion",
+        "type": "path"
+      },
+      "original": {
+        "path": "/home/dave/src/gh/dns-companion",
+        "type": "path"
       }
     },
     "flake-utils": {
@@ -114,11 +114,11 @@
     },
     "nix-modules": {
       "locked": {
-        "lastModified": 1748019906,
-        "narHash": "sha256-iTrPX+cABtk4G9O6DOfGEdQeA6/5XBfesKLlPHICFLA=",
+        "lastModified": 1748055780,
+        "narHash": "sha256-vKXjqIL8tG7ovJ1hWFbvYky1DXY3Y+jhR/OWiVseOuM=",
         "owner": "tiredofit",
         "repo": "nix-modules",
-        "rev": "4c3b73deefe787242547d643227364e1dd289179",
+        "rev": "d7d8de31d3586c43f294e7a329a440a8b5b7f6e8",
         "type": "github"
       },
       "original": {
@@ -143,11 +143,11 @@
     },
     "nixpkgs-stable": {
       "locked": {
-        "lastModified": 1747825515,
-        "narHash": "sha256-BWpMQymVI73QoKZdcVCxUCCK3GNvr/xa2Dc4DM1o2BE=",
+        "lastModified": 1747953325,
+        "narHash": "sha256-y2ZtlIlNTuVJUZCqzZAhIw5rrKP4DOSklev6c8PyCkQ=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "cd2812de55cf87df88a9e09bf3be1ce63d50c1a6",
+        "rev": "55d1f923c480dadce40f5231feb472e81b0bab48",
         "type": "github"
       },
       "original": {
@@ -189,8 +189,8 @@
     },
     "root": {
       "inputs": {
-        "container-dns-companion": "container-dns-companion",
         "disko": "disko",
+        "dns-companion": "dns-companion",
         "home-manager-stable": "home-manager-stable",
         "home-manager-unstable": "home-manager-unstable",
         "impermanence": "impermanence",

@@ -44,8 +44,9 @@
       url = "github:nfrastack/zt-dns-companion";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    container-dns-companion = {
-      url = "path:/home/dave/src/gh/container-dns-companion";
+    dns-companion = {
+      #url = "github:nfrastack/dns-companion";
+      url = "path:/home/dave/src/gh/dns-companion";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
