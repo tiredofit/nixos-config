@@ -28,7 +28,7 @@
       },
       "locked": {
         "lastModified": 0,
-        "narHash": "sha256-cZPI+HZaZaAWwbJ0dg+WSwxXBO21vPVWg0Laebc74lQ=",
+        "narHash": "sha256-ngeOPZcU2vufeZLwU9v9ffCdVeFvfVJFPVucAKmQzJE=",
         "path": "/home/dave/src/gh/dns-companion",
         "type": "path"
       },
@@ -114,11 +114,11 @@
     },
     "nix-modules": {
       "locked": {
-        "lastModified": 1748619244,
-        "narHash": "sha256-hSR8VFfaalZCJQqc1qa+ohOZsUmSXvS9jGo/QLWj2Fw=",
+        "lastModified": 1748619838,
+        "narHash": "sha256-VLC9SBaZg/PH/o8fjVvs9snn3mqR9WAyL1c0zMepgXw=",
         "owner": "tiredofit",
         "repo": "nix-modules",
-        "rev": "d12f808c96cde2fb545484da2faeced72efd1803",
+        "rev": "e60c44754c88c23e1edbcd8372d39aeeebc1e559",
         "type": "github"
       },
       "original": {
