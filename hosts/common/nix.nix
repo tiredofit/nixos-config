@@ -2,12 +2,20 @@
   with lib;
 {
   environment = {
+    etc."installed-packages".text =
+    let
+      packages = builtins.map (p: "${p.name}") config.environment.systemPackages;
+      sortedUnique = builtins.sort builtins.lessThan (lib.unique packages);
+      formatted = builtins.concatStringsSep "\n" sortedUnique;
+    in
+    formatted;
     systemPackages = with pkgs; [
       git
       nvd
     ];
   };
 
+  environment.
   nix = {
     gc = {
       automatic = mkDefault true;
@@ -55,6 +63,7 @@
         rm -rf "/var/log/activations/$_nvddate-$(ls -dv /nix/var/nix/profiles/system-*-link | tail -1 | cut -d '-' -f 2)-$(readlink $(ls -dv /nix/var/nix/profiles/system-*-link | tail -1) | cut -d - -f 4-).log"
       fi
     '';
+
     autoUpgrade.enable = mkDefault false;
     stateVersion = mkDefault "23.11";
   };
