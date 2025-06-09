@@ -45,8 +45,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     dns-companion = {
-      #url = "github:nfrastack/dns-companion";
-      url = "path:/home/dave/src/gh/dns-companion";
+      url = "github:nfrastack/dns-companion";
+      #url = "path:/home/dave/src/gh/dns-companion";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -150,17 +150,17 @@
       nixosConfigurations = {
         beef = self.mkSystem {
           hostPath = ./hosts/beef;
-          packages = "unstable";
+          packages = "stable";
         };
 
         butcher = self.mkSystem {
           hostPath = ./hosts/butcher;
-          packages = "unstable";
+          packages = "stable";
         };
 
         entropy = self.mkSystem {
           hostPath = ./hosts/entropy;
-          packages = "unstable";
+          packages = "stable";
         };
 
         nakulaptop = self.mkSystem {
@@ -176,12 +176,12 @@
 
         seed = self.mkSystem {
           hostPath = ./hosts/seed;
-          packages = "unstable";
+          packages = "stable";
         };
 
         tentacle = self.mkSystem {
           hostPath = ./hosts/tentacle;
-          packages = "unstable";
+          packages = "stable";
           system = "aarch64-linux";
         };
       };
