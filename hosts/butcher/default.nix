@@ -49,7 +49,7 @@
     role = "server";
     service = {
       syncthing.enable = true;
-      vscode_server.enable = true;
+      vscode_server.enable = false;
     };
     network = {
       hostname = "butcher";
@@ -70,6 +70,20 @@
       };
     };
     service = {
+      dns-companion = {
+        enable = false;
+        general = {
+          log_level = "debug";
+        };
+        polls = {
+          docker = {
+            type = "docker";
+          };
+        };
+      };
+      zt-dns-companion = {
+        enable = false;
+      };
       zabbix_agent = {
         enable = false;
         listenIP = "192.168.137.5";
