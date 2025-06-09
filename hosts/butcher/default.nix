@@ -14,27 +14,27 @@
       restic = {
         enable = true;
         logship = "false";
-        monitor = "true";
+        monitor = "false";
       };
       socket-proxy = {
         enable = true;
         logship = "false";
-        monitor = "true";
+        monitor = "false";
       };
       traefik = {
         enable = true;
         logship = "false";
-        monitor = "true";
+        monitor = "false";
       };
       cloudflare-companion = {
         enable = false;
         logship = "false";
-        monitor = "true";
+        monitor = "false";
       };
       zabbix-proxy = {
-        enable = true;
+        enable = false;
         logship = "false";
-        monitor = "true";
+        monitor = "false";
       };
     };
     filesystem = {
@@ -65,13 +65,13 @@
           networks = [
             "/var/run/secrets/zerotier/networks"
           ];
-          port = 9994;
+          port = 9993;
         };
       };
     };
     service = {
       zabbix_agent = {
-        enable = true;
+        enable = false;
         listenIP = "192.168.137.5";
         serverActive = "10.121.15.109:10051";
       };
