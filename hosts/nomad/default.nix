@@ -6,16 +6,36 @@
   ];
 
   host = {
-    application = {
-      openbao.enable = true;
-    };
     container = {
       restic = {
         enable = true;
         logship = "false";
-        monitor = "true";
+        monitor = "false";
       };
+      #traefik = {
+      #  enable = true;
+      #  logship = "false";
+      #  monitor = "false";
+      #};
+      #traefik-internal = {
+      #  enable = true;
+      #  logship = "false";
+      #  monitor = "false";
+      #  networkBinding = {
+      #    enable = true;
+      #    method = "zerotier";
+      #    zerotierNetwork = "d06d0877e069285c";  # or "tiredofit"
+      #    ports = [ "80:80" "443:443" ];
+      #    beforeServices = [
+      #      "docker-traefik.service"           # Start before the regular traefik
+      #      #"docker-nginx.service"             # Start before nginx if you have it
+      #      #"docker-caddy.service"             # Start before caddy if you have it
+      #      # Add any other containers that use the same ports
+      #    ];
+      #  };
+      #};
     };
+
     feature = {
       appimage.enable = true;
       development.crosscompilation.enable = true;
@@ -52,6 +72,9 @@
       firmware.enable = true;
     };
     network = {
+      firewall = {
+        opensnitch.enable = true;
+      };
       hostname = "nomad";
       vpn = {
         zerotier = {
@@ -59,7 +82,7 @@
           networks = [
             "/var/run/secrets/zerotier/networks"
           ];
-          port = 9994;
+          port = 9993;
         };
       };
     };
