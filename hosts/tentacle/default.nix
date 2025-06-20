@@ -153,7 +153,7 @@
       herald = {
         enable = true;
         general = {
-          log_level = "debug";
+          log_level = "verbose";
         };
         api = {
           enabled = true;
@@ -243,9 +243,11 @@
     };
   };
 
+  networking.firewall.allowedTCPPorts = [ 8080 ];
+
   services = {
     qemuGuest.enable = true;
   };
 
-  networking.firewall.allowedTCPPorts = [ 8080 ];
+
 }
