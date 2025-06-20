@@ -5,37 +5,80 @@
     ../common
   ];
 
+  host.feature.virtualization.docker.containers.restic.resources.memory.max = "3G";
   host = {
     container = {
       restic = {
         enable = true;
-        logship = "false";
-        monitor = "false";
+        logship = false;
+        monitor = false;
       };
-      #traefik = {
-      #  enable = true;
-      #  logship = "false";
-      #  monitor = "false";
-      #};
-      #traefik-internal = {
-      #  enable = true;
-      #  logship = "false";
-      #  monitor = "false";
-      #  networkBinding = {
-      #    enable = true;
-      #    method = "zerotier";
-      #    zerotierNetwork = "d06d0877e069285c";  # or "tiredofit"
-      #    ports = [ "80:80" "443:443" ];
-      #    beforeServices = [
-      #      "docker-traefik.service"           # Start before the regular traefik
-      #      #"docker-nginx.service"             # Start before nginx if you have it
-      #      #"docker-caddy.service"             # Start before caddy if you have it
-      #      # Add any other containers that use the same ports
-      #    ];
-      #  };
-      #};
-    };
+      socket-proxy = {
+        enable = true;
+        logship = false;
+        monitor = false;
+      };
+      traefik = {
+        enable = true;
+        logship = false;
+        monitor = false;
+        ports = {
+          http = {
+            enable = true;
+            method = "interface";
+            excludeInterfaces = [ "lo" ];
+            excludeInterfacePattern = "docker|veth|br-";
+          };
+          https = {
+            enable = true;
+            method = "interface";
+            excludeInterfaces = [ "lo" ];
+            excludeInterfacePattern = "docker|veth|br-";
+          };
+          http3 = {
+            enable = true;
+            method = "interface";
+            excludeInterfaces = [ "lo" ];
+            excludeInterfacePattern = "docker|veth|br-";
+          };
+        };
+      };
+      traefik-internal = {
+        enable = true;
+        logship = false;
+        monitor = false;
+        ports = {
+          http = {
+            enable = true;
+            method = "zerotier";
+            zerotierNetwork = "file:///var/run/secrets/zerotier/networks";
+          };
+          https = {
+            enable = true;
+            method = "zerotier";
+            zerotierNetwork = "file:///var/run/secrets/zerotier/networks";
+          };
+          http3 = {
+            enable = true;
+            method = "zerotier";
+            zerotierNetwork = "file:///var/run/secrets/zerotier/networks";
+          };
+        };
+      };
+      zabbix-proxy = {
+        enable = false;
+        logship = false;
+        monitor = false;
+        ports = {
+          proxy = {
+            enable = true;
+            method = "zerotier";
+            zerotierNetwork = "file:///var/run/secrets/zerotier/networks";
+          };
+        };
+      };
 
+    };
     feature = {
       appimage.enable = true;
       development.crosscompilation.enable = true;
@@ -50,6 +93,9 @@
         waydroid.enable = true;
         virtd = {
           daemon.enable = true;
+        };
+        docker = {
+          enable = true;
         };
       };
     };
@@ -88,14 +134,62 @@
     };
     role = "laptop";
     service = {
-      dns-companion = {
+      herald = {
         enable = true;
         general = {
-          log_level = "debug";
+          log_level = "verbose";
+          skip_domain_validation = true;
         };
-        polls = {
-          docker = {
+        inputs = {
+          docker_pub = {
             type = "docker";
+            api_url = "unix:///var/run/docker.sock";
+            expose_containers = false;
+            process_existing = true;
+            record_remove_on_stop = true;
+            filter = [
+              {
+                type = "label";
+                conditions = [
+                  {
+                    key = "traefik.proxy.visibility";
+                    value = "public";
+                  }
+                ];
+              }
+            ];
+          };
+          docker_int = {
+            type = "docker";
+            api_url = "unix:///var/run/docker.sock";
+            expose_containers = false;
+            process_existing = true;
+            record_remove_on_stop = true;
+            filter = [
+              {
+                type = "label";
+                conditions = [
+                  {
+                    key = "traefik.proxy.visibility";
+                    value = "internal";
+                  }
+                ];
+              }
+            ];
+          };
+        };
+        domains = {
+          domain01 = {
+            profiles = {
+              inputs = [ "docker_pub" ];
+              outputs = [ "output01" ];
+            };
+          };
+          domain02 = {
+            profiles = {
+              inputs = [ "docker_int" ];
+              outputs = [ "output02"];
+            };
           };
         };
       };
