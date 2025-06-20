@@ -12,28 +12,28 @@
     container = {
       restic = {
         enable = true;
-        logship = "false";
+        logship = false;
         monitor = "true";
       };
       socket-proxy = {
         enable = true;
-        logship = "false";
-        monitor = "false";
+        logship = false;
+        monitor = false;
       };
       tinc = {
         enable = true;
-        logship = "false";
-        monitor = "false";
+        logship = false;
+        monitor = false;
       };
       traefik = {
         enable = true;
-        logship = "false";
-        monitor = "false";
+        logship = false;
+        monitor = false;
       };
       cloudflare-companion = {
         enable = false;
-        logship = "false";
-        monitor = "false";
+        logship = false;
+        monitor = false;
       };
     };
     feature = {
