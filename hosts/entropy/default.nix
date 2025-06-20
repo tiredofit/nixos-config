@@ -4,7 +4,6 @@
     inputs.disko.nixosModules.disko
     ./disks.nix
     ../common
-    ../../modules/default.nix
   ];
 
   host = {
