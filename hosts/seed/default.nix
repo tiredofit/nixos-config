@@ -7,33 +7,102 @@
   ];
 
   host = {
-    feature = {
-    };
     container = {
       clamav = {
         enable = true;
-        logship = "false";
-        monitor = "false";
+        logship = false;
+        monitor = false;
+      };
+      openldap = {
+        enable = false;
+        logship = false;
+        monitor = false;
+        ports = {
+          ldap = {
+            enable = false;
+            method = "zerotier";
+            zerotierNetwork = "file:///var/run/secrets/zerotier/networks";
+          };
+          ldaps = {
+            enable = true;
+            method = "zerotier";
+            zerotierNetwork = "file:///var/run/secrets/zerotier/networks";
+          };
+        };
       };
       restic = {
         enable = true;
-        logship = "false";
-        monitor = "false";
+        logship = false;
+        monitor = false;
       };
       socket-proxy = {
         enable = true;
-        logship = "false";
-        monitor = "false";
+        logship = false;
+        monitor = false;
       };
       traefik = {
         enable = true;
-        logship = "false";
-        monitor = "false";
+        logship = false;
+        monitor = false;
+        ports = {
+          http = {
+            enable = true;
+            method = "interface";
+            excludeInterfaces = [ "lo" ];
+            excludeInterfacePattern = "docker|veth|br-";
+          };
+          https = {
+            enable = true;
+            method = "interface";
+            excludeInterfaces = [ "lo" ];
+            excludeInterfacePattern = "docker|veth|br-";
+          };
+          http3 = {
+            enable = true;
+            method = "interface";
+            excludeInterfaces = [ "lo" ];
+            excludeInterfacePattern = "docker|veth|br-";
+          };
+        };
+      };
+      traefik-internal = {
+        enable = true;
+        logship = false;
+        monitor = false;
+        ports = {
+          http = {
+            enable = true;
+            method = "zerotier";
+            zerotierNetwork = "file:///var/run/secrets/zerotier/networks";
+          };
+          https = {
+            enable = true;
+            method = "zerotier";
+            zerotierNetwork = "file:///var/run/secrets/zerotier/networks";
+          };
+          http3 = {
+            enable = true;
+            method = "zerotier";
+            zerotierNetwork = "file:///var/run/secrets/zerotier/networks";
+          };
+        };
       };
       unbound = {
         enable = true;
-        logship = "false";
-        monitor = "false";
+        monitor = false;
+        logship = false;
+      };
+      zabbix-proxy = {
+        enable = false;
+        logship = false;
+        monitor = false;
+        ports = {
+          proxy = {
+            enable = true;
+            method = "zerotier";
+            zerotierNetwork = "file:///var/run/secrets/zerotier/networks";
+          };
+        };
       };
     };
     filesystem = {
@@ -59,15 +128,61 @@
     };
     role = "server";
     service = {
-      dns-companion = {
+      herald = {
         enable = true;
         general = {
-          log_level = "debug";
+          log_level = "verbose";
         };
-        polls = {
-          docker = {
+        inputs = {
+          docker_pub = {
             type = "docker";
-            expose_containers = true;
+            api_url = "unix:///var/run/docker.sock";
+            expose_containers = false;
+            process_existing = true;
+            record_remove_on_stop = true;
+            filter = [
+              {
+                type = "label";
+                conditions = [
+                  {
+                    key = "traefik.proxy.visibility";
+                    value = "public";
+                  }
+                ];
+              }
+            ];
+          };
+          docker_int = {
+            type = "docker";
+            api_url = "unix:///var/run/docker.sock";
+            expose_containers = false;
+            process_existing = true;
+            record_remove_on_stop = true;
+            filter = [
+              {
+                type = "label";
+                conditions = [
+                  {
+                    key = "traefik.proxy.visibility";
+                    value = "internal";
+                  }
+                ];
+              }
+            ];
+          };
+        };
+        domains = {
+          domain01 = {
+            profiles = {
+              inputs = [ "docker_pub" ];
+              outputs = [ "output01" ];
+            };
+          };
+          domain02 = {
+            profiles = {
+              inputs = [ "docker_int" ];
+              outputs = [ "output02"];
+            };
           };
         };
       };
