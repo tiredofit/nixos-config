@@ -24,6 +24,11 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    herald = {
+      url = "github:nfrastack/herald";
+      #url = "path:/home/dave/src/gh/herald";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     home-manager-stable = {
       url = "github:nix-community/home-manager/release-25.05";
       inputs.nixpkgs.follows = "nixpkgs-stable";
@@ -42,11 +47,6 @@
     vscode-server.url = "github:nix-community/nixos-vscode-server";
     zt-dns-companion = {
       url = "github:nfrastack/zt-dns-companion";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    dns-companion = {
-      url = "github:nfrastack/dns-companion";
-      #url = "path:/home/dave/src/gh/dns-companion";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
