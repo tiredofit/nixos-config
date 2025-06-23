@@ -45,8 +45,9 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     vscode-server.url = "github:nix-community/nixos-vscode-server";
-    zt-dns-companion = {
-      url = "github:nfrastack/zt-dns-companion";
+    zeroplex = {
+      url = "github:nfrastack/zeroplex";
+      #url = "path:/home/dave/src/gh/zeroplex";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };

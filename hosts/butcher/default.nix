@@ -207,7 +207,7 @@
           };
         };
       };
-      zt-dns-companion = {
+      zeroplex = {
         enable = false;
       };
       zabbix_agent = {

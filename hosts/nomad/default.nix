@@ -196,7 +196,7 @@
       coredns = {
         enable = true;
       };
-      zt-dns-companion = {
+      zeroplex = {
         enable = true;
       };
     };
