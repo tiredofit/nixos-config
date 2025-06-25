@@ -8,6 +8,23 @@
   host.feature.virtualization.docker.containers.restic.resources.memory.max = "3G";
   host = {
     container = {
+      coredns = {
+        enable = true;
+        logship = false;
+        monitor = false;
+        ports = {
+          tcp = {
+            enable = true;
+            method = "zerotier";
+            zerotierNetwork = "file:///var/run/secrets/zerotier/networks";
+          };
+          udp = {
+            enable = true;
+            method = "zerotier";
+            zerotierNetwork = "file:///var/run/secrets/zerotier/networks";
+          };
+        };
+      };
       restic = {
         enable = true;
         logship = false;
@@ -193,9 +210,6 @@
           };
         };
       };
-      coredns = {
-        enable = true;
-      };
       zeroplex = {
         enable = true;
       };
@@ -205,4 +219,6 @@
       root.enable = true;
     };
   };
+
+    networking.firewall.allowedTCPPorts = [ 8080 1053 ];
 }
