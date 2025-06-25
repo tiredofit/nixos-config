@@ -12,7 +12,6 @@
         enable = true;
         logship = false;
         monitor = false;
-        # See host.feature.virtualization.docker.containers.coredns below for volumees
         ports = {
           tcp = {
             enable = true;
@@ -135,16 +134,7 @@
         };
       };
     };
-    feature.virtualization.docker.containers.coredns = {
-      volumes = [
-        {
-          source = "/var/local/data/_system/zonefiles";
-          target = "/data";
-          createIfMissing = true;
-          removeCOW = true;
-          permissions = "755";
-        }
-      ];
+    feature = {
     };
     filesystem = {
       swap = {
