@@ -8,6 +8,23 @@
 
   host = {
     container = {
+      coredns = {
+        enable = true;
+        logship = false;
+        monitor = false;
+        ports = {
+          tcp = {
+            enable = true;
+            method = "zerotier";
+            zerotierNetwork = "file:///var/run/secrets/zerotier/networks";
+          };
+          udp = {
+            enable = true;
+            method = "zerotier";
+            zerotierNetwork = "file:///var/run/secrets/zerotier/networks";
+          };
+        };
+      };
       openldap = {
         enable = false;
         logship = false;
