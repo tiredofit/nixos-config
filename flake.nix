@@ -25,8 +25,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     herald = {
-      url = "github:nfrastack/herald";
-      #url = "path:/home/dave/src/gh/herald";
+      #url = "github:nfrastack/herald";
+      url = "path:/home/dave/src/gh/herald";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     home-manager-stable = {
