@@ -176,44 +176,6 @@
           enabled = true;
           listen = [ "zt*" ];
         };
-        inputs = {
-          docker_pub = {
-            type = "docker";
-            api_url = "unix:///var/run/docker.sock";
-            expose_containers = false;
-            process_existing = true;
-            record_remove_on_stop = true;
-            filter = [
-              {
-                type = "label";
-                conditions = [
-                  {
-                    key = "traefik.proxy.visibility";
-                    value = "public";
-                  }
-                ];
-              }
-            ];
-          };
-          docker_int = {
-            type = "docker";
-            api_url = "unix:///var/run/docker.sock";
-            expose_containers = false;
-            process_existing = true;
-            record_remove_on_stop = true;
-            filter = [
-              {
-                type = "label";
-                conditions = [
-                  {
-                    key = "traefik.proxy.visibility";
-                    value = "internal";
-                  }
-                ];
-              }
-            ];
-          };
-        };
         outputs = {
           api_aggregate = {
             type = "file";
@@ -229,20 +191,6 @@
               retry = 900;
               expire = 604800;
               minimum = 300;
-            };
-          };
-        };
-        domains = {
-          domain01 = {
-            profiles = {
-              inputs = [ "docker_pub" ];
-              outputs = [ "output01" ];
-            };
-          };
-          domain02 = {
-            profiles = {
-              inputs = [ "docker_int" ];
-              outputs = [ "output02" ];
             };
           };
         };

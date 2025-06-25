@@ -133,58 +133,6 @@
         general = {
           log_level = "verbose";
         };
-        inputs = {
-          docker_pub = {
-            type = "docker";
-            api_url = "unix:///var/run/docker.sock";
-            expose_containers = false;
-            process_existing = true;
-            record_remove_on_stop = true;
-            filter = [
-              {
-                type = "label";
-                conditions = [
-                  {
-                    key = "traefik.proxy.visibility";
-                    value = "public";
-                  }
-                ];
-              }
-            ];
-          };
-          docker_int = {
-            type = "docker";
-            api_url = "unix:///var/run/docker.sock";
-            expose_containers = false;
-            process_existing = true;
-            record_remove_on_stop = true;
-            filter = [
-              {
-                type = "label";
-                conditions = [
-                  {
-                    key = "traefik.proxy.visibility";
-                    value = "internal";
-                  }
-                ];
-              }
-            ];
-          };
-        };
-        domains = {
-          domain01 = {
-            profiles = {
-              inputs = [ "docker_pub" ];
-              outputs = [ "output01" ];
-            };
-          };
-          domain02 = {
-            profiles = {
-              inputs = [ "docker_int" ];
-              outputs = [ "output02"];
-            };
-          };
-        };
       };
       iodine.enable = false;
       vscode_server.enable = true;

@@ -66,6 +66,63 @@
       domainname = mkDefault "tiredofit.ca";
     };
     service = {
+      herald = {
+        general = {
+          log_level = mkDefault "verbose";
+        };
+        inputs = {
+          docker_pub = mkDefault {
+            type = "docker";
+            api_url = "unix:///var/run/docker.sock";
+            expose_containers = false;
+            process_existing = true;
+            record_remove_on_stop = true;
+            filter = [
+              {
+                type = "label";
+                conditions = [
+                  {
+                    key = "traefik.proxy.visibility";
+                    value = "public";
+                  }
+                ];
+              }
+            ];
+          };
+          docker_int = mkDefault {
+            type = "docker";
+            api_url = "unix:///var/run/docker.sock";
+            expose_containers = false;
+            process_existing = true;
+            record_remove_on_stop = true;
+            filter = [
+              {
+                type = "label";
+                conditions = [
+                  {
+                    key = "traefik.proxy.visibility";
+                    value = "internal";
+                  }
+                ];
+              }
+            ];
+          };
+        };
+        domains = {
+          domain01 = mkDefault {
+            profiles = {
+              inputs = [ "docker_pub" ];
+              outputs = [ "output01" ];
+            };
+          };
+          domain02 = mkDefault {
+            profiles = {
+              inputs = [ "docker_int" ];
+              outputs = [ "output02"];
+            };
+          };
+        };
+      };
       logrotate = {
         enable = mkDefault true;
       };
