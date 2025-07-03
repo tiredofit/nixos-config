@@ -146,10 +146,10 @@
       wired = {
        enable = true;
        type = "static";
-       ip = "148.113.218.18/32";
+       ip = "148.113.219.154/32";
        gateway = "100.64.0.1";
-       mac = "34:5a:60:00:9a:5c";
-      };
+       mac = "34:5a:60:00:a8:68";
+     };
      vpn = {
         zerotier = {
           enable = true;

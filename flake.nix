@@ -175,10 +175,10 @@
           extraModules = [ ./modules ];
         };
 
-        seed = self.mkSystem {
-          hostPath = ./hosts/seed;
-          packages = "stable";
-        };
+        #seed = self.mkSystem {
+        #  hostPath = ./hosts/seed;
+        #  packages = "stable";
+        #};
 
         tentacle = self.mkSystem {
           hostPath = ./hosts/tentacle;
