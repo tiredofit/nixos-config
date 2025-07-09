@@ -200,7 +200,12 @@
         listenIP = "10.121.15.63";
         serverActive = "10.121.15.63:10051";
       };
-
+      zeroplex = {
+        enable = true;
+        client = {
+          port = config.host.network.vpn.zerotier.port;
+        };
+      };
     };
     user = {
       root.enable = true;
@@ -213,6 +218,4 @@
   services = {
     qemuGuest.enable = true;
   };
-
-
 }

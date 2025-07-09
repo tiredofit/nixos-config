@@ -177,6 +177,10 @@
       #  listenIP = "10.121.15.109";
       #  serverActive = "10.121.15.109:10051";
       #};
+      zeroplex = {
+        enable = true;
+        #mode = "resolved";
+      };
     };
     user = {
       root.enable = true;

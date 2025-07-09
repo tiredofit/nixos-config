@@ -154,6 +154,7 @@
         ip = "192.168.137.5/24";
         gateway = "192.168.137.1";
         mac = "2A:BE:78:89:51:A5";
+        dns = [ "192.168.137.1" ];
       };
       vpn = {
         zerotier = {
@@ -168,64 +169,9 @@
     service = {
       herald = {
         enable = true;
-        general = {
-          log_level = "verbose";
-        };
-        inputs = {
-          docker_pub = {
-            type = "docker";
-            api_url = "unix:///var/run/docker.sock";
-            expose_containers = false;
-            process_existing = true;
-            record_remove_on_stop = true;
-            filter = [
-              {
-                type = "label";
-                conditions = [
-                  {
-                    key = "traefik.proxy.visibility";
-                    value = "public";
-                  }
-                ];
-              }
-            ];
-          };
-          docker_int = {
-            type = "docker";
-            api_url = "unix:///var/run/docker.sock";
-            expose_containers = false;
-            process_existing = true;
-            record_remove_on_stop = true;
-            filter = [
-              {
-                type = "label";
-                conditions = [
-                  {
-                    key = "traefik.proxy.visibility";
-                    value = "internal";
-                  }
-                ];
-              }
-            ];
-          };
-        };
-        domains = {
-          domain01 = {
-            profiles = {
-              inputs = [ "docker_pub" ];
-              outputs = [ "output01" ];
-            };
-          };
-          domain02 = {
-            profiles = {
-              inputs = [ "docker_int" ];
-              outputs = [ "output02"];
-            };
-          };
-        };
       };
       zeroplex = {
-        enable = false;
+        enable = true;
       };
       zabbix_agent = {
         enable = false;
@@ -239,12 +185,12 @@
     };
   };
 
-  networking.nameservers = [ "192.168.137.1" ];
+  #networking.nameservers = [ "192.168.137.1" ];
 
-  services.resolved = {
-    enable = lib.mkForce false;
-    dnssec = "false";
-    domains = [ "~." ];
-    fallbackDns = [ "192.168.137.1" ];
-  };
+  #services.resolved = {
+  #  enable = lib.mkForce false;
+  #  dnssec = "false";
+  #  domains = [ "~." ];
+  #  fallbackDns = [ "192.168.137.1" ];
+  #};
 }

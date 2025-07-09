@@ -167,6 +167,4 @@
       root.enable = true;
     };
   };
-
-    networking.firewall.allowedTCPPorts = [ 8080 1053 ];
 }

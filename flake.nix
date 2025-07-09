@@ -46,8 +46,8 @@
     };
     vscode-server.url = "github:nix-community/nixos-vscode-server";
     zeroplex = {
-      url = "github:nfrastack/zeroplex";
-      #url = "path:/home/dave/src/gh/zeroplex";
+      #url = "github:nfrastack/zeroplex";
+      url = "path:/home/dave/src/gh/zeroplex";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -174,11 +174,6 @@
           packages = "stable";
           extraModules = [ ./modules ];
         };
-
-        #seed = self.mkSystem {
-        #  hostPath = ./hosts/seed;
-        #  packages = "stable";
-        #};
 
         tentacle = self.mkSystem {
           hostPath = ./hosts/tentacle;

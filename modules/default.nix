@@ -1,1 +1,7 @@
-{}
+{lib, ...}:
+
+with lib;
+{
+  imports = [
+  ];
+}
