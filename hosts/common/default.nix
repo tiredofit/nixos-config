@@ -46,16 +46,19 @@
       lazydocker.enable = mkDefault true;
       less.enable = mkDefault true;
       links.enable = mkDefault true;
+      liquidprompt.enable = mkDefault true;
       lsof.enable = mkDefault true;
       mtr.enable = mkDefault true;
       nano.enable = mkDefault true;
       ncdu.enable = mkDefault true;
       pciutils.enable = mkDefault true;
       psmisc.enable = mkDefault true;
+      ripgrep.enable = mkDefault true;
       rsync.enable = mkDefault true;
       strace.enable = mkDefault true;
       tmux.enable = mkDefault true;
       wget.enable = mkDefault true;
+      zoxide.enable = mkDefault true;
     };
     configDir = self.outPath;
     feature = {

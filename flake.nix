@@ -19,7 +19,11 @@
   inputs = {
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-25.05";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
-    nix-modules.url = "github:tiredofit/nix-modules";
+    nix-modules = {
+      #url = "github:tiredofit/nix-modules";
+      url = "path:/home/dave/src/nix-modules";
+    };
+
     disko = {
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
