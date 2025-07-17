@@ -12,6 +12,11 @@
   };
 
   config = mkIf config.host.user.root.enable {
+    host.application = {
+      comma.enable = mkDefault true;
+      direnv.enable = mkDefault true;
+    };
+
     users.users.root = {
       shell = pkgs.bashInteractive;
       hashedPasswordFile = mkDefault config.sops.secrets.root-password.path;
@@ -22,4 +27,6 @@
       neededForUsers = mkDefault true;
     };
   };
+
+
 }
