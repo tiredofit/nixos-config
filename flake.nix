@@ -164,6 +164,11 @@
           packages = "stable";
         };
 
+        enigma = self.mkSystem {
+          hostPath = ./hosts/enigma;
+          packages = "stable";
+        };
+
         entropy = self.mkSystem {
           hostPath = ./hosts/entropy;
           packages = "stable";
