@@ -146,7 +146,7 @@
       raid.enable = false;
     };
     network = {
-      hostname = "tentacle";
+      hostname = "atlas";
       vpn = {
         zerotier = {
           enable = true;
