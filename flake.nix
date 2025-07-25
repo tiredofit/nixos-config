@@ -153,6 +153,11 @@
         };
 
       nixosConfigurations = {
+        atlas = self.mkSystem {
+          hostPath = ./hosts/atlas;
+          packages = "stable";
+          system = "aarch64-linux";
+        };
 
         beef = self.mkSystem {
           hostPath = ./hosts/beef;

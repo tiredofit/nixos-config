@@ -1,4 +1,5 @@
 keys:
+  - &host_atlas age190tmygg8xmn9tkj4yjgemvdd8s4tnmycr9n4qfrr0l97zxfq3gjs36xsn8
   - &host_beef age1wq5xj5mwv9xk4tp26cxc4xqjq9xd9hwqv0zeemawl2cc8sarmqesw366dh
   - &host_butcher age1nleq0q2kzh2zn4pyr0dcy0zjnsr6sx8c5ttjahhfttkltsr2s3ksahhpkx
   - &host_enigma age1nleq0q2kzh2zn4pyr0dcy0zjnsr6sx8c5ttjahhfttkltsr2s3ksahhpkx
@@ -13,6 +14,7 @@ creation_rules:
   - path_regex: hosts/common/secrets/.*
     key_groups:
       - age:
+          - *host_atlas
           - *host_beef
           - *host_butcher
           - *host_entropy
@@ -26,6 +28,7 @@ creation_rules:
   - path_regex: users/secrets.yaml
     key_groups:
       - age:
+          - *host_atlas
           - *host_beef
           - *host_butcher
           - *host_enigma
@@ -34,6 +37,11 @@ creation_rules:
           - *host_tentacle
           - *host_seed
           - *host_nomad
+          - *user_dave
+  - path_regex: hosts/atlas/secrets/.*
+    key_groups:
+      - age:
+          - *host_atlas
           - *user_dave
   - path_regex: hosts/beef/secrets/.*
     key_groups:
@@ -48,7 +56,7 @@ creation_rules:
   - path_regex: hosts/enigma/secrets/.*
     key_groups:
       - age:
-          - *host_butcher
+          - *host_enigma
           - *user_dave
   - path_regex: hosts/entropy/secrets/.*
     key_groups:
@@ -72,11 +80,9 @@ creation_rules:
     key_groups:
       - age:
           - *host_seed
-          - *host_beef
           - *user_dave
   - path_regex: hosts/tentacle/secrets/.*
     key_groups:
       - age:
           - *host_tentacle
-          - *host_beef
           - *user_dave
