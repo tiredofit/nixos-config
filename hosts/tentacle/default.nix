@@ -196,7 +196,7 @@
         };
       };
       zabbix_agent = {
-        enable = true;
+        enable = false;
         listenIP = "10.121.15.63";
         serverActive = "10.121.15.63:10051";
       };

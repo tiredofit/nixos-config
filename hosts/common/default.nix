@@ -62,7 +62,7 @@
     };
     configDir = self.outPath;
     feature = {
-      home-manager.enable = mkDefault true;
+      #home-manager.enable = mkDefault true;
       secrets.enable = mkDefault true;
     };
     network = {

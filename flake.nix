@@ -153,6 +153,7 @@
         };
 
       nixosConfigurations = {
+
         beef = self.mkSystem {
           hostPath = ./hosts/beef;
           packages = "stable";

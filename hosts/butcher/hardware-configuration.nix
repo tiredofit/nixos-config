@@ -16,56 +16,56 @@
 
   fileSystems = {
     "/" = {
-      device = "/dev/disk/by-uuid/740f60e3-d62c-48db-b74a-668912c0aef1";
+      device = "/dev/disk/by-uuid/fa060c23-d46e-4713-9a96-fb9513a2b551";
       fsType = "btrfs";
       options = [ "subvol=root" ];
     };
     "/boot" = {
-      device = "/dev/disk/by-uuid/61FA-03B6";
+      device = "/dev/disk/by-uuid/4A74-66D0";
       fsType = "vfat";
     };
     "/home" = {
-      device = "/dev/disk/by-uuid/740f60e3-d62c-48db-b74a-668912c0aef1";
+      device = "/dev/disk/by-uuid/fa060c23-d46e-4713-9a96-fb9513a2b551";
       fsType = "btrfs";
       options = [ "subvol=home/active" ];
     };
     "/home/.snapshots" = {
-      device = "/dev/disk/by-uuid/740f60e3-d62c-48db-b74a-668912c0aef1";
+      device = "/dev/disk/by-uuid/fa060c23-d46e-4713-9a96-fb9513a2b551";
       fsType = "btrfs";
       options = [ "subvol=home/snapshots" ];
     };
     "/nix" = {
-      device = "/dev/disk/by-uuid/740f60e3-d62c-48db-b74a-668912c0aef1";
+      device = "/dev/disk/by-uuid/fa060c23-d46e-4713-9a96-fb9513a2b551";
       fsType = "btrfs";
       options = [ "subvol=nix" ];
     };
     "/persist" = {
-      device = "/dev/disk/by-uuid/740f60e3-d62c-48db-b74a-668912c0aef1";
+      device = "/dev/disk/by-uuid/fa060c23-d46e-4713-9a96-fb9513a2b551";
       fsType = "btrfs";
       options = [ "subvol=persist/active" ];
     };
     "/persist/.snapshots" = {
-      device = "/dev/disk/by-uuid/740f60e3-d62c-48db-b74a-668912c0aef1";
+      device = "/dev/disk/by-uuid/fa060c23-d46e-4713-9a96-fb9513a2b551";
       fsType = "btrfs";
       options = [ "subvol=persist/snapshots" ];
     };
     "/var/lib/docker" = {
-      device = "/dev/disk/by-uuid/740f60e3-d62c-48db-b74a-668912c0aef1";
+      device = "/dev/disk/by-uuid/fa060c23-d46e-4713-9a96-fb9513a2b551";
       fsType = "btrfs";
       options = [ "subvol=var_lib_docker" ];
     };
     "/var/local" = {
-      device = "/dev/disk/by-uuid/740f60e3-d62c-48db-b74a-668912c0aef1";
+      device = "/dev/disk/by-uuid/fa060c23-d46e-4713-9a96-fb9513a2b551";
       fsType = "btrfs";
       options = [ "subvol=var_local/active" ];
     };
     "/var/local/.snapshots" = {
-      device = "/dev/disk/by-uuid/740f60e3-d62c-48db-b74a-668912c0aef1";
+      device = "/dev/disk/by-uuid/fa060c23-d46e-4713-9a96-fb9513a2b551";
       fsType = "btrfs";
       options = [ "subvol=var_local/snapshots" ];
     };
     "/var/log" = {
-      device = "/dev/disk/by-uuid/740f60e3-d62c-48db-b74a-668912c0aef1";
+      device = "/dev/disk/by-uuid/fa060c23-d46e-4713-9a96-fb9513a2b551";
       fsType = "btrfs";
       options = [ "subvol=var_log" ];
     };
@@ -74,6 +74,7 @@
       fsType = "btrfs";
     };
   };
+  #networking.useDHCP = lib.mkDefault true;
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
 }
