@@ -23,7 +23,10 @@
       #url = "github:tiredofit/nix-modules";
       url = "path:/home/dave/src/nix-modules";
     };
-
+    apple-silicon = {
+      url = "github:tpwrules/nixos-apple-silicon";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     disko = {
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -153,6 +156,11 @@
         };
 
       nixosConfigurations = {
+        mirage = lib.nixosSystem { # Server Added 2025-08-01 
+          modules = [ ./hosts/mirage ];
+          specialArgs = { inherit self inputs outputs; };
+        };
+
         atlas = self.mkSystem {
           hostPath = ./hosts/atlas;
           packages = "stable";
@@ -161,11 +169,6 @@
 
         beef = self.mkSystem {
           hostPath = ./hosts/beef;
-          packages = "stable";
-        };
-
-        butcher = self.mkSystem {
-          hostPath = ./hosts/butcher;
           packages = "stable";
         };
 
@@ -186,14 +189,8 @@
 
         nomad = self.mkSystem {
           hostPath = ./hosts/nomad;
-          packages = "stable";
+          packages = "unstable";
           extraModules = [ ./modules ];
-        };
-
-        tentacle = self.mkSystem {
-          hostPath = ./hosts/tentacle;
-          packages = "stable";
-          system = "aarch64-linux";
         };
       };
 
