@@ -4,10 +4,9 @@ keys:
   - &host_butcher age1nleq0q2kzh2zn4pyr0dcy0zjnsr6sx8c5ttjahhfttkltsr2s3ksahhpkx
   - &host_enigma age1nleq0q2kzh2zn4pyr0dcy0zjnsr6sx8c5ttjahhfttkltsr2s3ksahhpkx
   - &host_entropy age10r9fcpj4z6nc9p5n3e6eqdy9kkmvp0kafpj02qwyvwnhs3ev2pts8qawyt
+  - &host_mirage age17pldhhyuahahzrtgcgfnrgse56mrjr2y5d52xy2glwu858hjtapsvug6sa
   - &host_nakulaptop age1m6gzjlvx5paan69evccl6kywj0ghdk46prumx4jn4hxcrxd4re6qckdl9w
   - &host_nomad age1y2f4jzfqjscgvwe3w3q8jmadtvxlsudk3c49lhqtdvatu7fwtdusez9fm9
-  - &host_seed age16wsn8f4wrk4f8ssk76h8hd57e4mquychcju0ny5qhvkzvq0teplqrct0yd
-  - &host_tentacle age190tmygg8xmn9tkj4yjgemvdd8s4tnmycr9n4qfrr0l97zxfq3gjs36xsn8
   - &user_dave age1upzm9um3qljxlmxcg8vl35d7eyeqtnsfcnqlh3wtnj46dhfzwyrqa80avw
   - &user_ireen age1477n5xa2cr4tgdy80vxg24tsdcrcmzarn4ad99tjvrsjedq6sqpqsxyrms
 creation_rules:
@@ -19,10 +18,9 @@ creation_rules:
           - *host_butcher
           - *host_entropy
           - *host_enigma
+          - *host_mirage
           - *host_nakulaptop
           - *host_nomad
-          - *host_seed
-          - *host_tentacle
           - *user_dave
           - *user_ireen
   - path_regex: users/secrets.yaml
@@ -33,9 +31,8 @@ creation_rules:
           - *host_butcher
           - *host_enigma
           - *host_entropy
+          - *host_mirage
           - *host_nakulaptop
-          - *host_tentacle
-          - *host_seed
           - *host_nomad
           - *user_dave
   - path_regex: hosts/atlas/secrets/.*
@@ -64,6 +61,12 @@ creation_rules:
           - *host_entropy
           - *host_nomad
           - *user_dave
+  - path_regex: hosts/mirage/secrets/.*
+    key_groups:
+      - age:
+          - *host_nomad
+          - *user_dave
+          - *host_mirage
   - path_regex: hosts/nakulaptop/secrets/.*
     key_groups:
       - age:
@@ -75,14 +78,4 @@ creation_rules:
       - age:
           - *host_nomad
           - *host_beef
-          - *user_dave
-  - path_regex: hosts/seed/secrets/.*
-    key_groups:
-      - age:
-          - *host_seed
-          - *user_dave
-  - path_regex: hosts/tentacle/secrets/.*
-    key_groups:
-      - age:
-          - *host_tentacle
           - *user_dave

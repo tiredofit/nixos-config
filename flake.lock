@@ -5,19 +5,36 @@
         "flake-compat": "flake-compat",
         "nixpkgs": [
           "nixpkgs"
-        ]
+        ],
+        "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1753175937,
-        "narHash": "sha256-DtDt87Gld0RCI2qHb7uUb1eWB16FFC4aNDfxZpic/Nw=",
-        "owner": "tpwrules",
+        "lastModified": 1754152461,
+        "narHash": "sha256-UNPGhPvjMGond6bTq2JXPjH0yyUj0g6nhG/wjEH/Vfo=",
+        "owner": "nix-community",
         "repo": "nixos-apple-silicon",
-        "rev": "5ddfff8387edf7c92ce36effb06fb2c52624fece",
+        "rev": "9c936c2686017de6adec644880451bdf3c323306",
         "type": "github"
       },
       "original": {
-        "owner": "tpwrules",
+        "owner": "nix-community",
         "repo": "nixos-apple-silicon",
+        "type": "github"
+      }
+    },
+    "asahi-firmware": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1754157986,
+        "narHash": "sha256-w6fDlOYGDnWejCnnptXrc6Oo4R0rj1Rwws7lPg1Idw0=",
+        "owner": "tiredofit",
+        "repo": "asahi-firmware",
+        "rev": "95b29a5050cfffb6d3f76fcc0e62188522abe8aa",
+        "type": "github"
+      },
+      "original": {
+        "owner": "tiredofit",
+        "repo": "asahi-firmware",
         "type": "github"
       }
     },
@@ -122,11 +139,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1754085240,
-        "narHash": "sha256-kVHCrTWEe8B1thAhFag1bk4QPY0ZP45V9vPbrwPHoNo=",
+        "lastModified": 1754225444,
+        "narHash": "sha256-mv01SQtqlhBMavc1dgNjgqJw4WfZxy+w3xBgwJU3YmU=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "e102920c1becb114645c6f92fe14edc0b05cc229",
+        "rev": "0de18bd5c6681280d7ae017fa34ffd91bdcf0557",
         "type": "github"
       },
       "original": {
@@ -153,8 +170,8 @@
     },
     "nix-modules": {
       "locked": {
-        "lastModified": 1754102108,
-        "narHash": "sha256-ejNgIxY8zMl5n6pyPOqB1rQgNqn1QIlijmBu4Em5TYQ=",
+        "lastModified": 1754249359,
+        "narHash": "sha256-pzHLldvrXF0bQgxlfIfHfsgzNkA3CxvpXrSna/NJiPM=",
         "path": "/home/dave/src/nix-modules",
         "type": "path"
       },
@@ -165,11 +182,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1754060105,
-        "narHash": "sha256-di5L6e5Iiv+oegS07j9h23FdqEpXn0ZQqMlDOEMw1EY=",
+        "lastModified": 1754182383,
+        "narHash": "sha256-hON5G3ENyUGUpqImXT+Ag7TWbBsfthwqxMcAw8EiKw8=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "e7eabdc701d7dbb810fd91a97ec358caa4c1fc50",
+        "rev": "e960e6e1dc689e2b5fe9e3ee824fc12860d9f27c",
         "type": "github"
       },
       "original": {
@@ -226,6 +243,7 @@
     "root": {
       "inputs": {
         "apple-silicon": "apple-silicon",
+        "asahi-firmware": "asahi-firmware",
         "disko": "disko",
         "herald": "herald",
         "home-manager-stable": "home-manager-stable",
@@ -272,6 +290,27 @@
       "original": {
         "owner": "nix-systems",
         "repo": "default",
+        "type": "github"
+      }
+    },
+    "treefmt-nix": {
+      "inputs": {
+        "nixpkgs": [
+          "apple-silicon",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1753006367,
+        "narHash": "sha256-tzbhc4XttkyEhswByk5R38l+ztN9UDbnj0cTcP6Hp9A=",
+        "owner": "numtide",
+        "repo": "treefmt-nix",
+        "rev": "421b56313c65a0815a52b424777f55acf0b56ddf",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "treefmt-nix",
         "type": "github"
       }
     },

@@ -20,12 +20,16 @@
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-25.05";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     nix-modules = {
-      #url = "github:tiredofit/nix-modules";
-      url = "path:/home/dave/src/nix-modules";
+      url = "github:tiredofit/nix-modules";
+      #url = "path:/home/dave/src/nix-modules";
     };
     apple-silicon = {
-      url = "github:tpwrules/nixos-apple-silicon";
+      url = "github:nix-community/nixos-apple-silicon";
       inputs.nixpkgs.follows = "nixpkgs";
+    };
+    asahi-firmware = {
+      url = "github:tiredofit/asahi-firmware";
+      flake = false;
     };
     disko = {
       url = "github:nix-community/disko";
@@ -156,11 +160,6 @@
         };
 
       nixosConfigurations = {
-        mirage = lib.nixosSystem { # Server Added 2025-08-01 
-          modules = [ ./hosts/mirage ];
-          specialArgs = { inherit self inputs outputs; };
-        };
-
         atlas = self.mkSystem {
           hostPath = ./hosts/atlas;
           packages = "stable";
@@ -179,7 +178,14 @@
 
         entropy = self.mkSystem {
           hostPath = ./hosts/entropy;
+          packages = "unstable";
+        };
+
+        mirage = self.mkSystem {
+          hostPath = ./hosts/mirage;
           packages = "stable";
+          system = "aarch64-linux";
+          extraModules = [ ./modules ];
         };
 
         nakulaptop = self.mkSystem {
