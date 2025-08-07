@@ -28,7 +28,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     asahi-firmware = {
-      url = "github:tiredofit/asahi-firmware";
+      url = "git+https://github.com/tiredofit/asahi-firmware.git";
       flake = false;
     };
     disko = {
