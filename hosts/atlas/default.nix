@@ -26,12 +26,14 @@
         };
       };
       openldap = {
-        enable = false;
+        enable = true;
         logship = false;
         monitor = false;
+        containerName = builtins.replaceStrings ["." ] ["-"] ( "ldap." + config.host.network.domainname + "-app" );
+        hostname = "ldap.${config.host.network.domainname}";
         ports = {
           ldap = {
-            enable = false;
+            enable = true;
             method = "zerotier";
             zerotierNetwork = "file:///var/run/secrets/zerotier/networks";
           };
@@ -75,7 +77,7 @@
         monitor = false;
         ports = {
           http = {
-            enable = true;
+            enable = false;
             method = "interface";
             excludeInterfaces = [ "lo" ];
             excludeInterfacePattern = "docker|veth|br-";
@@ -100,7 +102,7 @@
         monitor = false;
         ports = {
           http = {
-            enable = true;
+            enable = false;
             method = "zerotier";
             zerotierNetwork = "file:///var/run/secrets/zerotier/networks";
           };
@@ -138,7 +140,7 @@
     };
     filesystem = {
       swap = {
-        partition = "disk/by-partlabel/swap";
+        partition = "mapper/dev-disk-byx2dpartlabel-swap";
       };
     };
     hardware = {
@@ -194,11 +196,6 @@
             };
           };
         };
-      };
-      zabbix_agent = {
-        enable = false;
-        listenIP = "10.121.15.63";
-        serverActive = "10.121.15.63:10051";
       };
       zeroplex = {
         enable = true;
