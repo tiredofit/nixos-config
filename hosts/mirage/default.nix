@@ -45,7 +45,7 @@
         monitor = false;
         ports = {
           http = {
-            enable = true;
+            enable = false;
             host = 80;
             container = 80;
             method = "zerotier";
