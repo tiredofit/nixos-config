@@ -63,7 +63,7 @@
         monitor = false;
         ports = {
           http = {
-            enable = true;
+            enable = false;
             method = "interface";
             excludeInterfaces = [ "lo" ];
             excludeInterfacePattern = "docker|veth|br-";
@@ -88,7 +88,7 @@
         monitor = false;
         ports = {
           http = {
-            enable = true;
+            enable = false;
             method = "zerotier";
             zerotierNetwork = "file:///var/run/secrets/zerotier/networks";
           };
