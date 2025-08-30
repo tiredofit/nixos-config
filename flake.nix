@@ -20,8 +20,8 @@
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-25.05";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     nix-modules = {
-      url = "github:tiredofit/nix-modules";
-      #url = "path:/home/dave/src/nix-modules";
+      #url = "github:tiredofit/nix-modules";
+      url = "path:/home/dave/src/nix-modules";
     };
     apple-silicon = {
       url = "github:nix-community/nixos-apple-silicon";
@@ -162,7 +162,7 @@
       nixosConfigurations = {
         atlas = self.mkSystem {
           hostPath = ./hosts/atlas;
-          packages = "stable";
+          packages = "unstable";
           system = "aarch64-linux";
         };
 
@@ -173,7 +173,7 @@
 
         enigma = self.mkSystem {
           hostPath = ./hosts/enigma;
-          packages = "stable";
+          packages = "unstable";
         };
 
         entropy = self.mkSystem {
@@ -183,7 +183,7 @@
 
         mirage = self.mkSystem {
           hostPath = ./hosts/mirage;
-          packages = "stable";
+          packages = "unstable";
           system = "aarch64-linux";
           extraModules = [ ./modules ];
         };
