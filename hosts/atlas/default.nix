@@ -15,11 +15,13 @@
         ports = {
           tcp = {
             enable = true;
+            host = 530;
             method = "zerotier";
             zerotierNetwork = "file:///var/run/secrets/zerotier/networks";
           };
           udp = {
             enable = true;
+            host = 530;
             method = "zerotier";
             zerotierNetwork = "file:///var/run/secrets/zerotier/networks";
           };
@@ -122,6 +124,18 @@
         enable = true;
         monitor = false;
         logship = false;
+        ports = {
+          dns = {
+            enable = true;
+            method = "zerotier";
+            zerotierNetwork = "file:///var/run/secrets/zerotier/networks";
+          };
+          dns_tcp = {
+            enable = true;
+            method = "zerotier";
+            zerotierNetwork = "file:///var/run/secrets/zerotier/networks";
+          };
+        };
       };
       zabbix-proxy = {
         enable = false;
