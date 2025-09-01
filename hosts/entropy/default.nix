@@ -96,6 +96,9 @@
         enable = true;
         monitor = false;
         logship = false;
+        secrets = {
+          enable = true;
+        };
         ports = {
           dns = {
             enable = true;
