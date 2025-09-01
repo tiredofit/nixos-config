@@ -17,18 +17,6 @@
         enable = true;
         logship = false;
         monitor = false;
-        ports = {
-          tcp = {
-            enable = true;
-            method = "zerotier";
-            zerotierNetwork = "file:///var/run/secrets/zerotier/networks";
-          };
-          udp = {
-            enable = true;
-            method = "zerotier";
-            zerotierNetwork = "file:///var/run/secrets/zerotier/networks";
-          };
-        };
       };
       openldap = {
         enable = false;
@@ -108,6 +96,18 @@
         enable = true;
         monitor = false;
         logship = false;
+        ports = {
+          dns = {
+            enable = true;
+            method = "zerotier";
+            zerotierNetwork = "file:///var/run/secrets/zerotier/networks";
+          };
+          dns_tcp = {
+            enable = true;
+            method = "zerotier";
+            zerotierNetwork = "file:///var/run/secrets/zerotier/networks";
+          };
+        };
       };
       zabbix-proxy = {
         enable = false;
@@ -162,9 +162,6 @@
     };
     role = "server";
     service = {
-      coredns = {
-        enable = true;
-      };
       herald = {
         enable = true;
         general = {

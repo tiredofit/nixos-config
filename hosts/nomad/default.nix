@@ -9,7 +9,7 @@
   host = {
     container = {
       coredns = {
-        enable = true;
+        enable = false;
         logship = false;
         monitor = false;
         ports = {
@@ -41,7 +41,7 @@
         monitor = false;
         ports = {
           http = {
-            enable = true;
+            enable = false;
             method = "interface";
             excludeInterfaces = [ "lo" ];
             excludeInterfacePattern = "docker|veth|br-";
@@ -66,7 +66,7 @@
         monitor = false;
         ports = {
           http = {
-            enable = true;
+            enable = false;
             method = "zerotier";
             zerotierNetwork = "file:///var/run/secrets/zerotier/networks";
           };
@@ -122,7 +122,7 @@
       exfat.enable = true;
       ntfs.enable = true;
       swap = {
-        partition = "disk/by-uuid/323a1f63-524e-4891-a428-fb42cf6c169a";
+        partition = "/dev/disk/by-partlabel/swap";
       };
       tmp.tmpfs.enable = true;
     };
@@ -136,7 +136,7 @@
     };
     network = {
       firewall = {
-        opensnitch.enable = true;
+        opensnitch.enable = false;
       };
       hostname = "nomad";
       vpn = {
