@@ -37,7 +37,7 @@
     };
     herald = {
       url = "github:nfrastack/herald";
-      #url = "path:/home/dave/src/gh/herald";
+      #url = "path:/home/dave/src/nfra/herald";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     home-manager-stable = {
