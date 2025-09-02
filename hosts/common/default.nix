@@ -88,6 +88,11 @@
                     key = "traefik.proxy.visibility";
                     value = "public";
                   }
+                  {
+                    key = "traefik.proxy.visibility";
+                    value = "any";
+                    logic = "or";
+                  }
                 ];
               }
             ];
@@ -105,6 +110,11 @@
                   {
                     key = "traefik.proxy.visibility";
                     value = "internal";
+                  }
+                  {
+                    key = "traefik.proxy.visibility";
+                    value = "any";
+                    logic = "or";
                   }
                 ];
               }
