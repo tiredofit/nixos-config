@@ -37,7 +37,6 @@
     };
     herald = {
       url = "github:nfrastack/herald";
-      #url = "path:/home/dave/src/nfra/herald";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     home-manager-stable = {
@@ -58,7 +57,6 @@
     vscode-server.url = "github:nix-community/nixos-vscode-server";
     zeroplex = {
       url = "github:nfrastack/zeroplex";
-      #url = "path:/home/dave/src/gh/zeroplex";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
