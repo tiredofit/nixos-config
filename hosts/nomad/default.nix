@@ -107,7 +107,7 @@
       };
       virtualization = {
         flatpak.enable = true;
-        waydroid.enable = true;
+        waydroid.enable = false;
         virtd = {
           daemon.enable = true;
         };
