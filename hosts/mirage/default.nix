@@ -39,6 +39,31 @@
         logship = false;
         monitor = false;
       };
+      traefik = {
+        enable = true;
+        logship = false;
+        monitor = false;
+        ports = {
+          http = {
+            enable = false;
+            method = "interface";
+            excludeInterfaces = [ "lo" ];
+            excludeInterfacePattern = "docker|veth|br-";
+          };
+          https = {
+            enable = true;
+            method = "interface";
+            excludeInterfaces = [ "lo" ];
+            excludeInterfacePattern = "docker|veth|br-";
+          };
+          http3 = {
+            enable = true;
+            method = "interface";
+            excludeInterfaces = [ "lo" ];
+            excludeInterfacePattern = "docker|veth|br-";
+          };
+        };
+      };
       traefik-internal = {
         enable = true;
         logship = false;
