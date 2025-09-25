@@ -8,23 +8,6 @@
   host.feature.virtualization.docker.containers.restic.resources.memory.max = "3G";
   host = {
     container = {
-      coredns = {
-        enable = false;
-        logship = false;
-        monitor = false;
-        ports = {
-          tcp = {
-            enable = true;
-            method = "zerotier";
-            zerotierNetwork = "file:///var/run/secrets/zerotier/networks";
-          };
-          udp = {
-            enable = true;
-            method = "zerotier";
-            zerotierNetwork = "file:///var/run/secrets/zerotier/networks";
-          };
-        };
-      };
       restic = {
         enable = true;
         logship = false;
@@ -82,19 +65,6 @@
           };
         };
       };
-      zabbix-proxy = {
-        enable = false;
-        logship = false;
-        monitor = false;
-        ports = {
-          proxy = {
-            enable = true;
-            method = "zerotier";
-            zerotierNetwork = "file:///var/run/secrets/zerotier/networks";
-          };
-        };
-      };
-
     };
     feature = {
       appimage.enable = true;
@@ -117,8 +87,8 @@
       };
     };
     filesystem = {
-      encryption.enable = true;             # This line can be removed if not needed as it is already default set by the role template
-      impermanence.enable = true;           # This line can be removed if not needed as it is already default set by the role template
+      encryption.enable = true;
+      impermanence.enable = true;
       exfat.enable = true;
       ntfs.enable = true;
       swap = {
