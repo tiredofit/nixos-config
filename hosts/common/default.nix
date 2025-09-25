@@ -42,7 +42,6 @@
       iftop.enable = mkDefault true;
       inetutils.enable = mkDefault true;
       iotop.enable = mkDefault true;
-      kitty.enable = mkDefault true;
       lazydocker.enable = mkDefault true;
       less.enable = mkDefault true;
       links.enable = mkDefault true;
@@ -63,6 +62,10 @@
     };
     configDir = self.outPath;
     feature = {
+      console.terminfo = {
+        ghostty.enable = mkDefault true;
+        kitty.enable = mkDefault true;
+      };
       home-manager.enable = mkDefault true;
       secrets.enable = mkDefault true;
     };
