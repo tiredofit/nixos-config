@@ -48,6 +48,7 @@
       links.enable = mkDefault true;
       liquidprompt.enable = mkDefault true;
       lsof.enable = mkDefault true;
+      lnav.enable = mkDefault true;
       mtr.enable = mkDefault true;
       nano.enable = mkDefault true;
       ncdu.enable = mkDefault true;
