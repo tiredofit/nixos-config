@@ -172,11 +172,6 @@
         };
       };
       vscode_server.enable = true;
-      #zabbix_agent = {
-      #  enable = true;
-      #  listenIP = "10.121.15.109";
-      #  serverActive = "10.121.15.109:10051";
-      #};
       zeroplex = {
         enable = true;
         #mode = "resolved";
