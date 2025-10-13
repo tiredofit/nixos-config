@@ -181,6 +181,7 @@
     };
   };
 
+  services.qemuGuest.enable = true;
   #networking.nameservers = [ "192.168.137.1" ];
 
   #services.resolved = {
