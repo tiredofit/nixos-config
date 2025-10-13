@@ -13,14 +13,9 @@
       restic = {
         enable = true;
         logship = false;
-        monitor = "true";
-      };
-      socket-proxy = {
-        enable = true;
-        logship = false;
         monitor = false;
       };
-      tinc = {
+      socket-proxy = {
         enable = true;
         logship = false;
         monitor = false;
@@ -29,11 +24,48 @@
         enable = true;
         logship = false;
         monitor = false;
+        ports = {
+          http = {
+            enable = false;
+            method = "interface";
+            excludeInterfaces = [ "lo" ];
+            excludeInterfacePattern = "docker|veth|br-";
+          };
+          https = {
+            enable = true;
+            method = "interface";
+            excludeInterfaces = [ "lo" ];
+            excludeInterfacePattern = "docker|veth|br-";
+          };
+          http3 = {
+            enable = true;
+            method = "interface";
+            excludeInterfaces = [ "lo" ];
+            excludeInterfacePattern = "docker|veth|br-";
+          };
+        };
       };
-      cloudflare-companion = {
-        enable = false;
+      traefik-internal = {
+        enable = true;
         logship = false;
         monitor = false;
+        ports = {
+          http = {
+            enable = false;
+            method = "zerotier";
+            zerotierNetwork = "file:///var/run/secrets/zerotier/networks";
+          };
+          https = {
+            enable = true;
+            method = "zerotier";
+            zerotierNetwork = "file:///var/run/secrets/zerotier/networks";
+          };
+          http3 = {
+            enable = true;
+            method = "zerotier";
+            zerotierNetwork = "file:///var/run/secrets/zerotier/networks";
+          };
+        };
       };
     };
     feature = {
@@ -50,6 +82,7 @@
           ];
         };
       };
+      development.crosscompilation.enable = true;
       graphics = {
         enable = true;
         backend = "wayland";
@@ -58,7 +91,13 @@
       };
       virtualization = {
         flatpak.enable = true;
-        waydroid.enable = true;
+        waydroid.enable = false;
+        virtd = {
+          daemon.enable = true;
+        };
+        docker = {
+          enable = true;
+        };
       };
     };
     filesystem = {
@@ -95,13 +134,6 @@
       };
     };
     role = "desktop";
-    service = {
-      zabbix_agent = {
-        enable = true;
-        listenIP = "192.168.23.23";
-        serverActive = "10.121.15.60:10051";
-      };
-    };
     user = {
       dave.enable = true;
       root.enable = true;
