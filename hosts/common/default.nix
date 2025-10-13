@@ -37,6 +37,7 @@
       dust.enable = mkDefault true;
       e2fsprogs.enable = mkDefault true;
       fzf.enable = mkDefault true;
+      fping.enable = mkDefault true;
       git.enable = mkDefault true;
       htop.enable = mkDefault true;
       iftop.enable = mkDefault true;
