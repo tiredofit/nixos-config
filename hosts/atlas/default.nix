@@ -180,9 +180,6 @@
     };
     role = "server";
     service = {
-      coredns = {
-        enable = true;
-      };
       herald = {
         enable = true;
         general = {
