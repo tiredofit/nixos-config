@@ -50,7 +50,7 @@
     "/mnt/data" = {
       device = "/dev/disk/by-uuid/412946e6-1d5b-44df-ba8e-06b60d3a0804";
       fsType = "btrfs";
-      options = [ "subvol=__active" "compress=zstd" "noatime" ];
+      options = [ "subvol=__active" "compress=zstd" "noatime" "nofail" ];
     };
     "/nix" = {
       device = "/dev/disk/by-uuid/2116df83-e8d7-4dfb-85ba-0c3d602c7d90";
