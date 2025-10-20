@@ -1,6 +1,8 @@
-{ inputs, lib, pkgs, ...}: {
+{ inputs, lib, modulesPath, pkgs, ...}: {
 
   imports = [
+    (modulesPath + "/installer/scan/not-detected.nix")
+    (modulesPath + "/profiles/qemu-guest.nix")
     ./disks.nix
     ../common
   ];
@@ -8,7 +10,7 @@
   host = {
     container = {
       coredns = {
-        enable = true;
+        enable = false;
         logship = false;
         monitor = false;
         ports = {
@@ -25,7 +27,7 @@
         };
       };
       postfix-relay = {
-        enable = true;
+        enable = false;
         logship = false;
         monitor = false;
         ports = {
@@ -141,16 +143,27 @@
     role = "server";
     service = {
       syncthing.enable = true;
-      vscode_server.enable = false;
+      vscode_server.enable = lib.mkForce false;
     };
     network = {
       hostname = "enigma";
-      wired = {
-        enable = true;
-        ip = "192.168.137.5/24";
-        gateway = "192.168.137.1";
-        mac = "2A:BE:78:89:51:A5";
-        dns = [ "192.168.137.1" ];
+      interfaces = {
+        lan = {
+          match = {
+            mac = "2A:BE:78:89:51:A5";
+          };
+        };
+      };
+      networks = {
+        lan = {
+          match = {
+            name = "lan";
+          };
+          type = "static";
+          ip = "192.168.137.5/24";
+          gateway = "192.168.137.1";
+          dns = [ "192.168.137.1" ];
+        };
       };
       vpn = {
         zerotier = {
@@ -168,11 +181,6 @@
       };
       zeroplex = {
         enable = true;
-      };
-      zabbix_agent = {
-        enable = false;
-        listenIP = "192.168.137.5";
-        serverActive = "10.121.15.109:10051";
       };
     };
     user = {
