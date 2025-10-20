@@ -163,6 +163,19 @@
     };
     network = {
       hostname = "atlas";
+      interfaces = {
+        eth0 = {
+          match = {
+            mac = "02:00:17:01:92:94";
+          };
+        };
+      };
+      networks = {
+        eth0 = {
+          type = "dynamic";
+        };
+      };
+
       vpn = {
         zerotier = {
           enable = true;
@@ -171,11 +184,6 @@
           ];
           port = 9994;
         };
-      };
-      wired = {
-       enable = true;
-       type = "dynamic";
-       mac = "02:00:17:01:92:94";
       };
     };
     role = "server";
