@@ -88,7 +88,6 @@
     };
     hardware = {
       cpu = "amd";
-      keyboard.enable = true;
       raid.enable = true;
       wireless.enable = true;
     };
