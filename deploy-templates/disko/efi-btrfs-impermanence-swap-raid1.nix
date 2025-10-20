@@ -88,7 +88,7 @@ in
                   };
                   "/var_log" = {
                     mountpoint = "/var/log";
-                    mountOptions = [ "compress=zstd" "noatime" ];
+                    mountOptions = [ "compress=zstd" "noatime" "nodatacow" ];
                   };
                 };
               };
