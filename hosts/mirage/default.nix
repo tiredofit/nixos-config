@@ -106,10 +106,17 @@
     };
     network = {
       hostname = "mirage";
-      wired = {
-       enable = true;
-       type = "dynamic";
-       mac = "a4:77:f3:00:db:de";
+      interfaces = {
+        enp0 = {
+          match = {
+            mac = "a4:77:f3:00:db:de";
+          };
+        };
+      };
+      networks = {
+        enp0 = {
+          type = "dynamic";
+        };
       };
       vpn = {
         zerotier = {
