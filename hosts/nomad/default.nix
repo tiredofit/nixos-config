@@ -6,6 +6,7 @@
   ];
 
   host.feature.virtualization.docker.containers.restic.resources.memory.max = "3G";
+    networking = { useNetworkd = lib.mkForce true; };
   host = {
     container = {
       restic = {
