@@ -155,23 +155,10 @@
         };
 
       nixosConfigurations = {
-                nucleus = self.mkSystem { # Server Added 2025-10-18
-
-                    hostPath = ./hosts/nucleus;
-
-                    packages = "unstable";
-
-                };
-
         atlas = self.mkSystem {
           hostPath = ./hosts/atlas;
           packages = "unstable";
           system = "aarch64-linux";
-        };
-
-        beef = self.mkSystem {
-          hostPath = ./hosts/beef;
-          packages = "stable";
         };
 
         enigma = self.mkSystem {
@@ -200,6 +187,11 @@
           hostPath = ./hosts/nomad;
           packages = "unstable";
           extraModules = [ ./modules ];
+        };
+
+        nucleus = self.mkSystem {
+          hostPath = ./hosts/nucleus;
+          packages = "unstable";
         };
       };
 

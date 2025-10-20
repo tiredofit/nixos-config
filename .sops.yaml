@@ -1,6 +1,5 @@
 keys:
   - &host_atlas age190tmygg8xmn9tkj4yjgemvdd8s4tnmycr9n4qfrr0l97zxfq3gjs36xsn8
-  - &host_beef age1wq5xj5mwv9xk4tp26cxc4xqjq9xd9hwqv0zeemawl2cc8sarmqesw366dh
   - &host_butcher age1nleq0q2kzh2zn4pyr0dcy0zjnsr6sx8c5ttjahhfttkltsr2s3ksahhpkx
   - &host_enigma age1nleq0q2kzh2zn4pyr0dcy0zjnsr6sx8c5ttjahhfttkltsr2s3ksahhpkx
   - &host_entropy age10r9fcpj4z6nc9p5n3e6eqdy9kkmvp0kafpj02qwyvwnhs3ev2pts8qawyt
@@ -15,43 +14,30 @@ creation_rules:
     key_groups:
       - age:
           - *host_atlas
-          - *host_beef
-          - *host_butcher
           - *host_entropy
           - *host_enigma
           - *host_mirage
           - *host_nakulaptop
           - *host_nomad
+          - *host_nucleus
           - *user_dave
           - *user_ireen
-          - *host_nucleus
   - path_regex: users/secrets.yaml
     key_groups:
       - age:
           - *host_atlas
-          - *host_beef
-          - *host_butcher
           - *host_enigma
           - *host_entropy
           - *host_mirage
           - *host_nakulaptop
           - *host_nomad
-          - *user_dave
           - *host_nucleus
+          - *user_dave
+          - *user_ireen
   - path_regex: hosts/atlas/secrets/.*
     key_groups:
       - age:
           - *host_atlas
-          - *user_dave
-  - path_regex: hosts/beef/secrets/.*
-    key_groups:
-      - age:
-          - *host_beef
-          - *user_dave
-  - path_regex: hosts/butcher/secrets/.*
-    key_groups:
-      - age:
-          - *host_butcher
           - *user_dave
   - path_regex: hosts/enigma/secrets/.*
     key_groups:
@@ -62,14 +48,12 @@ creation_rules:
     key_groups:
       - age:
           - *host_entropy
-          - *host_nomad
           - *user_dave
   - path_regex: hosts/mirage/secrets/.*
     key_groups:
       - age:
-          - *host_nomad
-          - *user_dave
           - *host_mirage
+          - *user_dave
   - path_regex: hosts/nakulaptop/secrets/.*
     key_groups:
       - age:
@@ -80,13 +64,9 @@ creation_rules:
     key_groups:
       - age:
           - *host_nomad
-          - *host_beef
           - *user_dave
   - path_regex: hosts/nucleus/secrets/.*
     key_groups:
       - age:
           - *host_nucleus
-          - *host_nomad
-          - *user_dave
-          - *host_nomad
           - *user_dave
