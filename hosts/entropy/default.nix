@@ -9,7 +9,7 @@
   host = {
     container = {
       clamav = {
-        enable = true;
+        enable = false;
         logship = false;
         monitor = false;
       };
@@ -139,21 +139,30 @@
       raid.enable = true;
     };
     network = {
-      bridge = {
-        enable = true;
-        interfaces = [
-          "enp3s0f0"
-        ];
-      };
       hostname = "entropy";
-      wired = {
-       enable = true;
-       type = "static";
-       ip = "148.113.219.154/32";
-       gateway = "100.64.0.1";
-       mac = "34:5a:60:00:a8:68";
-     };
-     vpn = {
+      interfaces = {
+        enp3s0f0 = {
+          match = {
+            mac = "34:5a:60:00:a8:68";
+          };
+        };
+      };
+      bridges = {
+        br0 = {
+          name = "br0";
+          interfaces = [ "enp3s0f0" ];
+          stp = false;
+          linkLocalAddressing = false;
+        };
+      };
+      networks = {
+        br0 = {
+          type = "static";
+          ip = "148.113.219.154/32";
+          gateway = "100.64.0.1";
+        };
+      };
+      vpn = {
         zerotier = {
           enable = true;
           networks = [
