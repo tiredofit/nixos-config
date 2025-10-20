@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 
-SCRIPT_VERSION=1.9.0
+SCRIPT_VERSION=1.10.0
 
 INSTALL_BUILD_LOCAL=${INSTALL_BUILD_LOCAL:-"TRUE"}
 INSTALL_DEBUG=${INSTALL_DEBUG:-"FALSE"}
 INSTALL_REBOOT=${INSTALL_REBOOT:-"FALSE"}
 NIXOSANYWHERE_VERSION=${NIXOSANYWHERE_VERSION:-""}
+DEFAULT_PACKAGES=${DEFAULT_PACKAGES:-"unstable"}
 LOG_LEVEL=NOTICE
 REMOTE_USER=${REMOTE_USER:-"$(whoami)"}
 SECRET_USER="$(whoami)"
@@ -1743,13 +1744,13 @@ EOF
                         esac
                     fi
 
-                    ## Don't change the indenting on any of this!
-                    sed -i "/nixosConfigurations = {/a\\
-        ${deploy_host} = lib.nixosSystem { # ${template_role^} Added $(date +"%Y-%m-%d") \n\
-          modules = [ .\/hosts\/${deploy_host} ];\n\
-          specialArgs = { inherit self inputs outputs; };\n\
-        };\n" \
-                    "${_dir_flake}"/flake.nix
+                                        ## Don't change the indenting on any of this!
+                                        sed -i "/nixosConfigurations = {/a\\
+                ${deploy_host} = self.mkSystem { # ${template_role^} Added $(date +"%Y-%m-%d") \n\\
+                    hostPath = \.\/hosts\/${deploy_host};\n\\
+                    packages = \"${DEFAULT_PACKAGES}\";\n\\
+                };\n" \
+                                        "${_dir_flake}"/flake.nix
                     silent git add "${_dir_flake}"/flake.nix
                     _host_created=true
                 else
@@ -1783,7 +1784,7 @@ task_hostmanagement_delete() {
     rm -rf -i "${_dir_flake}"/hosts/"${opt}"
     git add .
 
-    sed -i -e "/${opt} = lib.nixosSystem/,/\ \ };/d" "${_dir_flake}"/flake.nix
+    sed -i -e "/${opt} = \(lib.nixosSystem\|self.mkSystem\)/,/\ \ };/d" "${_dir_flake}"/flake.nix
     silent git add "${_dir_flake}"/flake.nix
 }
 
