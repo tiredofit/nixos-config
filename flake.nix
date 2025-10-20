@@ -70,10 +70,7 @@
         "x86_64-linux"
       ];
 
-      # Create package sets for each system
       forAllSystems = f: lib.genAttrs systems (system: f system);
-
-      # Create a stable/unstable overlay
       nixpkgsSelection = { stable, unstable }: final: prev: {
         stable = import stable {
           inherit (prev) system;
@@ -158,6 +155,14 @@
         };
 
       nixosConfigurations = {
+                nucleus = self.mkSystem { # Server Added 2025-10-18
+
+                    hostPath = ./hosts/nucleus;
+
+                    packages = "unstable";
+
+                };
+
         atlas = self.mkSystem {
           hostPath = ./hosts/atlas;
           packages = "unstable";
