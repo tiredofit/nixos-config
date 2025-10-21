@@ -119,6 +119,23 @@
           port = 9993;
         };
       };
+      interfaces = {
+        eth-onboard = {
+          match = {
+            mac = "c8:53:09:04:e3:5a";
+          };
+        };
+        eth-dock = {
+          match = {
+            mac = "c8:53:09:04:e3:5b";
+          };
+        };
+      };
+      networks = {
+        onboard = {
+          type = "dynamic";
+        };
+      };
     };
     role = "laptop";
     service = {
