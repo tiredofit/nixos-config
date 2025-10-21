@@ -88,10 +88,10 @@
         inherit system;
         config.allowUnfree = true;
         overlays = [
-            outputs.overlays.additions
-            outputs.overlays.modifications
-            outputs.overlays.stable-packages
-            outputs.overlays.unstable-packages
+          outputs.overlays.additions
+          outputs.overlays.modifications
+          outputs.overlays.stable-packages
+          outputs.overlays.unstable-packages
         ];
       });
 
