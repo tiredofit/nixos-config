@@ -153,9 +153,7 @@
     feature = {
     };
     filesystem = {
-      swap = {
-        partition = "mapper/dev-disk-byx2dpartlabel-swap";
-      };
+      swap.enable = false; #disko
     };
     hardware = {
       cpu = "ampere";
