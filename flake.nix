@@ -159,6 +159,7 @@
           hostPath = ./hosts/atlas;
           packages = "unstable";
           system = "aarch64-linux";
+          extraModules = [ ./modules ];
         };
 
         enigma = self.mkSystem {
@@ -169,6 +170,7 @@
         entropy = self.mkSystem {
           hostPath = ./hosts/entropy;
           packages = "unstable";
+          extraModules = [ ./modules ];
         };
 
         mirage = self.mkSystem {
