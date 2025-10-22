@@ -5,8 +5,6 @@
     ../common
   ];
 
-  host.feature.virtualization.docker.containers.restic.resources.memory.max = "3G";
-    networking = { useNetworkd = lib.mkForce true; };
   host = {
     container = {
       restic = {
@@ -110,6 +108,7 @@
         opensnitch.enable = false;
       };
       hostname = "nomad";
+      manager = "both";
       vpn = {
         zerotier = {
           enable = true;
@@ -133,6 +132,7 @@
       };
       networks = {
         onboard = {
+          match.name = "eth-onboard";
           type = "dynamic";
         };
       };
