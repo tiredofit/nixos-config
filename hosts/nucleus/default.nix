@@ -194,4 +194,8 @@
   };
 
   networking.networkmanager.enable = true;
+
+  networking.firewall = {
+    trustedInterfaces = [ "br-quad1" "br-quad2" ];
+  };
 }
