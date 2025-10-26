@@ -95,6 +95,12 @@
       hostname = "nucleus";
       manager = "both";
       bridges = {
+        br-onboard = {
+          interfaces = [ "onboard" ];
+          match = {
+            name = "onboard";
+          };
+        };
         br-quad1 = {
           interfaces = [ "quad1" ];
           match = {
@@ -116,7 +122,7 @@
         br-quad4 = {
           interfaces = [ "quad4" ];
           match = {
-            name = "quad1";
+            name = "quad4";
           };
         };
       };
@@ -150,6 +156,9 @@
       networks = {
         onboard = {
           type = "dynamic";
+          match = {
+            name = "br-onboard";
+          };
         };
         quad1 = {
           type = "unmanaged";
@@ -193,8 +202,8 @@
     };
   };
 
-  networking.networkmanager.enable = true;
-
+  networking.networkmanager.enable = false;
+  networking.firewall.enable = false;
   networking.firewall = {
     trustedInterfaces = [ "br-quad1" "br-quad2" ];
   };
