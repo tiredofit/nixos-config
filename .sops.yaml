@@ -1,6 +1,5 @@
 keys:
   - &host_atlas age190tmygg8xmn9tkj4yjgemvdd8s4tnmycr9n4qfrr0l97zxfq3gjs36xsn8
-  - &host_butcher age1nleq0q2kzh2zn4pyr0dcy0zjnsr6sx8c5ttjahhfttkltsr2s3ksahhpkx
   - &host_enigma age1nleq0q2kzh2zn4pyr0dcy0zjnsr6sx8c5ttjahhfttkltsr2s3ksahhpkx
   - &host_entropy age10r9fcpj4z6nc9p5n3e6eqdy9kkmvp0kafpj02qwyvwnhs3ev2pts8qawyt
   - &host_mirage age17pldhhyuahahzrtgcgfnrgse56mrjr2y5d52xy2glwu858hjtapsvug6sa
@@ -9,6 +8,7 @@ keys:
   - &user_dave age1upzm9um3qljxlmxcg8vl35d7eyeqtnsfcnqlh3wtnj46dhfzwyrqa80avw
   - &user_ireen age1477n5xa2cr4tgdy80vxg24tsdcrcmzarn4ad99tjvrsjedq6sqpqsxyrms
   - &host_nucleus age197ewza8kky2gfef9d7qa464sylk0pshj4084hamxkhvtfyjgngfssjmxjc
+  - &host_test age1taje6mg0rpewujkvcsfgakpud88sg35fxyzad40f8pparymrhyvs33ju4l
 creation_rules:
   - path_regex: hosts/common/secrets/.*
     key_groups:
@@ -22,6 +22,7 @@ creation_rules:
           - *host_nucleus
           - *user_dave
           - *user_ireen
+          - *host_test
   - path_regex: users/secrets.yaml
     key_groups:
       - age:
@@ -34,6 +35,7 @@ creation_rules:
           - *host_nucleus
           - *user_dave
           - *user_ireen
+          - *host_test
   - path_regex: hosts/atlas/secrets/.*
     key_groups:
       - age:
@@ -69,4 +71,10 @@ creation_rules:
     key_groups:
       - age:
           - *host_nucleus
+          - *user_dave
+  - path_regex: hosts/test/secrets/.*
+    key_groups:
+      - age:
+          - *host_test
+          - *host_nomad
           - *user_dave

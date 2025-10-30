@@ -194,6 +194,13 @@
         nucleus = self.mkSystem {
           hostPath = ./hosts/nucleus;
           packages = "unstable";
+          extraModules = [ ./modules ];
+        };
+
+        test = self.mkSystem {
+          hostPath = ./hosts/test;
+          packages = "unstable";
+          extraModules = [ ./modules ];
         };
       };
 
