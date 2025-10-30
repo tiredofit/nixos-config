@@ -108,7 +108,7 @@
         opensnitch.enable = false;
       };
       hostname = "nomad";
-      manager = "both";
+      manager = "networkmanager";
       vpn = {
         zerotier = {
           enable = true;
