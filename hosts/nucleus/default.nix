@@ -82,9 +82,6 @@
     filesystem = {
       encryption.enable = false;
       impermanence.enable = true;
-      #swap = {
-      #  partition = "disk/by-partlabel/swap";
-      #};
     };
     hardware = {
       cpu = "amd";
@@ -94,6 +91,62 @@
     network = {
       hostname = "nucleus";
       manager = "both";
+      interfaces = {
+        onboard = {
+          match = {
+            mac = "d8:5e:d3:e7:65:b6";
+          };
+        };
+        quad1 = {
+          match = {
+            mac = "00:E0:4C:69:8B:0C";
+          };
+        };
+        quad2 = {
+          match = {
+            mac = "00:E0:4C:69:8B:0D";
+          };
+        };
+        quad3 = {
+          match = {
+            mac = "00:E0:4C:69:8B:0E";
+          };
+        };
+        quad4 = {
+          match = {
+            mac = "00:E0:4C:69:8B:0F";
+          };
+        };
+        br-quad2 = { # Create VLAN sub-interfaces on br-quad2
+          match = {
+            name = "br-quad2";
+          };
+          vlans = [
+            "vlan23"
+            "vlan60"
+            "vlan230"
+            #"vlan468"
+            "vlan1337"
+          ];
+        };
+      };
+      vlans = {
+        vlan23 = {
+          id = 23;
+        };
+        vlan60 = {
+          id = 60;
+        };
+        vlan230 = {
+          id = 230;
+        };
+        #vlan468 = {
+        #  id = 468;
+        #};
+        vlan1337 = {
+          id = 1337;
+        };
+      };
       bridges = {
         br-onboard = {
           interfaces = [ "onboard" ];
@@ -125,32 +178,20 @@
             name = "quad4";
           };
         };
-      };
-      interfaces = {
-        onboard = {
-          match = {
-            mac = "d8:5e:d3:e7:65:b6";
-          };
+        br-vlan23 = { # VLAN-specific bridges - Built on VLAN interfaces on br-quad2
+          interfaces = [ "vlan23" ];
         };
-        quad1 = {
-          match = {
-            mac = "00:E0:4C:69:8B:0C";
-          };
+        br-vlan60 = {
+          interfaces = [ "vlan60" ];
         };
-        quad2 = {
-          match = {
-            mac = "00:E0:4C:69:8B:0D";
-          };
+        br-vlan230 = {
+          interfaces = [ "vlan230" ];
         };
-        quad3 = {
-          match = {
-            mac = "00:E0:4C:69:8B:0E";
-          };
-        };
-        quad4 = {
-          match = {
-            mac = "00:E0:4C:69:8B:0F";
-          };
+        #br-vlan468 = {
+        #  interfaces = [ "vlan468" ];
+        #};
+        br-vlan1337 = {
+          interfaces = [ "vlan1337" ];
         };
       };
       networks = {
@@ -184,6 +225,36 @@
             name = "br-quad4";
           };
         };
+        vlan23 = {
+          type = "dynamic";
+          match = {
+            name = "br-vlan23";
+          };
+        };
+        vlan60 = {
+          type = "dynamic";
+          match = {
+            name = "br-vlan60";
+          };
+        };
+        vlan230 = {
+          type = "dynamic";
+          match = {
+            name = "br-vlan230";
+          };
+        };
+        #vlan468 = {
+        #  type = "dynamic";
+        #  match = {
+        #    name = "br-vlan1337";
+        #  };
+        #};
+        vlan1337 = {
+          type = "dynamic";
+          match = {
+            name = "br-vlan1337";
+          };
+        };
       };
       vpn = {
         zerotier = {
@@ -202,7 +273,6 @@
     };
   };
 
-  networking.networkmanager.enable = false;
   networking.firewall.enable = false;
   networking.firewall = {
     trustedInterfaces = [ "br-quad1" "br-quad2" ];
