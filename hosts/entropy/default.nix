@@ -145,22 +145,8 @@
           };
         };
       };
-      bridges = {
-        br0 = {
-          name = "br0";
-          interfaces = [ "enp3s0f0" ];
-          match = {
-           name = "enp3s0f0";
-          };
-          linkLocalAddressing = false;
-          stp = false;
-        };
-      };
       networks = {
-        br0 = {
-          match = {
-            name = "br0";
-          };
+        enp3s0f0 = {
           type = "static";
           ip = "148.113.219.154/32";
           gateway = "100.64.0.1";
