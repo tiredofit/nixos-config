@@ -1,11 +1,18 @@
-{ inputs, lib, modulesPath, pkgs, ...}: {
+{ config, inputs, lib, pkgs, ...}: {
 
   imports = [
-    (modulesPath + "/installer/scan/not-detected.nix")
-    (modulesPath + "/profiles/qemu-guest.nix")
+    inputs.disko.nixosModules.disko
     ./disks.nix
     ../common
   ];
+
+  fileSystems = {
+    "/mnt/media" = {
+      device = "/dev/disk/by-uuid/9c3cfc7b-f660-44eb-9c60-d32342cdf174";
+      fsType = "btrfs";
+      options = [ "compress=zstd" "noatime" "nofail" ];
+    };
+  };
 
   host = {
     container = {
@@ -116,29 +123,12 @@
           };
         };
       };
-      zabbix-proxy = {
-        enable = false;
-        logship = false;
-        monitor = false;
-        ports = {
-          proxy = {
-            enable = true;
-            host = 10051;
-            container = 10051;
-            method = "zerotier";
-            zerotierNetwork = "file:///var/run/secrets/zerotier/networks";
-          };
-        };
-      };
     };
     filesystem = {
       encryption.enable = false;
-      swap = {
-        partition = "disk/by-partlabel/swap";
-      };
     };
     hardware = {
-      cpu = "vm-intel";
+      cpu = "vm-amd";
     };
     role = "server";
     service = {
@@ -148,21 +138,21 @@
     network = {
       hostname = "enigma";
       interfaces = {
-        lan = {
+        lan1337 = {
           match = {
-            mac = "2A:BE:78:89:51:A5";
+            mac = "52:54:00:b9:02:e2";
           };
         };
       };
       networks = {
-        lan = {
+        lan1337 = {
           match = {
-            name = "lan";
+            name = "lan1337";
           };
           type = "static";
-          ip = "192.168.137.5/24";
-          gateway = "192.168.137.1";
-          dns = [ "192.168.137.1" ];
+          ip = "10.60.137.5/24";
+          gateway = "10.60.137.1";
+          dns = [ "10.60.137.1" ];
         };
       };
       vpn = {
@@ -189,13 +179,11 @@
     };
   };
 
-  services.qemuGuest.enable = true;
-  #networking.nameservers = [ "192.168.137.1" ];
+  networking.firewall = {
+    enable = true;  # Firewall is enabled by default
+    allowedTCPPorts = [ 8384 ];  # Add your TCP ports here
+    allowedUDPPorts = [8384 ];  # Add UDP ports if needed
+  };
 
-  #services.resolved = {
-  #  enable = lib.mkForce false;
-  #  dnssec = "false";
-  #  domains = [ "~." ];
-  #  fallbackDns = [ "192.168.137.1" ];
-  #};
+
 }

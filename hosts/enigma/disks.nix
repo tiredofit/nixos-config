@@ -1,78 +1,100 @@
-{ config, lib, pkgs, ... }:
-
+let
+  rawdisk1 = "/dev/vda";
+in
 {
-  boot = {
-    initrd = {
-      availableKernelModules = [
-        "uhci_hcd"
-        "ehci_pci"
-        "ahci"
-        "vmw_pvscsi"
-        "sd_mod"
-        "sr_mod"
-      ];
-    };
-  };
-
-  fileSystems = {
-    "/" = {
-      device = "/dev/disk/by-uuid/fa060c23-d46e-4713-9a96-fb9513a2b551";
-      fsType = "btrfs";
-      options = [ "subvol=root" "compress=zstd" "noatime" ];
-    };
-    "/boot" = {
-      device = "/dev/disk/by-uuid/4A74-66D0";
-      fsType = "vfat";
-    };
-    "/home" = {
-      device = "/dev/disk/by-uuid/fa060c23-d46e-4713-9a96-fb9513a2b551";
-      fsType = "btrfs";
-      options = [ "subvol=home/active" "compress=zstd" "noatime" ];
-    };
-    "/home/.snapshots" = {
-      device = "/dev/disk/by-uuid/fa060c23-d46e-4713-9a96-fb9513a2b551";
-      fsType = "btrfs";
-      options = [ "subvol=home/snapshots" "compress=zstd" "noatime" ];
-    };
-    "/nix" = {
-      device = "/dev/disk/by-uuid/fa060c23-d46e-4713-9a96-fb9513a2b551";
-      fsType = "btrfs";
-      options = [ "subvol=nix" ];
-    };
-    "/persist" = {
-      device = "/dev/disk/by-uuid/fa060c23-d46e-4713-9a96-fb9513a2b551";
-      fsType = "btrfs";
-      options = [ "subvol=persist/active" "compress=zstd" "noatime" ];
-    };
-    "/persist/.snapshots" = {
-      device = "/dev/disk/by-uuid/fa060c23-d46e-4713-9a96-fb9513a2b551";
-      fsType = "btrfs";
-      options = [ "subvol=persist/snapshots" "compress=zstd" "noatime" ];
-    };
-    "/var/lib/docker" = {
-      device = "/dev/disk/by-uuid/fa060c23-d46e-4713-9a96-fb9513a2b551";
-      fsType = "btrfs";
-      options = [ "subvol=var_lib_docker" "compress=zstd" "noatime" ];
-    };
-    "/var/local" = {
-      device = "/dev/disk/by-uuid/fa060c23-d46e-4713-9a96-fb9513a2b551";
-      fsType = "btrfs";
-      options = [ "subvol=var_local/active" "compress=zstd" "noatime" ];
-    };
-    "/var/local/.snapshots" = {
-      device = "/dev/disk/by-uuid/fa060c23-d46e-4713-9a96-fb9513a2b551";
-      fsType = "btrfs";
-      options = [ "subvol=var_local/snapshots" "compress=zstd" "noatime" ];
-    };
-    "/var/log" = {
-      device = "/dev/disk/by-uuid/fa060c23-d46e-4713-9a96-fb9513a2b551";
-      fsType = "btrfs";
-      options = [ "subvol=var_log" "compress=zstd" "noatime" "nodatacow" ];
-    };
-    "/mnt/media" = {
-      device = "/dev/disk/by-uuid/9c3cfc7b-f660-44eb-9c60-d32342cdf174";
-      fsType = "btrfs";
-      options = [ "compress=zstd" "noatime" ];
+  disko.devices = {
+    disk = {
+      ${rawdisk1} = {
+        device = "${rawdisk1}" ;
+        type = "disk";
+        content = {
+          type = "gpt";
+          partitions = {
+            ESP = {
+              label = "EFI";
+              name = "ESP";
+              size = "1024M";
+              type = "EF00" ;
+              content = {
+                type = "filesystem";
+                format = "vfat";
+                mountpoint = "/boot";
+              };
+            };
+            swap = {
+              label = "swap";
+              size = "20G";
+              content = {
+                type = "swap";
+                resumeDevice = true;
+              };
+            };
+            root = {
+              label = "rootfs";
+              name = "btrfs";
+              size = "100%";
+              content = {
+                type = "btrfs";
+                extraArgs = [ "-f" ];
+                subvolumes = {
+                  "/root" = {
+                    mountpoint = "/";
+                    mountOptions = [ "compress=zstd" "noatime" ];
+                  };
+                  "/root-blank" = {
+                    mountOptions = [ "compress=zstd" "noatime" ];
+                  };
+                  "/home" = {
+                    mountOptions = [ "compress=zstd" "noatime" ];
+                  };
+                  "/home/active" = {
+                    mountpoint = "/home";
+                    mountOptions = [ "compress=zstd" "noatime" ];
+                  };
+                  "/home/snapshots" = {
+                    mountpoint = "/home/.snapshots";
+                    mountOptions = [ "compress=zstd" "noatime" ];
+                  };
+                  "/nix" = {
+                    mountpoint = "/nix";
+                    mountOptions = [ "compress=zstd" "noatime" ];
+                  };
+                  "/persist" = {
+                    mountOptions = [ "compress=zstd" "noatime" ];
+                  };
+                  "/persist/active" = {
+                    mountpoint = "/persist";
+                    mountOptions = [ "compress=zstd" "noatime" ];
+                  };
+                  "/persist/snapshots" = {
+                    mountpoint = "/persist/.snapshots";
+                    mountOptions = [ "compress=zstd" "noatime" ];
+                  };
+                  "/var_lib_docker" = {
+                    mountpoint = "/var/lib/docker";
+                    mountOptions = [ "compress=zstd" "noatime" ];
+                  };
+                  "/var_local" = {
+                    mountOptions = [ "compress=zstd" "noatime" ];
+                  };
+                  "/var_local/active" = {
+                    mountpoint = "/var/local";
+                    mountOptions = [ "compress=zstd" "noatime" ];
+                  };
+                  "/var_local/snapshots" = {
+                    mountpoint = "/var/local/.snapshots";
+                    mountOptions = [ "compress=zstd" "noatime" ];
+                  };
+                  "/var_log" = {
+                    mountpoint = "/var/log";
+                    mountOptions = [ "compress=zstd" "noatime" "nodatacow" ];
+                  };
+                };
+              };
+            };
+          };
+        };
+      };
     };
   };
 }
