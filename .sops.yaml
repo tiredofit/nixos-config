@@ -77,4 +77,5 @@ creation_rules:
       - age:
           - *host_test
           - *host_nomad
+          - *host_enigma
           - *user_dave
