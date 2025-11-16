@@ -155,5 +155,4 @@
       root.enable = true;
     };
   };
-programs.ssh.package = lib.mkForce pkgs.openssh_hpn;
 }
