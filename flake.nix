@@ -17,7 +17,7 @@
   };
 
   inputs = {
-    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-25.05";
+    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-25.11";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     nix-modules = {
       #url = "github:tiredofit/nix-modules";
@@ -40,7 +40,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     home-manager-stable = {
-      url = "github:nix-community/home-manager/release-25.05";
+      url = "github:nix-community/home-manager/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs-stable";
     };
     home-manager-unstable = {
@@ -157,49 +157,49 @@
       nixosConfigurations = {
         atlas = self.mkSystem {
           hostPath = ./hosts/atlas;
-          packages = "unstable";
+          packages = "stable";
           system = "aarch64-linux";
           extraModules = [ ./modules ];
         };
 
         enigma = self.mkSystem {
           hostPath = ./hosts/enigma;
-          packages = "unstable";
+          packages = "stable";
         };
 
         entropy = self.mkSystem {
           hostPath = ./hosts/entropy;
-          packages = "unstable";
+          packages = "stable";
           extraModules = [ ./modules ];
         };
 
         mirage = self.mkSystem {
           hostPath = ./hosts/mirage;
-          packages = "unstable";
+          packages = "stable";
           system = "aarch64-linux";
           extraModules = [ ./modules ];
         };
 
         nakulaptop = self.mkSystem {
           hostPath = ./hosts/nakulaptop;
-          packages = "unstable";
+          packages = "stable";
         };
 
         nomad = self.mkSystem {
           hostPath = ./hosts/nomad;
-          packages = "unstable";
+          packages = "stable";
           extraModules = [ ./modules ];
         };
 
         nucleus = self.mkSystem {
           hostPath = ./hosts/nucleus;
-          packages = "unstable";
+          packages = "stable";
           extraModules = [ ./modules ];
         };
 
         test = self.mkSystem {
           hostPath = ./hosts/test;
-          packages = "unstable";
+          packages = "stable";
           extraModules = [ ./modules ];
         };
       };
