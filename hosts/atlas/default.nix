@@ -33,6 +33,13 @@
         monitor = false;
         containerName = builtins.replaceStrings ["." ] ["-"] ( "ldap." + config.host.network.domainname + "-app" );
         hostname = "ldap.${config.host.network.domainname}";
+        certs = {
+          volume = {
+            source = "/var/local/data/_system/traefik-internal/certs/dump/${config.host.network.domainname}";
+            target = "/certs/lencrypts";
+            readOnly = true;
+          };
+        };
         ports = {
           ldap = {
             enable = true;
@@ -173,7 +180,6 @@
           type = "dynamic";
         };
       };
-
       vpn = {
         zerotier = {
           enable = true;
