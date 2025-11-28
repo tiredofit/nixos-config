@@ -150,7 +150,7 @@
             inherit self inputs outputs;
             home-manager = selectedHomeManager;
           };
-          inherit (systemPkgs) system;
+          system = systemPkgs.stdenv.hostPlatform.system;
           pkgs = systemPkgs;
         };
 
