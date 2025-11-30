@@ -6,5 +6,6 @@ with lib;
     ./dave
     ./ireen
     ./root
+    ./tttttt
   ];
 }
