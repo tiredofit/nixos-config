@@ -36,7 +36,7 @@
         certs = {
           volume = {
             source = "/var/local/data/_system/traefik-internal/certs/dump/${config.host.network.domainname}";
-            target = "/certs/lencrypts";
+            target = "/certs/letsencrypt";
             readOnly = true;
           };
         };
