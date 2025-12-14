@@ -289,7 +289,7 @@
     };
   };
 
-  nix.gc.automatic = false;
+  #nix.gc.automatic = false;
   programs.hyprland.xwayland.enable = false;
 
   services.greetd = {
