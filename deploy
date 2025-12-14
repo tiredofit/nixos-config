@@ -13,6 +13,12 @@ SECRET_USER="$(whoami)"
 SECRET_HOST="$(hostname)"
 SSH_PORT=${SSH_PORT:-"22"}
 
+if command -v nixos-rebuild-ng > /dev/null 2>&1 ; then
+    NIXOS_REBUILD_CMD="nixos-rebuild-ng"
+else
+    NIXOS_REBUILD_CMD="nixos-rebuild"
+fi
+
 if [ -f ".deploy.env" ] ; then source .deploy.env ; fi
 
 case "${1}" in
@@ -442,7 +448,7 @@ flake_tools() {
         ;;
         "upgrade" )
             print_info "Upgrading System"
-            sudo nixos-rebuild switch --flake "${_dir_flake}"/#"$(hostname)"
+            sudo ${NIXOS_REBUILD_CMD} switch --flake "${_dir_flake}"/#"$(hostname)"
         ;;
     esac
 }
@@ -2094,7 +2100,7 @@ task_update_host() {
     if [ -n "${SSH_PRIVATE_KEY}" ]; then
         task_update_host_ssh_private_key="-i ${SSH_PRIVATE_KEY}"
     fi
-    NIX_SSHOPTS="-t -p ${SSH_PORT} ${task_update_host_ssh_private_key} -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" nixos-rebuild switch --flake "${_dir_flake}"/#${deploy_host} --use-remote-sudo --target-host ${REMOTE_USER}@${REMOTE_IP}
+    NIX_SSHOPTS="-t -p ${SSH_PORT} ${task_update_host_ssh_private_key} -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" ${NIXOS_REBUILD_CMD} switch --flake "${_dir_flake}"/#${deploy_host} --use-remote-sudo --target-host ${REMOTE_USER}@${REMOTE_IP}
     wait_for_keypress
 }
 
