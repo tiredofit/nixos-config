@@ -135,15 +135,25 @@
                   overlays = [];
                 };
               })
-            ];
+            ] ++ (if packages == "stable" then [
+              # 20251213 stable issue - make sure `systemd` NixOS modules that check `cfg.package.withNspawn` don't fail on older stable pkgs.
+              (final: prev: {
+                systemd = prev.systemd // { withNspawn = true; };
+              })
+            ] else []);
           };
         in
         lib.nixosSystem {
-          modules = [
+          modules = (if packages == "stable" then [
+            ./lib/modules/patch-withNspawn.nix
+          ] else []) ++ [
             selectedHomeManager.nixosModules.home-manager
             hostPath
             {
-              _module.args.nixpkgsBranch = packages;
+              _module.args = {
+                nixpkgsBranch = packages;
+                systemPkgs = systemPkgs;
+              };
             }
           ] ++ extraModules;
           specialArgs = {
@@ -187,7 +197,7 @@
 
         nomad = self.mkSystem {
           hostPath = ./hosts/nomad;
-          packages = "stable";
+          packages = "unstable";
           extraModules = [ ./modules ];
         };
 
@@ -199,7 +209,7 @@
 
         test = self.mkSystem {
           hostPath = ./hosts/test;
-          packages = "stable";
+          packages = "unstable";
           extraModules = [ ./modules ];
         };
       };
