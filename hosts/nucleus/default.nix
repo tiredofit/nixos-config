@@ -67,6 +67,13 @@
       };
     };
     feature = {
+      graphics = {
+        enable = true;
+        backend = "wayland";
+        displayManager.manager = "greetd";
+        windowManager.manager = "hyprland";
+        acceleration = lib.mkForce true;
+      };
       virtualization = {
         docker = {
           enable = true;
@@ -268,13 +275,42 @@
     };
     role = "server";
     user = {
-      root.enable = lib.mkDefault true;
-      dave.enable = lib.mkDefault true;
+      root.enable = true;
+      dave.enable = true;
+      tttttt.enable = true;
     };
   };
 
-  networking.firewall.enable = false;
-  networking.firewall = {
-    trustedInterfaces = [ "br-quad1" "br-quad2" ];
+  networking = {
+    firewall = {
+      enable = true;
+      checkReversePath = "loose"; # libvirtd requirement
+      #trustedInterfaces = [ "br-quad1" "br-quad2" "br-quad3" "br-quad4"];
+    };
   };
+
+  nix.gc.automatic = false;
+  programs.hyprland.xwayland.enable = false;
+
+  services.greetd = {
+    settings = {
+      default_session = {
+        user = "tttttt";
+        command = "uwsm start hyprland-uwsm.desktop";
+      };
+      initial_session = {
+        user = "tttttt";
+        command = "uwsm start hyprland-uwsm.desktop";
+      };
+      terminal.vt = 1;
+    };
+    restart = true;
+  };
+
+  #virtualisation.libvirtd.firewallBackend = "iptables";
+  #virtualisation.libvirtd.onShutdown = "shutdown";
+  #virtualisation.libvirtd.parallelShutdown = 2;
+  #networking.firewall.package = pkgs.iptables;
+  #networking.firewall.backend = "iptables";
+  #networking.firewall.logRefusedPackets = true;
 }
