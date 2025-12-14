@@ -24,18 +24,9 @@ in
         "video"
         "audio"
       ] ++ ifTheyExist [
-        "adbusers"
-        "deluge"
-        "dialout"
-        "docker"
         "git"
         "input"
         "libvirtd"
-        "lp"
-        "mysql"
-        "network"
-        "networkmanager"
-        "podman"
       ];
 
       openssh.authorizedKeys.keys = [ (builtins.readFile ./ssh.pub) ];
