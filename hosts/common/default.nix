@@ -53,6 +53,7 @@
       mtr.enable = mkDefault true;
       nano.enable = mkDefault true;
       ncdu.enable = mkDefault true;
+      net-tools.enable = mkDefault true;
       pciutils.enable = mkDefault true;
       psmisc.enable = mkDefault true;
       ripgrep.enable = mkDefault true;
@@ -154,7 +155,6 @@
 
   security = {
     pam.loginLimits = [
-      # Increase open file limit for sudoers
       {
         domain = "@wheel";
         item = "nofile";
