@@ -284,12 +284,12 @@
   networking = {
     firewall = {
       enable = true;
+      allowedTCPPorts = [ 5960 ];
       checkReversePath = "loose"; # libvirtd requirement
       #trustedInterfaces = [ "br-quad1" "br-quad2" "br-quad3" "br-quad4"];
     };
   };
 
-  #nix.gc.automatic = false;
   programs.hyprland.xwayland.enable = false;
 
   services.greetd = {
