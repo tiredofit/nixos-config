@@ -23,14 +23,6 @@
       #url = "github:tiredofit/nix-modules";
       url = "path:/home/dave/src/nix-modules";
     };
-    apple-silicon = {
-      url = "github:nix-community/nixos-apple-silicon";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    asahi-firmware = {
-      url = "git+https://github.com/tiredofit/asahi-firmware.git";
-      flake = false;
-    };
     disko = {
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -145,15 +137,17 @@
         in
         lib.nixosSystem {
           modules = (if packages == "stable" then [
-            ./lib/modules/patch-withNspawn.nix
+            {
+              # Force the systemd package used by modules to be an overridden
+              # derivation that exposes `withNspawn`. This avoids failing the
+              # systemd module check on older stable nixpkgs.
+              systemd.package = systemPkgs.systemd.override (old: old // { withNspawn = true; });
+            }
           ] else []) ++ [
             selectedHomeManager.nixosModules.home-manager
             hostPath
             {
-              _module.args = {
-                nixpkgsBranch = packages;
-                systemPkgs = systemPkgs;
-              };
+              _module.args.nixpkgsBranch = packages;
             }
           ] ++ extraModules;
           specialArgs = {
@@ -180,13 +174,6 @@
         entropy = self.mkSystem {
           hostPath = ./hosts/entropy;
           packages = "stable";
-          extraModules = [ ./modules ];
-        };
-
-        mirage = self.mkSystem {
-          hostPath = ./hosts/mirage;
-          packages = "stable";
-          system = "aarch64-linux";
           extraModules = [ ./modules ];
         };
 
