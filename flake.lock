@@ -1,42 +1,5 @@
 {
   "nodes": {
-    "apple-silicon": {
-      "inputs": {
-        "flake-compat": "flake-compat",
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1766064315,
-        "narHash": "sha256-aMoYLYIj+yYGhDKuSromj+VZYnMyN3lRRAZ+dk1IOiE=",
-        "owner": "nix-community",
-        "repo": "nixos-apple-silicon",
-        "rev": "f94f4496775f9ca6e8a9e9e83f5aa4e4210fbb5d",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nix-community",
-        "repo": "nixos-apple-silicon",
-        "type": "github"
-      }
-    },
-    "asahi-firmware": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1754157986,
-        "narHash": "sha256-w6fDlOYGDnWejCnnptXrc6Oo4R0rj1Rwws7lPg1Idw0=",
-        "ref": "refs/heads/main",
-        "rev": "95b29a5050cfffb6d3f76fcc0e62188522abe8aa",
-        "revCount": 2,
-        "type": "git",
-        "url": "https://github.com/tiredofit/asahi-firmware.git"
-      },
-      "original": {
-        "type": "git",
-        "url": "https://github.com/tiredofit/asahi-firmware.git"
-      }
-    },
     "disko": {
       "inputs": {
         "nixpkgs": [
@@ -54,21 +17,6 @@
       "original": {
         "owner": "nix-community",
         "repo": "disko",
-        "type": "github"
-      }
-    },
-    "flake-compat": {
-      "locked": {
-        "lastModified": 1746162366,
-        "narHash": "sha256-5SSSZ/oQkwfcAz/o/6TlejlVGqeK08wyREBQ5qFFPhM=",
-        "owner": "nix-community",
-        "repo": "flake-compat",
-        "rev": "0f158086a2ecdbb138cd0429410e44994f1b7e4b",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nix-community",
-        "repo": "flake-compat",
         "type": "github"
       }
     },
@@ -169,8 +117,8 @@
     },
     "nix-modules": {
       "locked": {
-        "lastModified": 1766076598,
-        "narHash": "sha256-EPuWrPjG7UtuBA84tv9cU0Tzaf5/Z016P/lx8F/DMjE=",
+        "lastModified": 1766444773,
+        "narHash": "sha256-B5K5CcJns0e9X7asNFoNQ8FEZxGfJx/s8lQCG1pKnvs=",
         "path": "/home/dave/src/nix-modules",
         "type": "path"
       },
@@ -241,8 +189,6 @@
     },
     "root": {
       "inputs": {
-        "apple-silicon": "apple-silicon",
-        "asahi-firmware": "asahi-firmware",
         "disko": "disko",
         "herald": "herald",
         "home-manager-stable": "home-manager-stable",
