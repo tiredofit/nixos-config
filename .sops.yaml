@@ -2,7 +2,6 @@ keys:
   - &host_atlas age190tmygg8xmn9tkj4yjgemvdd8s4tnmycr9n4qfrr0l97zxfq3gjs36xsn8
   - &host_enigma age1nleq0q2kzh2zn4pyr0dcy0zjnsr6sx8c5ttjahhfttkltsr2s3ksahhpkx
   - &host_entropy age10r9fcpj4z6nc9p5n3e6eqdy9kkmvp0kafpj02qwyvwnhs3ev2pts8qawyt
-  - &host_mirage age17pldhhyuahahzrtgcgfnrgse56mrjr2y5d52xy2glwu858hjtapsvug6sa
   - &host_nakulaptop age1m6gzjlvx5paan69evccl6kywj0ghdk46prumx4jn4hxcrxd4re6qckdl9w
   - &host_nomad age1y2f4jzfqjscgvwe3w3q8jmadtvxlsudk3c49lhqtdvatu7fwtdusez9fm9
   - &user_dave age1upzm9um3qljxlmxcg8vl35d7eyeqtnsfcnqlh3wtnj46dhfzwyrqa80avw
@@ -16,7 +15,6 @@ creation_rules:
           - *host_atlas
           - *host_entropy
           - *host_enigma
-          - *host_mirage
           - *host_nakulaptop
           - *host_nomad
           - *host_nucleus
@@ -29,7 +27,6 @@ creation_rules:
           - *host_atlas
           - *host_enigma
           - *host_entropy
-          - *host_mirage
           - *host_nakulaptop
           - *host_nomad
           - *host_nucleus
@@ -50,11 +47,6 @@ creation_rules:
     key_groups:
       - age:
           - *host_entropy
-          - *user_dave
-  - path_regex: hosts/mirage/secrets/.*
-    key_groups:
-      - age:
-          - *host_mirage
           - *user_dave
   - path_regex: hosts/nakulaptop/secrets/.*
     key_groups:
