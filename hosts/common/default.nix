@@ -56,6 +56,7 @@
       net-tools.enable = mkDefault true;
       pciutils.enable = mkDefault true;
       psmisc.enable = mkDefault true;
+      reptyr.enable = mkDefault true;
       ripgrep.enable = mkDefault true;
       rsync.enable = mkDefault true;
       strace.enable = mkDefault true;
