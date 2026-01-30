@@ -18,7 +18,7 @@
         monitor = false;
       };
       traefik = {
-        enable = true;
+        enable = false;
         logship = false;
         monitor = false;
         ports = {
@@ -68,6 +68,9 @@
     feature = {
       appimage.enable = true;
       development.crosscompilation.enable = true;
+      gaming = {
+        steam.enable = true;
+      };
       graphics = {
         enable = true;
         backend = "wayland";
@@ -135,6 +138,12 @@
           match.name = "eth-onboard";
           type = "dynamic";
         };
+        vlan23 = {
+          type = "dynamic";
+          match = {
+            name = "eth-dock";
+          };
+        };
       };
     };
     role = "laptop";
@@ -153,6 +162,21 @@
     user = {
       dave.enable = true;
       root.enable = true;
+    };
+  };
+
+  hardware = {
+    steam-hardware.enable = true;
+    xpadneo.enable = true;
+  };
+
+  services.resolved = {
+    enable = true;
+    settings = {
+      Resolve = {
+        MulticastDNS = false;  # No mDNS responder (stops publishing/changing hostnames)
+        LLMNR = false;  # Redundant with llmnr="false", but explicit if needed
+      };
     };
   };
 }

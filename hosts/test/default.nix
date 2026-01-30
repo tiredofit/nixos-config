@@ -14,7 +14,7 @@
         monitor = false;
       };
       coredns = {
-        enable = true;
+        enable = false;
         logship = false;
         monitor = false;
       };
@@ -36,12 +36,12 @@
         };
       };
       socket-proxy = {
-        enable = true;
+        enable = false;
         logship = false;
         monitor = false;
       };
       traefik = {
-        enable = true;
+        enable = false;
         logship = false;
         monitor = false;
         ports = {
@@ -66,7 +66,7 @@
         };
       };
       unbound = {
-        enable = true;
+        enable = false;
         monitor = false;
         logship = false;
         secrets = {
@@ -87,6 +87,17 @@
       };
     };
     feature = {
+      #fonts = {
+      #  enable = lib.mkForce true;
+      #};
+      graphics = {
+        enable = true;
+        backend = "wayland";
+        displayManager.manager = "greetd";
+        #windowManager.manager = null;
+        windowManager.manager = "hyprland";
+        acceleration = lib.mkForce true;
+      };
       virtualization = {
         docker = {
          enable = true;
@@ -106,8 +117,9 @@
     };
     service = {
       docker_container_manager = {
-        enable = lib.mkForce true;  # Enable start/stop containers on bootup/shutdown
+        enable = lib.mkForce false;  # Enable start/stop containers on bootup/shutdown
       };
+      vscode_server.enable = true;
     };
     network = {
       firewall.fail2ban.enable = false;
@@ -118,19 +130,19 @@
             mac = "52:54:00:44:71:80";
           };
         };
-        eth1337 = {
-           match = {
-            mac = "52:54:00:8a:c9:b3";
-          };
-        };
+        #eth1337 = {
+        #   match = {
+        #    mac = "52:54:00:8a:c9:b3";
+        #  };
+        #};
       };
       bridges = {
         br-vlan60 = {
           interfaces = [ "eth60" ];
         };
-        br-vlan1337 = {
-          interfaces = [ "eth1337" ];
-        };
+        #br-vlan1337 = {
+        #  interfaces = [ "eth1337" ];
+        #};
       };
       networks = {
         vlan60 = {
@@ -139,20 +151,44 @@
             name = "br-vlan60";
           };
         };
-        vlan1337 = {
-          type = "dynamic";
-          match = {
-            name = "br-vlan1337";
-          };
-        };
+        #vlan1337 = {
+        #  type = "dynamic";
+        #  match = {
+        #    name = "br-vlan1337";
+        #  };
+        #};
       };
     };
     role = "server";
     user = {
       root.enable = lib.mkDefault true;
       dave.enable = lib.mkDefault true;
+      tttttt.enable = lib.mkDefault true;
     };
   };
 
-  networking.firewall.enable = false;
+  networking.firewall.enable = true;
+
+  services.greetd = {
+    settings = {
+      default_session = {
+        user = "tttttt";
+        #command = "${pkgs.runtimeShell} $HOME/.hm-xsession";
+        #command = "Hyprland";
+        command = "uwsm start hyprland-uwsm.desktop";
+      };
+      initial_session = {
+        user = "tttttt";
+        #command = "${pkgs.runtimeShell} $HOME/.hm-xsession";
+        command = "uwsm start hyprland-uwsm.desktop";
+      };
+      terminal.vt = 1;
+    };
+    restart = true;
+  };
+
+  #fonts.fontconfig.enable = lib.mkForce true;
+  environment.systemPackages = with pkgs; [
+    iptables
+  ];
 }
