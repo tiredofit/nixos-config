@@ -105,6 +105,7 @@
         server = "pipewire";
       };
       firmware.enable = true;
+      gamecontroller.enable = true;
     };
     network = {
       firewall = {
@@ -112,6 +113,7 @@
       };
       hostname = "nomad";
       manager = "networkmanager";
+      resolved.enable = true;
       vpn = {
         zerotier = {
           enable = true;
@@ -162,21 +164,6 @@
     user = {
       dave.enable = true;
       root.enable = true;
-    };
-  };
-
-  hardware = {
-    steam-hardware.enable = true;
-    xpadneo.enable = true;
-  };
-
-  services.resolved = {
-    enable = true;
-    settings = {
-      Resolve = {
-        MulticastDNS = false;  # No mDNS responder (stops publishing/changing hostnames)
-        LLMNR = false;  # Redundant with llmnr="false", but explicit if needed
-      };
     };
   };
 }
