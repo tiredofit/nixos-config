@@ -20,8 +20,8 @@
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-25.11";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     nix-modules = {
-      url = "github:tiredofit/nix-modules";
-      #url = "path:/home/dave/src/nix-modules";
+      #url = "github:tiredofit/nix-modules";
+      url = "path:/home/dave/src/nix-modules";
     };
     disko = {
       url = "github:nix-community/disko";
@@ -161,19 +161,19 @@
       nixosConfigurations = {
         atlas = self.mkSystem {
           hostPath = ./hosts/atlas;
-          packages = "stable";
+          packages = "unstable";
           system = "aarch64-linux";
           extraModules = [ ./modules ];
         };
 
         enigma = self.mkSystem {
           hostPath = ./hosts/enigma;
-          packages = "stable";
+          packages = "unstable";
         };
 
         entropy = self.mkSystem {
           hostPath = ./hosts/entropy;
-          packages = "stable";
+          packages = "unstable";
           extraModules = [ ./modules ];
         };
 
