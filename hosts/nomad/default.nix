@@ -5,6 +5,7 @@
     ../common
   ];
 
+
   host = {
     container = {
       restic = {
@@ -81,7 +82,7 @@
         flatpak.enable = true;
         waydroid.enable = false;
         virtd = {
-          daemon.enable = true;
+          daemon.enable = false;
         };
         docker = {
           enable = true;
@@ -106,6 +107,7 @@
       };
       firmware.enable = true;
       gamecontroller.enable = true;
+      wireless.enable = true;
     };
     network = {
       firewall = {
@@ -115,6 +117,7 @@
       manager = "networkmanager";
       resolved.enable = true;
       vpn = {
+        openvpn.enable = true;
         zerotier = {
           enable = true;
           networks = [
