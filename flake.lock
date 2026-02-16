@@ -107,11 +107,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1771132481,
-        "narHash": "sha256-Tc+YqZ/Q1K35vJK4ji4RbLB/qKGcEq6yh7p4CKoZF60=",
+        "lastModified": 1771188132,
+        "narHash": "sha256-qLXxN/tPrZtnekaLBQuVtxQfvqqs5cT5WbyH4zZaTGI=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "1e53254671f36cb7d0e2dcca08730f066d5e69b4",
+        "rev": "ae8003d8b61d0d373e7ca3da1a48f9c870d15df9",
         "type": "github"
       },
       "original": {
@@ -142,17 +142,14 @@
     },
     "nix-modules": {
       "locked": {
-        "lastModified": 1770313005,
-        "narHash": "sha256-4LUycqtpQsWCNXfw0lW42J36K5x4ERcsrPiAHNiHiRA=",
-        "owner": "tiredofit",
-        "repo": "nix-modules",
-        "rev": "5cb4be20176e0940841cb317f3b533ef74e7ffb6",
-        "type": "github"
+        "lastModified": 1771256652,
+        "narHash": "sha256-J8zSqNr+Cr1pWGYpyuQdcFo7i2wg4zzx5EnlC7vsEzU=",
+        "path": "/home/dave/src/nix-modules",
+        "type": "path"
       },
       "original": {
-        "owner": "tiredofit",
-        "repo": "nix-modules",
-        "type": "github"
+        "path": "/home/dave/src/nix-modules",
+        "type": "path"
       }
     },
     "nixpkgs": {
@@ -205,11 +202,11 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1770843696,
-        "narHash": "sha256-LovWTGDwXhkfCOmbgLVA10bvsi/P8eDDpRudgk68HA8=",
+        "lastModified": 1771177547,
+        "narHash": "sha256-trTtk3WTOHz7hSw89xIIvahkgoFJYQ0G43IlqprFoMA=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "2343bbb58f99267223bc2aac4fc9ea301a155a16",
+        "rev": "ac055f38c798b0d87695240c7b761b82fc7e5bc2",
         "type": "github"
       },
       "original": {
