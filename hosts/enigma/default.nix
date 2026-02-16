@@ -132,7 +132,13 @@
     };
     role = "server";
     service = {
-      syncthing.enable = true;
+      syncthing = {
+        enable = true;
+        openFirewall = {
+          enable = true;
+          tcpPorts = [ 22000 ] ;
+        };
+      };
       vscode_server.enable = lib.mkForce false;
     };
     network = {
