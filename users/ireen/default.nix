@@ -17,13 +17,16 @@ in
   config = mkIf config.host.user.ireen.enable {
     users.users.ireen = {
       isNormalUser = true;
-      shell = pkgs.bashInteractive;
+      shell =
+        if config.host.application.zsh.enable then pkgs.zsh
+        else if config.host.application.bash.enable then pkgs.bashInteractive
+        else pkgs.bashInteractive;
       uid = 4242;
       group = "users" ;
       extraGroups = [
-        "wheel"
-        "video"
         "audio"
+        "video"
+        "wheel"
       ] ++ ifTheyExist [
         "adbusers"
         "input"

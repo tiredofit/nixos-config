@@ -1,4 +1,4 @@
-{lib, ...}:
+{lib, pkgs, ...}:
 
 with lib;
 {
@@ -8,4 +8,19 @@ with lib;
     ./root
     ./tttttt
   ];
+
+  config = {
+    environment.shells = with pkgs; [
+      bashInteractive
+      zsh
+    ];
+    system = {
+      userActivationScripts = {
+        zshrc = "touch .zshrc";
+      };
+    };
+    users = {
+      defaultUserShell = pkgs.zsh;
+    };
+  };
 }

@@ -16,13 +16,16 @@ in
   config = mkIf config.host.user.tttttt.enable {
     users.users.tttttt = {
       isNormalUser = true;
-      shell = pkgs.bashInteractive;
+      shell =
+        if config.host.application.zsh.enable then pkgs.zsh
+        else if config.host.application.bash.enable then pkgs.bashInteractive
+        else pkgs.bashInteractive;
       uid = 6060;
       group = "users" ;
       extraGroups = [
-        "wheel"
-        "video"
         "audio"
+        "video"
+        "wheel"
       ] ++ ifTheyExist [
         "git"
         "input"

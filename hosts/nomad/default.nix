@@ -5,7 +5,7 @@
     ../common
   ];
 
-
+  programs.hyprland.xwayland.enable = false;
   host = {
     container = {
       restic = {

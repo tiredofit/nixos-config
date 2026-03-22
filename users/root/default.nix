@@ -18,7 +18,10 @@
     };
 
     users.users.root = {
-      shell = pkgs.bashInteractive;
+      shell =
+        if config.host.application.zsh.enable then pkgs.zsh
+        else if config.host.application.bash.enable then pkgs.bashInteractive
+        else pkgs.bashInteractive;
       hashedPasswordFile = mkDefault config.sops.secrets.root-password.path;
     };
 

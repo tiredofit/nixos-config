@@ -63,6 +63,7 @@
       tmux.enable = mkDefault true;
       wget.enable = mkDefault true;
       zoxide.enable = mkDefault true;
+      zsh.enable = mkDefault true;
     };
     configDir = self.outPath;
     feature = {

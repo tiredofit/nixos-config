@@ -17,7 +17,10 @@ in
   config = mkIf config.host.user.dave.enable {
     users.users.dave = {
       isNormalUser = true;
-      shell = pkgs.bashInteractive;
+    shell =
+      if config.host.application.zsh.enable then pkgs.zsh
+      else if config.host.application.bash.enable then pkgs.bashInteractive
+      else pkgs.bashInteractive;
       uid = 2323;
       group = "users" ;
       extraGroups = [
@@ -26,14 +29,12 @@ in
         "audio"
       ] ++ ifTheyExist [
         "adbusers"
-        "deluge"
         "dialout"
         "docker"
         "git"
         "input"
         "libvirtd"
         "lp"
-        "mysql"
         "network"
         "networkmanager"
         "podman"

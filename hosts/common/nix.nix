@@ -50,6 +50,11 @@
         alias nix_package_size="nix path-info --size --human-readable --recursive /run/current-system | cut -d - -f 2- | sort"
       '';
     };
+    zsh = {
+      shellInit = ''
+        alias nix_package_size="nix path-info --size --human-readable --recursive /run/current-system | cut -d - -f 2- | sort"
+      '';
+    };
   };
 
   system = {
