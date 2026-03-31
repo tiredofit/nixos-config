@@ -15,6 +15,8 @@
     host.application = {
       comma.enable = mkDefault true;
       direnv.enable = mkDefault true;
+      #starship.enable = true;
+      #zsh.enable = true;
     };
 
     users.users.root = {

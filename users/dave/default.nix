@@ -17,10 +17,7 @@ in
   config = mkIf config.host.user.dave.enable {
     users.users.dave = {
       isNormalUser = true;
-    shell =
-      if config.host.application.zsh.enable then pkgs.zsh
-      else if config.host.application.bash.enable then pkgs.bashInteractive
-      else pkgs.bashInteractive;
+      shell = pkgs.zsh;
       uid = 2323;
       group = "users" ;
       extraGroups = [
