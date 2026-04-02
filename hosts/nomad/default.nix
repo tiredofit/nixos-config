@@ -5,7 +5,7 @@
     ../common
   ];
 
-  programs.hyprland.xwayland.enable = false;
+  programs.hyprland.xwayland.enable = true;
   host = {
     container = {
       restic = {
@@ -120,6 +120,9 @@
         openvpn.enable = true;
         zerotier = {
           enable = true;
+          configureClientFirewall = true;
+          configureExitFirewall = true;
+          exitNode = true;
           networks = [
             "/var/run/secrets/zerotier/networks"
           ];
