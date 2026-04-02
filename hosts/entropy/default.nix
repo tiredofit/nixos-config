@@ -155,6 +155,7 @@
       vpn = {
         zerotier = {
           enable = true;
+          exitNode = true;
           networks = [
             "/var/run/secrets/zerotier/networks"
           ];
