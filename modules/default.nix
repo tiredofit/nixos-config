@@ -2,5 +2,7 @@
 with lib;
 {
   imports = [
+    ./niri.nix
+    ./cosmic.nix
   ];
 }

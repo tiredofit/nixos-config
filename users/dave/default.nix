@@ -32,6 +32,7 @@ in
         "input"
         "libvirtd"
         "lp"
+        "kvm"
         "network"
         "networkmanager"
         "podman"

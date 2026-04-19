@@ -32,6 +32,7 @@
           https = {
             enable = true;
             method = "interface";
+
             excludeInterfaces = [ "lo" ];
             excludeInterfacePattern = "docker|veth|br-";
           };
