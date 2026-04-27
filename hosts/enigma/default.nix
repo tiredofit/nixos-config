@@ -140,6 +140,12 @@
         };
       };
       vscode_server.enable = lib.mkForce false;
+      herald = {
+        enable = true;
+      };
+      zeroplex = {
+        enable = true;
+      };
     };
     network = {
       hostname = "enigma";
@@ -169,14 +175,6 @@
           ];
           port = 9993;
         };
-      };
-    };
-    service = {
-      herald = {
-        enable = true;
-      };
-      zeroplex = {
-        enable = true;
       };
     };
     user = {
