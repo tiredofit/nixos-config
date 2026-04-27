@@ -184,9 +184,8 @@
   };
 
   networking.firewall = {
-    enable = true;  # Firewall is enabled by default
-    allowedTCPPorts = [ 8384 ];  # Add your TCP ports here
-    allowedUDPPorts = [8384 ];  # Add UDP ports if needed
+    enable = true;
+    allowedTCPPorts = [ 8384 ];
   };
 
 
