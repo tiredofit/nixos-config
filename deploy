@@ -5,6 +5,7 @@ SCRIPT_VERSION=1.11.0
 INSTALL_BUILD_LOCAL=${INSTALL_BUILD_LOCAL:-"TRUE"}
 INSTALL_DEBUG=${INSTALL_DEBUG:-"FALSE"}
 INSTALL_REBOOT=${INSTALL_REBOOT:-"FALSE"}
+REBUILD_ACTION=${REBUILD_ACTION:-"switch"}
 NIXOSANYWHERE_VERSION=${NIXOSANYWHERE_VERSION:-""}
 DEFAULT_PACKAGES=${DEFAULT_PACKAGES:-"unstable"}
 LOG_LEVEL=NOTICE
@@ -63,6 +64,8 @@ case "${1}" in
 **   --user <username>    - SSH username (default: current user)
 **   --ssh-key <path>     - Path to SSH private key
 **   --ssh-port <port>    - SSH port (default: 22)
+**   --switch             - Apply config immediately (default)
+**   --boot               - Stage config for next reboot (use when switch is inhibited)
 **   --reboot             - Reboot after installation
 **   --no-reboot          - Don't reboot after installation
 **   --debug              - Verbose output
@@ -623,8 +626,8 @@ flake_tools() {
             sudo nix flake update "${_dir_flake}"/
         ;;
         "upgrade" )
-            print_info "Upgrading System"
-            sudo ${NIXOS_REBUILD_CMD} switch --flake "${_dir_flake}"/#"$(hostname)"
+            print_info "Upgrading System (action: ${REBUILD_ACTION})"
+            sudo ${NIXOS_REBUILD_CMD} ${REBUILD_ACTION} --flake "${_dir_flake}"/#"$(hostname)"
         ;;
     esac
 }
@@ -697,12 +700,21 @@ menu_execute_options() {
 ---------------------------
 
 Build configuration locally and send remotely, or build on remote host
+Choose rebuild action: 'switch' applies immediately, 'boot' stages for next reboot
 Reboot remote host after install
 Set Allow more debug verbosity
 EOF
     echo -e "${coff}"
-    read -p "$(echo -e ${cdgy}\(${cwh}N${cdgy}\) NixOS Anywhere Version: ${NIXOSANYWHERE_VERSION}\\n\(${cwh}L${cdgy}\) Local Build: ${INSTALL_BUILD_LOCAL^}\\n\(${cwh}R${cdgy}\) Reboot after installation: ${INSTALL_REBOOT^}\\n\(${cwh}D${cdgy}\) Debug Installation: ${INSTALL_DEBUG^}\\n\\n\(${cwh}B${cdgy}\) Back to main menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_hostexecution
+    read -p "$(echo -e ${cdgy}\(${cwh}A${cdgy}\) Rebuild Action: ${REBUILD_ACTION}\\n\(${cwh}N${cdgy}\) NixOS Anywhere Version: ${NIXOSANYWHERE_VERSION}\\n\(${cwh}L${cdgy}\) Local Build: ${INSTALL_BUILD_LOCAL^}\\n\(${cwh}R${cdgy}\) Reboot after installation: ${INSTALL_REBOOT^}\\n\(${cwh}D${cdgy}\) Debug Installation: ${INSTALL_DEBUG^}\\n\\n\(${cwh}B${cdgy}\) Back to main menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_hostexecution
     case "${q_menu_hostexecution,,}" in
+        "a" | "action" )
+            if [ "${REBUILD_ACTION}" = "switch" ] ; then
+                REBUILD_ACTION=boot
+            else
+                REBUILD_ACTION=switch
+            fi
+            menu_execute_options
+        ;;
         "l" | "build" )
             if var_true "${INSTALL_BUILD_LOCAL}" ; then
                 INSTALL_BUILD_LOCAL=FALSE
@@ -2292,8 +2304,10 @@ task_update_host() {
         print_info "Build mode: LOCAL (building here, copying result to remote)"
     fi
 
+    print_info "Rebuild action: ${REBUILD_ACTION}"
+
     NIX_SSHOPTS="-p ${SSH_PORT} ${_update_ssh_key} -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" \
-        ${NIXOS_REBUILD_CMD} switch \
+        ${NIXOS_REBUILD_CMD} ${REBUILD_ACTION} \
         --flake "${_dir_flake}"/#"${deploy_host}" \
         --sudo \
         --target-host "${REMOTE_USER}@${REMOTE_IP}" \
@@ -2410,6 +2424,14 @@ parse_global_options() {
             ;;
             --no-reboot )
                 INSTALL_REBOOT=FALSE
+                shift
+            ;;
+            --boot )
+                REBUILD_ACTION=boot
+                shift
+            ;;
+            --switch )
+                REBUILD_ACTION=switch
                 shift
             ;;
             --debug )

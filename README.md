@@ -79,6 +79,8 @@ These can be passed before the command and apply to `update` and `install`:
 | `--user <username>` | SSH username (default: current user)                   |
 | `--ssh-key <path>`  | Path to SSH private key                                |
 | `--ssh-port <port>` | SSH port (default: 22)                                 |
+| `--switch`          | Apply config immediately (default)                     |
+| `--boot`            | Stage config for next reboot instead of switching live  |
 | `--reboot`          | Reboot remote host after install                       |
 | `--no-reboot`       | Don't reboot after install                             |
 | `--debug`           | Verbose output                                         |
@@ -107,9 +109,10 @@ Create a new host configuration without going through the menus:
 #### Updating Hosts
 
 ```
-./deploy update exmamplehost                           # Auto-resolves IP from config/DNS
-./deploy update examplehost 10.0.0.5                  # Explicit IP
-./deploy --remote-build update examplehost            # Evaluate locally, build on remote
+./deploy update examplehost                            # Auto-resolves IP from config/DNS
+./deploy update examplehost 10.0.0.5                   # Explicit IP
+./deploy --remote-build update examplehost             # Evaluate locally, build on remote
+./deploy --boot update examplehost                     # Stage for next reboot instead of live switch
 ./deploy --user root --ssh-port 2222 update examplehost
 ```
 
