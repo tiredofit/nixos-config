@@ -1,7 +1,7 @@
 { config, lib, pkgs, ... }:
 {
   services = {
-    sonarr = {
+    radarr = {
       enable = true;
       dataDir = "/var/local/data/radarr";
     };
