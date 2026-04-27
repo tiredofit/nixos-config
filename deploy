@@ -47,13 +47,48 @@ case "${1}" in
 **     - 'git', 'age', 'ssh-to-age', 'sops'
 **
 **
-** - Usage:
-**   '$(basename "$0")'                      - Interative Mode (Default)
+** - Commands:
+**   '$(basename "$0")'                              - Interactive Mode (Default)
+**   '$(basename "$0")' list                         - List all configured hosts
+**   '$(basename "$0")' create <host> [opts]         - Create new host config (see below)
+**   '$(basename "$0")' update <host> [ip]           - Update existing host (skips all menus)
+**   '$(basename "$0")' install <host> <ip>          - Fresh install (resumable on failure)
+**   '$(basename "$0")' flake update                 - Update flake.lock
+**   '$(basename "$0")' flake upgrade                - Upgrade running NixOS system
+**   '$(basename "$0")' secrets rekey <all|host>     - Rekey secrets
+**
+** - Global Options (use before or after the command):
+**   --remote-build       - Build on the remote host instead of locally
+**   --local-build        - Build locally and send to remote (default)
+**   --user <username>    - SSH username (default: current user)
+**   --ssh-key <path>     - Path to SSH private key
+**   --ssh-port <port>    - SSH port (default: 22)
+**   --reboot             - Reboot after installation
+**   --no-reboot          - Don't reboot after installation
+**   --debug              - Verbose output
+**
+** - Create Options:
+**   --role <role>        - server, desktop, laptop, kiosk, minimal, vm (default: server)
+**   --ip <ip/mask>       - Static IP with subnet (eg 10.0.0.5/24)
+**   --gateway <ip>       - Network gateway
+**   --mac <addr>         - Network MAC address
+**   --cpu <type>         - amd or intel (default: amd)
+**   --packages <channel> - stable or unstable (default: unstable)
+**   --encryption / --no-encryption     (default: on)
+**   --impermanence / --no-impermanence (default: on)
+**   --raid / --no-raid                 (default: off)
+**
+** - Examples:
+**   '$(basename "$0")' list
+**   '$(basename "$0")' update entropy
+**   '$(basename "$0")' --remote-build update entropy
+**   '$(basename "$0")' install myhost 10.0.0.5
+**   '$(basename "$0")' create myhost --role server --ip 10.0.0.5/24 --gateway 10.0.0.1
+**   '$(basename "$0")' --user root --ssh-port 2222 update myhost
+**
 **   '$(basename "$0")' --help               - Yer lookin at it
-**   '$(basename "$0")' --debug              - Shows Output of commands behind the scenes
 **   '$(basename "$0")' --changelog          - Shows this tools Changelog
 **   '$(basename "$0")' --version            - Shows this tools version
-**   '$(basename "$0")' --(arguments)        - Pass any arguments to alter default behaviour
 **
 **
 ****************************************************************************************************************************
@@ -412,14 +447,80 @@ check_for_repository() {
     fi
 }
 
-check_host_availability() {
-    getent ahosts ${1} | grep STREAM | sed "/:/d" | awk '{print $1}' > /dev/null
-    host_available_exit=$?
-    remote_ip_tmp=$(getent ahosts ${1} | grep STREAM | sed "/:/d" | awk '{print $1}')
-    if [ "${host_available_exit}" = 0 ]; then
-        REMOTE_IP=${remote_ip_tmp}
+resolve_host_fqdn() {
+    # Build FQDN from host config (hostname + domainname), same logic as menu_host_management_select_host
+    local _host="${1}"
+    local _hname=""
+    local _dname=""
+
+    if [ -f "${_dir_flake}/hosts/${_host}/default.nix" ]; then
+        if grep -q "hostname = \".*\"" "${_dir_flake}/hosts/${_host}/default.nix"; then
+            _hname=$(grep "hostname = \".*\"" "${_dir_flake}/hosts/${_host}/default.nix" | cut -d '"' -f 2)
+        fi
+
+        if grep -q "domainname = \".*\"" "${_dir_flake}/hosts/${_host}/default.nix"; then
+            _dname=".$(grep "domainname = \".*\"" "${_dir_flake}/hosts/${_host}/default.nix" | cut -d '"' -f 2)"
+        elif [ -f "${_dir_flake}/hosts/common/default.nix" ] && grep -q "domainname = .*\".*\"" "${_dir_flake}/hosts/common/default.nix"; then
+            _dname=".$(grep "domainname = .*\".*\"" "${_dir_flake}/hosts/common/default.nix" | cut -d '"' -f 2)"
+        fi
+    fi
+
+    if [ -n "${_hname}" ]; then
+        echo "${_hname}${_dname}"
     else
-        print_warn "Couldn't resolve hostname, please enter in a new hostname or ip address"
+        echo "${_host}"
+    fi
+}
+
+check_host_availability() {
+    local resolved_ip=""
+    local lookup_target="${1}"
+
+    # Method 1: getent (uses NSS/local DNS)
+    resolved_ip=$(getent ahosts "${lookup_target}" 2>/dev/null | grep STREAM | sed "/:/d" | awk 'NR==1{print $1}')
+
+    # Method 2: dig (direct DNS query)
+    if [ -z "${resolved_ip}" ] && command -v dig > /dev/null 2>&1; then
+        resolved_ip=$(dig +short "${lookup_target}" A 2>/dev/null | head -1)
+        if [ -n "${resolved_ip}" ]; then
+            print_debug "[check_host_availability] Resolved via dig: ${resolved_ip}"
+        fi
+    fi
+
+    # Method 3: check if it's already a valid IP
+    if [ -z "${resolved_ip}" ] && valid_ip "${lookup_target}"; then
+        resolved_ip="${lookup_target}"
+    fi
+
+    # Method 4: check SSH config (~/.ssh/config Host entries)
+    if [ -z "${resolved_ip}" ] && command -v ssh > /dev/null 2>&1; then
+        local ssh_hostname
+        ssh_hostname=$(ssh -G "${lookup_target}" 2>/dev/null | awk '/^hostname /{print $2}')
+        if [ -n "${ssh_hostname}" ] && [ "${ssh_hostname}" != "${lookup_target}" ]; then
+            if valid_ip "${ssh_hostname}"; then
+                resolved_ip="${ssh_hostname}"
+                print_debug "[check_host_availability] Resolved via SSH config: ${resolved_ip}"
+            else
+                resolved_ip=$(getent ahosts "${ssh_hostname}" 2>/dev/null | grep STREAM | sed "/:/d" | awk 'NR==1{print $1}')
+            fi
+        fi
+    fi
+
+    # Method 5: check host config for static IP
+    if [ -z "${resolved_ip}" ] && [ -n "${deploy_host}" ] && [ -f "${_dir_flake}/hosts/${deploy_host}/default.nix" ]; then
+        local config_ip
+        config_ip=$(grep -oP 'ip\s*=\s*"\K[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' "${_dir_flake}/hosts/${deploy_host}/default.nix" 2>/dev/null | head -1)
+        if [ -n "${config_ip}" ] && valid_ip "${config_ip}"; then
+            resolved_ip="${config_ip}"
+            print_debug "[check_host_availability] Resolved via host config: ${resolved_ip}"
+        fi
+    fi
+
+    if [ -n "${resolved_ip}" ]; then
+        REMOTE_IP="${resolved_ip}"
+    else
+        print_warn "Couldn't resolve '${lookup_target}' via DNS, dig, SSH config, or host config"
+        print_warn "Please enter a hostname or IP address manually"
         task_set_ip_address
     fi
 }
@@ -428,6 +529,81 @@ cleanup() {
    if [ -d "${_dir_remote_rootfs}" ]; then rm -rf "${_dir_remote_rootfs}"; fi
    if [ -f "${_template_chooser}" ]; then rm -rf "${_template_chooser}"; fi
    if [ -f "${luks_key}" ]; then rm -rf "${luks_key}"; fi
+}
+
+deploy_state_file() {
+    echo "${_dir_flake}/hosts/${deploy_host}/.deploy-state"
+}
+
+deploy_state_save() {
+    local state_file
+    state_file="$(deploy_state_file)"
+    cat > "${state_file}" <<STATEEOF
+# Deploy state for ${deploy_host} - saved $(date -Iseconds)
+# This file is auto-generated and gitignored. It is removed after a successful install.
+DEPLOY_STATE_HOST="${deploy_host}"
+DEPLOY_STATE_REMOTE_IP="${REMOTE_IP}"
+DEPLOY_STATE_REMOTE_USER="${REMOTE_USER}"
+DEPLOY_STATE_SSH_PORT="${SSH_PORT}"
+DEPLOY_STATE_SSH_PRIVATE_KEY="${SSH_PRIVATE_KEY}"
+DEPLOY_STATE_DIR_REMOTE_ROOTFS="${_dir_remote_rootfs}"
+DEPLOY_STATE_AGE_KEY_PUB="${_age_key_pub}"
+DEPLOY_STATE_PASSWORD_ENCRYPTION="${PASSWORD_ENCRYPTION}"
+DEPLOY_STATE_DISK_TEMPLATE="${deploy_disk_template}"
+DEPLOY_STATE_DISK_ENCRYPTION="${disk_encryption}"
+DEPLOY_STATE_DISK_IMPERMANENCE="${disk_impermanence}"
+DEPLOY_STATE_FEATURE_IMPERMANENCE="${feature_impermanence}"
+DEPLOY_STATE_STEP_SSH_KEY="${task_generate_ssh_key_new}"
+DEPLOY_STATE_STEP_AGE_SECRETS="${task_generate_age_secrets_new}"
+DEPLOY_STATE_STEP_SOPS_CONFIG="${task_generate_sops_configuration_new}"
+DEPLOY_STATE_STEP_HOST_SECRETS="${task_generate_host_secrets_new}"
+STATEEOF
+    print_debug "[deploy_state_save] State saved to ${state_file}"
+}
+
+deploy_state_load() {
+    local state_file
+    state_file="$(deploy_state_file)"
+    if [ -f "${state_file}" ]; then
+        print_notice "Found saved deploy state for ${deploy_host}"
+        read -p "$(echo -e ${clg}** ${cdgy}Resume previous install attempt? \(${cwh}Y${cdgy}\) Yes \| \(${cwh}N${cdgy}\) No \(start fresh\) : ${cwh}${coff}) " q_resume
+        case "${q_resume,,}" in
+            "y" | "yes" | "" )
+                source "${state_file}"
+                REMOTE_IP="${DEPLOY_STATE_REMOTE_IP}"
+                REMOTE_USER="${DEPLOY_STATE_REMOTE_USER}"
+                SSH_PORT="${DEPLOY_STATE_SSH_PORT}"
+                SSH_PRIVATE_KEY="${DEPLOY_STATE_SSH_PRIVATE_KEY}"
+                _dir_remote_rootfs="${DEPLOY_STATE_DIR_REMOTE_ROOTFS}"
+                _age_key_pub="${DEPLOY_STATE_AGE_KEY_PUB}"
+                PASSWORD_ENCRYPTION="${DEPLOY_STATE_PASSWORD_ENCRYPTION}"
+                deploy_disk_template="${DEPLOY_STATE_DISK_TEMPLATE}"
+                disk_encryption="${DEPLOY_STATE_DISK_ENCRYPTION}"
+                disk_impermanence="${DEPLOY_STATE_DISK_IMPERMANENCE}"
+                feature_impermanence="${DEPLOY_STATE_FEATURE_IMPERMANENCE}"
+                task_generate_ssh_key_new="${DEPLOY_STATE_STEP_SSH_KEY}"
+                task_generate_age_secrets_new="${DEPLOY_STATE_STEP_AGE_SECRETS}"
+                task_generate_sops_configuration_new="${DEPLOY_STATE_STEP_SOPS_CONFIG}"
+                task_generate_host_secrets_new="${DEPLOY_STATE_STEP_HOST_SECRETS}"
+                print_info "Resumed deploy state - will skip already completed steps"
+                return 0
+            ;;
+            * )
+                deploy_state_remove
+                return 1
+            ;;
+        esac
+    fi
+    return 1
+}
+
+deploy_state_remove() {
+    local state_file
+    state_file="$(deploy_state_file)"
+    if [ -f "${state_file}" ]; then
+        rm -f "${state_file}"
+        print_debug "[deploy_state_remove] Removed state file ${state_file}"
+    fi
 }
 
 ctrl_c() {
@@ -677,17 +853,31 @@ Before the installation the following needs to occur:
   - Generate sample host secret
 
 EOF
+            deploy_state_load
             task_parse_disk_config
             if [ -z "${DISK_SWAP_SIZE_GB}" ] ; then task_update_swap_size; fi
             if [ -z "${PASSWORD_ENCRYPTION}" ] ; then task_generate_encryption_password ; fi
             if var_nottrue "${task_generate_ssh_key_new}" ; then task_generate_ssh_key new ;fi
+            deploy_state_save
             if var_nottrue "${task_generate_age_secrets_new}" ; then task_generate_age_secrets new ; fi
+            deploy_state_save
             if var_nottrue "${task_generate_sops_configuration_new}" ; then task_generate_sops_configuration new ; fi
+            deploy_state_save
             if var_nottrue "${task_generate_host_secrets_new}" ; then task_generate_host_secrets new; fi
+            deploy_state_save
             secret_rekey_silent=true
             secret_tools rekey all
             secret_rekey_silent=false
+            deploy_state_save
             task_install_host
+            install_exit_code=$?
+            if [ "${install_exit_code}" -eq 0 ]; then
+                deploy_state_remove
+                print_info "Installation successful - deploy state cleaned up"
+            else
+                print_warn "Installation failed (exit code: ${install_exit_code})"
+                print_warn "Deploy state saved - you can resume from where you left off"
+            fi
             menu_host
         ;;
         "u" | "update" )
@@ -803,17 +993,9 @@ menu_host_management_select_host() {
     COLUMNS=$oldcolumns
     export deploy_host=${opt}
 
-    if grep -q "hostname = \".*\"" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix ; then
-        hname=$(grep "hostname = \".*\"" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix | cut -d '"' -f 2)
-
-        if grep -q "domainname = \".*\"" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix ; then
-            dname=".$(grep "domainname = \".*\"" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix | cut -d '"' -f 2)"
-        elif grep -q "domainname = .*\".*\"" "${_dir_flake}"/hosts/common/default.nix ; then
-            dname=".$(grep "domainname = .*\".*\"" "${_dir_flake}"/hosts/common/default.nix | cut -d '"' -f 2)"
-        fi
-
-        if [ -n "${hname}" ]; then check_host_availability ${hname}${dname}; fi
-    fi
+    local fqdn
+    fqdn=$(resolve_host_fqdn "${deploy_host}")
+    if [ -n "${fqdn}" ]; then check_host_availability "${fqdn}"; fi
 }
 
 menu_host_secrets() {
@@ -1183,13 +1365,13 @@ menu_ssh_options_q_sshkey() {
 }
 
 menu_ssh_options_q_username() {
+    local counter=1
     q_remote_username=" "
     while [[ $q_remote_username = *" "* ]];  do
         if [ $counter -gt 1 ] ; then print_error "Usernames cannot have spaces in them" ; fi ;
         read -e -p "$(echo -e ${clg}** ${cdgy}Enter your remote username:\ ${coff})" q_remote_username
         (( counter+=1 ))
     done
-    counter=1
     REMOTE_USER="${q_remote_username}"
 }
 
@@ -1381,7 +1563,7 @@ EOF
     read -p "$(echo -e What is the role of this host?\\n${cdgy}\(${cwh}S${cdgy}\) Server\\n\(${cwh}D${cdgy}\) Desktop\\n\(${cwh}L${cdgy}\) Laptop\\n\(${cwh}K${cdgy}\) Kiosk\\n\(${cwh}M${cdgy}\) Minimal\\n\(${cwh}V${cdgy}\) Virtual Machine\\n${cwh}${coff}\\n${cdgy}\(${cwh}B${cdgy}\) Back to host deploy menu\\n\\n${clg}** ${cdgy}What do you want to do\? : \  )" q_menu_hostaddition_role
     case "${q_menu_hostaddition_role,,}" in
         "d" | "desktop" )
-            template_role="server"
+            template_role="desktop"
             task_hostmanagement_q_impermanence
             task_hostmanagement_q_encryption
             task_hostmanagement_q_raid
@@ -1518,10 +1700,10 @@ task_hostmanagement_q_networking() {
                                 (( counter+=1 ))
                             done
                             _template_network_gateway=${network_ip_public_gateway_tmp}
-                            break
                             if [ -z "${_template_network_mac}" ]; then
                                 read -e -i "$_template_network_mac" -p "$(echo -e ${clg}** ${cdgy}Network MAC Address \(eg 00:01:02:03:04:05\): \ ${coff})" _template_network_mac
                             fi
+                            break
                         ;;
                         "d" | "dhcp" | "dynamic" )
                             _template_ip_type="dynamic"
@@ -1629,26 +1811,22 @@ task_generate_encryption_password() {
 }
 
 task_generate_host_secrets() {
-    printf "\033c"
-    echo -e "${clm}"
-    cat << EOF
---------------------------
-| Host Secrets Additions |
---------------------------
-
-    HOST SECRETS
-
-    Before you can do anything you'll need to crete an example secret.
-    Create an example secret. Delete everything in the file and replace it with the following line:
-
-${deploy_host}: Example secret for ${deploy_host}
-EOF
-
-    wait_for_keypress
     mkdir -p "${_dir_flake}"/hosts/"${deploy_host}"/secrets
-    sops "${_dir_flake}"/hosts/"${deploy_host}"/secrets/secrets.yaml
-    git add "${_dir_flake}"/hosts/"${deploy_host}"/secrets/secrets.yaml
 
+    if [ "${1}" = "new" ] && [ ! -f "${_dir_flake}"/hosts/"${deploy_host}"/secrets/secrets.yaml ]; then
+        print_info "Auto-generating initial host secrets for ${deploy_host}"
+        echo "${deploy_host}: Example secret for ${deploy_host}" | sops --input-type yaml --output-type yaml -e /dev/stdin > "${_dir_flake}"/hosts/"${deploy_host}"/secrets/secrets.yaml
+        if [ $? -eq 0 ]; then
+            print_info "Host secrets generated successfully"
+        else
+            print_warn "Auto-generation failed, falling back to manual edit"
+            sops "${_dir_flake}"/hosts/"${deploy_host}"/secrets/secrets.yaml
+        fi
+    else
+        sops "${_dir_flake}"/hosts/"${deploy_host}"/secrets/secrets.yaml
+    fi
+
+    git add "${_dir_flake}"/hosts/"${deploy_host}"/secrets/secrets.yaml
     if [ "${1}" = "new" ]; then task_generate_host_secrets_new=true; fi
 }
 
@@ -1829,12 +2007,14 @@ task_install_host() {
                                                 ${feature_luks} --extra-files "${_dir_remote_rootfs}" \
                                                 --flake "${_dir_flake}"/#${deploy_host} \
                                                 ${REMOTE_USER}@${REMOTE_IP}
+    local _install_exit_code=$?
 
     if [ -n "${PASSWORD_ENCRYPTION}" ]; then
         rm -rf "${luks_key}"
     fi
     if var_true "${INSTALL_DEBUG}" ; then set +x ; fi
     wait_for_keypress
+    return ${_install_exit_code}
 }
 
 task_parse_disk_config() {
@@ -2026,7 +2206,6 @@ task_ssh_to_host() {
         task_ssh_to_host_private_key="-i ${SSH_PRIVATE_KEY}"
     fi
 
-    ssh -p ${SSH_PORT}
     ssh -p ${SSH_PORT} ${task_ssh_to_host_private_key} -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_IP}
 }
 
@@ -2096,11 +2275,29 @@ task_update_disk_prefix() {
 }
 
 task_update_host() {
-    print_info "Commencing update to remote host"
+    print_info "Commencing update to remote host: ${deploy_host} (${REMOTE_USER}@${REMOTE_IP})"
+    local _update_ssh_key=""
+    local _update_build_host=""
+
     if [ -n "${SSH_PRIVATE_KEY}" ]; then
-        task_update_host_ssh_private_key="-i ${SSH_PRIVATE_KEY}"
+        _update_ssh_key="-i ${SSH_PRIVATE_KEY}"
     fi
-    NIX_SSHOPTS="-t -p ${SSH_PORT} ${task_update_host_ssh_private_key} -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" ${NIXOS_REBUILD_CMD} switch --flake "${_dir_flake}"/#${deploy_host} --use-remote-sudo --target-host ${REMOTE_USER}@${REMOTE_IP}
+
+    if var_false "${INSTALL_BUILD_LOCAL}"; then
+        _update_build_host="--build-host ${REMOTE_USER}@${REMOTE_IP}"
+        print_info "Build mode: REMOTE (evaluating locally, building on ${REMOTE_USER}@${REMOTE_IP})"
+        print_notice "Flake evaluation and input fetching still happens locally."
+        print_notice "Only the derivation build runs on the remote host."
+    else
+        print_info "Build mode: LOCAL (building here, copying result to remote)"
+    fi
+
+    NIX_SSHOPTS="-p ${SSH_PORT} ${_update_ssh_key} -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" \
+        ${NIXOS_REBUILD_CMD} switch \
+        --flake "${_dir_flake}"/#"${deploy_host}" \
+        --sudo \
+        --target-host "${REMOTE_USER}@${REMOTE_IP}" \
+        ${_update_build_host}
     wait_for_keypress
 }
 
@@ -2111,21 +2308,277 @@ task_update_swap_size() {
     fi
 }
 
+################ CLI Create (non-interactive)
+
+task_cli_create_host() {
+    local hostname="${1}"
+    local role="${2:-server}"
+    local encryption="${3:-true}"
+    local impermanence="${4:-true}"
+    local raid="${5:-false}"
+    local ip="${6}"
+    local gateway="${7}"
+    local mac="${8}"
+    local cpu="${9:-amd}"
+    local packages="${10:-${DEFAULT_PACKAGES}}"
+
+    if [ -z "${hostname}" ]; then
+        print_error "Hostname is required"
+        return 1
+    fi
+
+    if [ -f "${_dir_flake}/hosts/${hostname}/default.nix" ]; then
+        print_error "Host '${hostname}' already exists"
+        return 1
+    fi
+
+    if [ ! -f "${_dir_flake}/deploy-templates/host/${role}.nix" ]; then
+        print_error "Unknown role '${role}'. Available: server, desktop, laptop, kiosk, minimal, vm"
+        return 1
+    fi
+
+    print_info "Creating host '${hostname}' with role '${role}'"
+
+    mkdir -p "${_dir_flake}/hosts/${hostname}"
+    cp -R "${_dir_flake}/deploy-templates/host/${role}.nix" "${_dir_flake}/hosts/${hostname}/default.nix"
+    silent git add "${_dir_flake}/hosts/${hostname}"
+
+    sed -i \
+        -e "s|hostname = \".*\";|hostname = \"${hostname}\";|g" \
+        -e "s|encryption.enable = .*;|encryption.enable = ${encryption};|g" \
+        -e "s|impermanence.enable = .*;|impermanence.enable = ${impermanence};|g" \
+        -e "s|raid.enable = .*;|raid.enable = ${raid};|g" \
+        -e "s|cpu = \".*\";|cpu = \"${cpu}\";|g" \
+        "${_dir_flake}/hosts/${hostname}/default.nix"
+
+    # Add network config if IP was provided
+    if [ -n "${ip}" ] && [ -n "${gateway}" ]; then
+        sed -i "/hostname = \".*\";/a\\
+      wired = {\n       enable = true;\n       type = \"static\";\n       ip = \"${ip}\";\n       gateway = \"${gateway}\";\n       mac = \"${mac}\";\n      };\n" "${_dir_flake}/hosts/${hostname}/default.nix"
+        sed -i "/wired..* = .*;/d" "${_dir_flake}/hosts/${hostname}/default.nix"
+    fi
+
+    # Add to flake.nix
+    ## Don't change the indenting on any of this!
+    sed -i "/nixosConfigurations = {/a\\
+                ${hostname} = self.mkSystem { # ${role^} Added $(date +"%Y-%m-%d") \n\\
+                    hostPath = \.\/hosts\/${hostname};\n\\
+                    packages = \"${packages}\";\n\\
+                };\n" \
+        "${_dir_flake}/flake.nix"
+    silent git add "${_dir_flake}/flake.nix"
+
+    print_info "Host '${hostname}' created successfully"
+    print_info "  Config: ${_dir_flake}/hosts/${hostname}/default.nix"
+    print_info "  Role: ${role} | Encryption: ${encryption} | Impermanence: ${impermanence} | RAID: ${raid}"
+    if [ -n "${ip}" ]; then
+        print_info "  Network: ${ip} via ${gateway}"
+    fi
+    print_notice "Next steps: review the config, then run: $(basename "$0") install ${hostname} <ip>"
+}
+
+################ CLI Option Parsing
+
+parse_global_options() {
+    # Parse global options before the subcommand, sets globals and returns remaining args via CLI_ARGS
+    CLI_ARGS=()
+    while [[ $# -gt 0 ]]; do
+        case "${1}" in
+            --remote-build | --build-remote )
+                INSTALL_BUILD_LOCAL=FALSE
+                shift
+            ;;
+            --local-build | --build-local )
+                INSTALL_BUILD_LOCAL=TRUE
+                shift
+            ;;
+            --ssh-key )
+                SSH_PRIVATE_KEY="${2}"
+                shift 2
+            ;;
+            --ssh-port )
+                SSH_PORT="${2}"
+                shift 2
+            ;;
+            --user )
+                REMOTE_USER="${2}"
+                shift 2
+            ;;
+            --reboot )
+                INSTALL_REBOOT=TRUE
+                shift
+            ;;
+            --no-reboot )
+                INSTALL_REBOOT=FALSE
+                shift
+            ;;
+            --debug )
+                export DEBUG_MODE=TRUE
+                shift
+            ;;
+            * )
+                CLI_ARGS+=("${1}")
+                shift
+            ;;
+        esac
+    done
+}
+
 ################ FUNCTIONS END
 
 trap ctrl_c INT
 
 check_for_repository
 
+# Parse global options, remaining args go into CLI_ARGS array
+parse_global_options "$@"
+set -- "${CLI_ARGS[@]}"
+
 case "${1,,}" in
+    update | upgrade )
+        # Direct CLI: ./deploy [options] update <hostname> [ip]
+        if [ -n "${2}" ]; then
+            deploy_host="${2}"
+            check_dependencies git
+            check_dependencies nix
+            if [ -n "${3}" ]; then
+                REMOTE_IP="${3}"
+            else
+                fqdn=$(resolve_host_fqdn "${deploy_host}")
+                print_info "Resolving ${deploy_host} as ${fqdn}"
+                check_host_availability "${fqdn}"
+            fi
+            if [ -z "${REMOTE_IP}" ]; then
+                task_set_ip_address
+            fi
+            task_update_host
+            exit $?
+        else
+            print_error "Usage: $(basename "$0") [options] update <hostname> [ip]"
+            exit 1
+        fi
+    ;;
+    install )
+        # Direct CLI: ./deploy [options] install <hostname> <ip>
+        if [ -n "${2}" ] && [ -n "${3}" ]; then
+            deploy_host="${2}"
+            REMOTE_IP="${3}"
+            check_dependencies git
+            check_dependencies nix
+            check_dependencies ssh-to-age
+            check_dependencies yq
+            if [ ! -d "${_dir_flake}/hosts/${deploy_host}" ]; then
+                print_error "Host '${deploy_host}' not found. Create it first: $(basename "$0") create <hostname> --role server"
+                exit 1
+            fi
+            deploy_state_load
+            task_parse_disk_config
+            if [ -z "${DISK_SWAP_SIZE_GB}" ] ; then task_update_swap_size; fi
+            if [ -z "${PASSWORD_ENCRYPTION}" ] ; then task_generate_encryption_password ; fi
+            if var_nottrue "${task_generate_ssh_key_new}" ; then task_generate_ssh_key new ;fi
+            deploy_state_save
+            if var_nottrue "${task_generate_age_secrets_new}" ; then task_generate_age_secrets new ; fi
+            deploy_state_save
+            if var_nottrue "${task_generate_sops_configuration_new}" ; then task_generate_sops_configuration new ; fi
+            deploy_state_save
+            if var_nottrue "${task_generate_host_secrets_new}" ; then task_generate_host_secrets new; fi
+            deploy_state_save
+            secret_rekey_silent=true
+            secret_tools rekey all
+            secret_rekey_silent=false
+            deploy_state_save
+            task_install_host
+            install_exit_code=$?
+            if [ "${install_exit_code}" -eq 0 ]; then
+                deploy_state_remove
+                print_info "Installation successful"
+            else
+                print_warn "Installation failed (exit code: ${install_exit_code})"
+                print_warn "Deploy state saved - re-run the same command to resume"
+            fi
+            exit ${install_exit_code}
+        else
+            print_error "Usage: $(basename "$0") [options] install <hostname> <ip>"
+            exit 1
+        fi
+    ;;
+    create )
+        # Direct CLI: ./deploy create <hostname> [--role server] [--ip x.x.x.x/xx] [--gateway x.x.x.x] [--mac xx:xx:xx:xx:xx:xx]
+        #             [--encryption] [--no-encryption] [--impermanence] [--no-impermanence] [--raid] [--cpu amd|intel]
+        #             [--packages stable|unstable]
+        if [ -n "${2}" ]; then
+            check_dependencies git
+            check_dependencies nix
+            cli_create_hostname="${2}"
+            cli_create_role="server"
+            cli_create_encryption="true"
+            cli_create_impermanence="true"
+            cli_create_raid="false"
+            cli_create_ip=""
+            cli_create_gateway=""
+            cli_create_mac=""
+            cli_create_cpu="amd"
+            cli_create_packages="${DEFAULT_PACKAGES}"
+            shift 2
+            while [[ $# -gt 0 ]]; do
+                case "${1}" in
+                    --role )        cli_create_role="${2}"; shift 2 ;;
+                    --ip )          cli_create_ip="${2}"; shift 2 ;;
+                    --gateway )     cli_create_gateway="${2}"; shift 2 ;;
+                    --mac )         cli_create_mac="${2}"; shift 2 ;;
+                    --cpu )         cli_create_cpu="${2}"; shift 2 ;;
+                    --packages )    cli_create_packages="${2}"; shift 2 ;;
+                    --encryption )  cli_create_encryption="true"; shift ;;
+                    --no-encryption ) cli_create_encryption="false"; shift ;;
+                    --impermanence ) cli_create_impermanence="true"; shift ;;
+                    --no-impermanence ) cli_create_impermanence="false"; shift ;;
+                    --raid )        cli_create_raid="true"; shift ;;
+                    --no-raid )     cli_create_raid="false"; shift ;;
+                    * ) print_warn "Unknown create option: ${1}"; shift ;;
+                esac
+            done
+            task_cli_create_host "${cli_create_hostname}" "${cli_create_role}" "${cli_create_encryption}" \
+                "${cli_create_impermanence}" "${cli_create_raid}" "${cli_create_ip}" "${cli_create_gateway}" \
+                "${cli_create_mac}" "${cli_create_cpu}" "${cli_create_packages}"
+            exit $?
+        else
+            print_error "Usage: $(basename "$0") create <hostname> [--role server] [--ip x.x.x.x/xx --gateway x.x.x.x] [--mac xx:xx:xx:xx:xx:xx]"
+            exit 1
+        fi
+    ;;
+    list | ls )
+        # Direct CLI: ./deploy list
+        printf "\n"
+        printf "%-15s %-10s %-25s %-8s %-8s\n" "HOST" "ROLE" "IP" "ENCRYPT" "IMPERM"
+        printf "%-15s %-10s %-25s %-8s %-8s\n" "----" "----" "--" "-------" "------"
+        for host_dir in "${_dir_flake}"/hosts/*/; do
+            host_name=$(basename "${host_dir}")
+            if [ "${host_name}" = "common" ]; then continue; fi
+            if [ ! -f "${host_dir}/default.nix" ]; then continue; fi
+
+            host_role=$(grep 'role = "' "${host_dir}/default.nix" 2>/dev/null | head -1 | cut -d '"' -f2)
+            host_ip=$(grep -oP 'ip\s*=\s*"\K[^"]+' "${host_dir}/default.nix" 2>/dev/null | head -1)
+            host_encrypt=$(grep -oP 'encryption\.enable\s*=\s*\K\w+' "${host_dir}/default.nix" 2>/dev/null | head -1)
+            host_imperm=$(grep -oP 'impermanence\.enable\s*=\s*\K\w+' "${host_dir}/default.nix" 2>/dev/null | head -1)
+
+            [ -z "${host_ip}" ] && host_ip="-"
+            [ -z "${host_encrypt}" ] && host_encrypt="-"
+            [ -z "${host_imperm}" ] && host_imperm="-"
+            [ -z "${host_role}" ] && host_role="-"
+
+            printf "%-15s %-10s %-25s %-8s %-8s\n" "${host_name}" "${host_role}" "${host_ip}" "${host_encrypt}" "${host_imperm}"
+        done
+        printf "\n"
+        exit 0
+    ;;
     deploy )
         MODE=DEPLOY
     ;;
     flake )
         MODE=FLAKE
     ;;
-    install )
-        MODE=INSTALL
+    secrets )
+        MODE=SECRETS
     ;;
 esac
 
@@ -2133,7 +2586,7 @@ if [ -z "${MODE}" ] ; then menu_startup ; fi
 
 case "${MODE,,}" in
     deploy )
-        install_and_deploy_q_host
+        menu_host_management_select_host
         task_set_ip_address
         menu_host
     ;;
