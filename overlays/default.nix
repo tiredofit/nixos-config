@@ -1,9 +1,6 @@
 {inputs, ...}: {
-  additions = final: _prev: import ../pkgs final.pkgs;
+  additions = final: _prev: import ../pkgs final;
 
   modifications = final: prev: {
   };
-
-  #stable-packages = final: _prev: {};
-  #unstable-packages = final: _prev: {};
 }
