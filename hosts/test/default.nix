@@ -94,8 +94,8 @@
         enable = true;
         backend = "wayland";
         displayManager.manager = "greetd";
-        #windowManager.manager = null;
-        windowManager.manager = "hyprland";
+        #windowManager.manager = [];
+        windowManager.manager = [ "hyprland" ];
         acceleration = lib.mkForce true;
       };
       virtualization = {

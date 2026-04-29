@@ -77,7 +77,7 @@
         enable = true;
         backend = "wayland";
         displayManager.manager = "greetd";
-        windowManager.manager = "hyprland";
+        windowManager.manager = [ "hyprland" ];
       };
       virtualization = {
         flatpak.enable = true;
