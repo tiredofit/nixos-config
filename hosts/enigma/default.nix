@@ -187,6 +187,4 @@
     enable = true;
     allowedTCPPorts = [ 8384 ];
   };
-
-
 }
