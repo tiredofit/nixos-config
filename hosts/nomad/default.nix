@@ -79,6 +79,7 @@
         displayManager.manager = "greetd";
         windowManager.manager = [ "hyprland" "niri" "cosmic" ];
       };
+      nix-ld.enable = true;
       virtualization = {
         flatpak.enable = true;
         waydroid.enable = false;
