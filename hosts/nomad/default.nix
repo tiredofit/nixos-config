@@ -77,7 +77,7 @@
         enable = true;
         backend = "wayland";
         displayManager.manager = "greetd";
-        windowManager.manager = [ "hyprland" "niri" "cosmic" ];
+        windowManager.manager = [ "hyprland" "niri" ];
       };
       nix-ld.enable = true;
       virtualization = {
