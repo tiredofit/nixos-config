@@ -66,7 +66,7 @@
     feature = {
       console.terminfo = {
         ghostty.enable = mkDefault true;
-        kitty.enable = mkDefault true;
+        kitty.enable = mkDefault false;
       };
       home-manager.enable = mkDefault true;
       secrets.enable = mkDefault true;
@@ -156,6 +156,7 @@
     enable = true;
     enableGlobalCompInit = mkDefault false;
   };
+
   security = {
     pam.loginLimits = [
       {
@@ -174,6 +175,11 @@
     sudo.wheelNeedsPassword = mkDefault false;
   };
 
-  services.fstrim.enable = mkDefault true;
-  users.mutableUsers = mkDefault false;
+  services = {
+    fstrim.enable = mkDefault true;
+  };
+
+  users = {
+    mutableUsers = mkDefault false;
+  };
 }
