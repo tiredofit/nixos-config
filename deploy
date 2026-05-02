@@ -83,11 +83,11 @@ case "${1}" in
 **
 ** - Examples:
 **   '$(basename "$0")' list
-**   '$(basename "$0")' update entropy
-**   '$(basename "$0")' --remote-build update entropy
+**   '$(basename "$0")' update myhostname
+**   '$(basename "$0")' --remote-build update myhostname
 **   '$(basename "$0")' install myhost 10.0.0.5
 **   '$(basename "$0")' create myhost --role server --ip 10.0.0.5/24 --gateway 10.0.0.1
-**   '$(basename "$0")' --user root --ssh-port 2222 update myhost
+**   '$(basename "$0")' --user root --ssh-port 2222 update myhostname
 **
 **   '$(basename "$0")' --help               - Yer lookin at it
 **   '$(basename "$0")' --changelog          - Shows this tools Changelog
