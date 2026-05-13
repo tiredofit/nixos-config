@@ -5,7 +5,6 @@
     ../common
   ];
 
-  programs.hyprland.xwayland.enable = true;
   host = {
     container = {
       restic = {
@@ -122,13 +121,16 @@
         openvpn.enable = true;
         zerotier = {
           enable = true;
-          configureClientFirewall = true;
-          configureExitFirewall = true;
-          exitNode = true;
+          configureClientFirewall = false;
+          configureExitFirewall = false;
+          exitNode = false;
           networks = [
             "/var/run/secrets/zerotier/networks"
           ];
           port = 9993;
+          cliUsers = [ 
+            "dave"
+          ];
         };
       };
       interfaces = {
@@ -173,5 +175,12 @@
       dave.enable = true;
       root.enable = true;
     };
+
   };
+
+  #programs.hyprland.xwayland.enable = true;
+  services = {
+    blueman.enable = false;
+  };
+  environment.etc."current-flake".source = inputs.self;
 }
