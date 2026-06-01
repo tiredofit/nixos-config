@@ -1,4 +1,4 @@
-{ lib, buildPythonApplication, fetchFromGitHub, python3, i2c-tools, }:
+{ lib, buildPythonApplication, fetchFromGitHub, libevdev, evdev, numpy, inotify, xlib }:
 
 buildPythonApplication rec {
   pname = "asus-touchpad-numpad-driver";
@@ -12,13 +12,7 @@ buildPythonApplication rec {
     sha256 = "sha256-qanPTmP2Sctq4ybiUFzIiADP2gZH8HhajBORUSIXb04=";
   };
 
-  propagatedBuildInputs = with python3.pkgs; [
-    libevdev
-    evdev
-    numpy
-    inotify
-    xlib
-  ];
+  propagatedBuildInputs = [ libevdev evdev numpy inotify xlib ];
 
   installPhase = ''
     install -Dm744 asus_touchpad.py $out/bin/asus_touchpad.py
