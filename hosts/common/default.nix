@@ -16,8 +16,9 @@
   };
 
   environment = {
-    defaultPackages = [
-      pkgs.nh
+    defaultPackages = [];
+    systemPackages = with pkgs; [
+      nh
     ];
     enableAllTerminfo = mkDefault false;
   };
@@ -59,6 +60,7 @@
       strace.enable = mkDefault true;
       tmux.enable = mkDefault true;
       wget.enable = mkDefault true;
+      zellij.enable = mkDefault true;
       zoxide.enable = mkDefault true;
       zsh.enable = mkDefault false;
     };
