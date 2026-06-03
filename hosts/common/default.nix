@@ -62,7 +62,7 @@
       wget.enable = mkDefault true;
       zellij.enable = mkDefault true;
       zoxide.enable = mkDefault true;
-      zsh.enable = mkDefault false;
+      zsh.enable = mkDefault true;
     };
     configDir = self.outPath;
     feature = {
