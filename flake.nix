@@ -63,21 +63,9 @@
       ];
 
       forAllSystems = f: lib.genAttrs systems (system: f system);
-      nixpkgsSelection = { stable, unstable }: final: prev: {
-        stable = import stable {
-          inherit (prev) system;
-          config = prev.config;
-          overlays = [];
-        };
-        unstable = import unstable {
-          inherit (prev) system;
-          config = prev.config;
-          overlays = [];
-        };
-      };
 
       pkgsFor = forAllSystems (system: import nixpkgs {
-        inherit system;
+        localSystem = system;
         config.allowUnfree = true;
         overlays = [
           outputs.overlays.additions
@@ -106,7 +94,7 @@
                                else inputs.home-manager-unstable;
 
           systemPkgs = import selectedNixpkgs {
-            inherit system;
+            localSystem = system;
             config = {
               allowUnfree = true;
               allowBroken = false;
@@ -115,33 +103,21 @@
             overlays = builtins.attrValues outputs.overlays ++ [
               (final: prev: {
                 stable = import nixpkgs-stable {
-                  inherit system;
+                  localSystem = system;
                   config.allowUnfree = true;
                   overlays = [];
                 };
                 unstable = import nixpkgs-unstable {
-                  inherit system;
+                  localSystem = system;
                   config.allowUnfree = true;
                   overlays = [];
                 };
               })
-            ] ++ (if packages == "stable" then [
-              # 20251213 stable issue - make sure `systemd` NixOS modules that check `cfg.package.withNspawn` don't fail on older stable pkgs.
-              (final: prev: {
-                systemd = prev.systemd // { withNspawn = true; };
-              })
-            ] else []);
+            ];
           };
         in
         lib.nixosSystem {
-          modules = (if packages == "stable" then [
-            {
-              # Force the systemd package used by modules to be an overridden
-              # derivation that exposes `withNspawn`. This avoids failing the
-              # systemd module check on older stable nixpkgs.
-              systemd.package = systemPkgs.systemd.override (old: old // { withNspawn = true; });
-            }
-          ] else []) ++ [
+          modules = [
             selectedHomeManager.nixosModules.home-manager
             hostPath
             {
@@ -152,7 +128,6 @@
             inherit self inputs outputs;
             home-manager = selectedHomeManager;
           };
-          system = systemPkgs.stdenv.hostPlatform.system;
           pkgs = systemPkgs;
         };
 
