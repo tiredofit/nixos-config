@@ -1,4 +1,4 @@
-{ config, inputs, pkgs, ...}: {
+{ config, inputs, ...}: {
 
   imports = [
     ./disks.nix
@@ -16,7 +16,8 @@
       };
       graphics = {
         enable = true;
-        backend = "x";
+        backend = "wayland";
+        displayManager.manager = "gdm";
       };
       virtualization = {
         flatpak.enable = true;
@@ -37,7 +38,7 @@
       cpu = "amd";
       gpu = "integrated-amd";
       sound = {
-        server = "pulseaudio";
+        server = "pipewire";
       };
       touchpad = {
         asus-touchpad-numpad.enable = true;
@@ -54,26 +55,5 @@
     };
   };
 
-  services.xserver = {
-    enable = true;
-    desktopManager = {
-      cinnamon.enable = true;
-      xterm.enable = false;
-      session = [
-        {
-          name = "home-manager";
-          start = ''
-            ${pkgs.runtimeShell} $HOME/.hm-xsession &
-            waitPID=$!
-          '';
-        }
-        {
-          name = "cinnamon";
-          start = ''
-            cinnamon
-          '';
-        }
-      ];
-    };
-  };
+  services.xserver.desktopManager.cinnamon.enable = true;
 }
