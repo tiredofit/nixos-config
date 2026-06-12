@@ -59,7 +59,7 @@
       rsync.enable = mkDefault true;
       strace.enable = mkDefault true;
       tmux.enable = mkDefault true;
-      util-linux = mkDefault true;
+      util-linux.enable = mkDefault true;
       wget.enable = mkDefault true;
       zellij.enable = mkDefault true;
       zoxide.enable = mkDefault true;
