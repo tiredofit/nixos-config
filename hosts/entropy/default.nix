@@ -14,7 +14,7 @@
         monitor = false;
       };
       coredns = {
-        enable = true;
+        enable = false;
         logship = false;
         monitor = false;
       };
@@ -36,7 +36,7 @@
         };
       };
       restic = {
-        enable = true;
+        enable = false;
         logship = false;
         monitor = false;
       };
@@ -166,7 +166,7 @@
     role = "server";
     service = {
       herald = {
-        enable = true;
+        enable = false;
         general = {
           log_level = "verbose";
         };

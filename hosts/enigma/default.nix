@@ -55,7 +55,7 @@
         };
       };
       restic = {
-        enable = true;
+        enable = false;
         logship = false;
         monitor = false;
       };
@@ -123,6 +123,9 @@
           };
         };
       };
+    };
+    feature = {
+      nix-ld.enable = true;
     };
     filesystem = {
       encryption.enable = false;
