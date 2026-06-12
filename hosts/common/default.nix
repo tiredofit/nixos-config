@@ -36,6 +36,7 @@
       e2fsprogs.enable = mkDefault true;
       fzf.enable = mkDefault true;
       fping.enable = mkDefault true;
+      gdu.enable = mkDefault true;
       git.enable = mkDefault true;
       htop.enable = mkDefault true;
       iftop.enable = mkDefault true;
@@ -50,7 +51,6 @@
       lnav.enable = mkDefault true;
       mtr.enable = mkDefault true;
       nano.enable = mkDefault true;
-      ncdu.enable = mkDefault true;
       net-tools.enable = mkDefault true;
       pciutils.enable = mkDefault true;
       psmisc.enable = mkDefault true;
@@ -59,6 +59,7 @@
       rsync.enable = mkDefault true;
       strace.enable = mkDefault true;
       tmux.enable = mkDefault true;
+      util-linux = mkDefault true;
       wget.enable = mkDefault true;
       zellij.enable = mkDefault true;
       zoxide.enable = mkDefault true;
