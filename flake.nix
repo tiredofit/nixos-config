@@ -17,6 +17,7 @@
   };
 
   inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-26.05";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     nix-modules = {
@@ -178,5 +179,10 @@
         type = with lib.types; attrsOf (attrsOf anything);
         default = {};
       };
+
+      checks = lib.genAttrs systems (system:
+        lib.mapAttrs (name: config: config.config.system.build.toplevel)
+          (lib.filterAttrs (name: config: config.pkgs.system == system) self.nixosConfigurations)
+      );
     };
 }
