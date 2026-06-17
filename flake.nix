@@ -182,7 +182,7 @@
 
       checks = lib.genAttrs systems (system:
         lib.mapAttrs (name: config: config.config.system.build.toplevel)
-          (lib.filterAttrs (name: config: config.pkgs.system == system) self.nixosConfigurations)
+          (lib.filterAttrs (name: config: config.pkgs.stdenv.hostPlatform.system == system) self.nixosConfigurations)
       );
     };
 }
