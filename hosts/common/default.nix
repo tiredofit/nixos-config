@@ -139,6 +139,42 @@
           };
           domain02 = mkDefault {
             profiles = {
+              inputs = [ "docker_pub" ];
+              outputs = [ "output01" ];
+            };
+          };
+          domain03 = mkDefault {
+            profiles = {
+              inputs = [ "docker_pub" ];
+              outputs = [ "output01" ];
+            };
+          };
+          domain04 = mkDefault {
+            profiles = {
+              inputs = [ "docker_pub" ];
+              outputs = [ "output01" ];
+            };
+          };
+          domain11 = mkDefault {
+            profiles = {
+              inputs = [ "docker_int" ];
+              outputs = [ "output02"];
+            };
+          };
+          domain12 = mkDefault {
+            profiles = {
+              inputs = [ "docker_int" ];
+              outputs = [ "output02"];
+            };
+          };
+          domain13 = mkDefault {
+            profiles = {
+              inputs = [ "docker_int" ];
+              outputs = [ "output02"];
+            };
+          };
+          domain14 = mkDefault {
+            profiles = {
               inputs = [ "docker_int" ];
               outputs = [ "output02"];
             };
