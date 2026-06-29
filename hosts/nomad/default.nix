@@ -8,7 +8,7 @@
   host = {
     container = {
       restic = {
-        enable = true;
+        enable = false;
         logship = false;
         monitor = false;
       };
@@ -31,7 +31,6 @@
           https = {
             enable = true;
             method = "interface";
-
             excludeInterfaces = [ "lo" ];
             excludeInterfacePattern = "docker|veth|br-";
           };
@@ -107,6 +106,16 @@
         server = "pipewire";
       };
       firmware.enable = true;
+      keyboard = {
+        via.enable = true;
+        remap = {
+          enable = true;
+          key = {
+            capslock = "none";
+            escape = "capslock";
+          };
+        };
+      };
       gamecontroller.enable = true;
       wireless.enable = true;
     };
@@ -128,7 +137,7 @@
             "/var/run/secrets/zerotier/networks"
           ];
           port = 9993;
-          cliUsers = [ 
+          cliUsers = [
             "dave"
           ];
         };
@@ -175,12 +184,5 @@
       dave.enable = true;
       root.enable = true;
     };
-
   };
-
-  #programs.hyprland.xwayland.enable = true;
-  services = {
-    blueman.enable = false;
-  };
-  environment.etc."current-flake".source = inputs.self;
 }
