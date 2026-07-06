@@ -43,7 +43,7 @@
       inetutils.enable = mkDefault true;
       iotop.enable = mkDefault true;
       iperf.enable = mkDefault true;
-      lazydocker.enable = mkDefault true;
+      lazydocker.enable = mkDefault false;
       less.enable = mkDefault true;
       links.enable = mkDefault true;
       liquidprompt.enable = mkDefault false;
@@ -58,7 +58,7 @@
       ripgrep.enable = mkDefault true;
       rsync.enable = mkDefault true;
       strace.enable = mkDefault true;
-      tmux.enable = mkDefault true;
+      tmux.enable = mkDefault false;
       util-linux.enable = mkDefault true;
       wget.enable = mkDefault true;
       zellij.enable = mkDefault true;
