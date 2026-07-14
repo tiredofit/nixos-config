@@ -91,8 +91,8 @@
                             else nixpkgs-unstable;
 
           selectedHomeManager = if packages == "stable"
-                               then inputs.home-manager-stable
-                               else inputs.home-manager-unstable;
+                                then inputs.home-manager-stable
+                                else inputs.home-manager-unstable;
 
           systemPkgs = import selectedNixpkgs {
             localSystem = system;
@@ -145,12 +145,6 @@
           packages = "unstable";
         };
 
-        entropy = self.mkSystem {
-          hostPath = ./hosts/entropy;
-          packages = "unstable";
-          extraModules = [ ./modules ];
-        };
-
         nakulaptop = self.mkSystem {
           hostPath = ./hosts/nakulaptop;
           packages = "stable";
@@ -165,12 +159,6 @@
         nucleus = self.mkSystem {
           hostPath = ./hosts/nucleus;
           packages = "stable";
-          extraModules = [ ./modules ];
-        };
-
-        test = self.mkSystem {
-          hostPath = ./hosts/test;
-          packages = "unstable";
           extraModules = [ ./modules ];
         };
       };

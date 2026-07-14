@@ -1,38 +1,32 @@
 keys:
   - &host_atlas age190tmygg8xmn9tkj4yjgemvdd8s4tnmycr9n4qfrr0l97zxfq3gjs36xsn8
   - &host_enigma age1nleq0q2kzh2zn4pyr0dcy0zjnsr6sx8c5ttjahhfttkltsr2s3ksahhpkx
-  - &host_entropy age10r9fcpj4z6nc9p5n3e6eqdy9kkmvp0kafpj02qwyvwnhs3ev2pts8qawyt
   - &host_nakulaptop age1m6gzjlvx5paan69evccl6kywj0ghdk46prumx4jn4hxcrxd4re6qckdl9w
   - &host_nomad age1y2f4jzfqjscgvwe3w3q8jmadtvxlsudk3c49lhqtdvatu7fwtdusez9fm9
   - &user_dave age1upzm9um3qljxlmxcg8vl35d7eyeqtnsfcnqlh3wtnj46dhfzwyrqa80avw
   - &user_ireen age1477n5xa2cr4tgdy80vxg24tsdcrcmzarn4ad99tjvrsjedq6sqpqsxyrms
   - &host_nucleus age197ewza8kky2gfef9d7qa464sylk0pshj4084hamxkhvtfyjgngfssjmxjc
-  - &host_test age1taje6mg0rpewujkvcsfgakpud88sg35fxyzad40f8pparymrhyvs33ju4l
 creation_rules:
   - path_regex: hosts/common/secrets/.*
     key_groups:
       - age:
           - *host_atlas
-          - *host_entropy
           - *host_enigma
           - *host_nakulaptop
           - *host_nomad
           - *host_nucleus
           - *user_dave
           - *user_ireen
-          - *host_test
   - path_regex: users/secrets.yaml
     key_groups:
       - age:
           - *host_atlas
           - *host_enigma
-          - *host_entropy
           - *host_nakulaptop
           - *host_nomad
           - *host_nucleus
           - *user_dave
           - *user_ireen
-          - *host_test
   - path_regex: hosts/atlas/secrets/.*
     key_groups:
       - age:
@@ -42,11 +36,6 @@ creation_rules:
     key_groups:
       - age:
           - *host_enigma
-          - *user_dave
-  - path_regex: hosts/entropy/secrets/.*
-    key_groups:
-      - age:
-          - *host_entropy
           - *user_dave
   - path_regex: hosts/nakulaptop/secrets/.*
     key_groups:
@@ -63,11 +52,4 @@ creation_rules:
     key_groups:
       - age:
           - *host_nucleus
-          - *user_dave
-  - path_regex: hosts/test/secrets/.*
-    key_groups:
-      - age:
-          - *host_test
-          - *host_nomad
-          - *host_enigma
           - *user_dave
