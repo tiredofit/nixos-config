@@ -6,6 +6,11 @@ keys:
   - &user_dave age1upzm9um3qljxlmxcg8vl35d7eyeqtnsfcnqlh3wtnj46dhfzwyrqa80avw
   - &user_ireen age1477n5xa2cr4tgdy80vxg24tsdcrcmzarn4ad99tjvrsjedq6sqpqsxyrms
   - &host_nucleus age197ewza8kky2gfef9d7qa464sylk0pshj4084hamxkhvtfyjgngfssjmxjc
+  - &host_pulsar age1dgdwjmr80g6xgjtvfq6mkkwvd6wl8lusu45jxqe568dr49t5yfmslerynx
+  - &host_pulsar age1yaqalu5ha0qt9nzupeh74xhnckx940ydeu7wrknmf7c5te0audhsfsldyw
+  - &host_pulsar age1wphztg003pn0td9jglv4ywpk58k9g3ugvuus3wkq4y5fazgln47s9t8pxl
+  - &host_pulsar age1puwtrw6npm87s9evyevws5rt5l9dvwugjz50r2kjnhsukvzpzpeqmssx50
+  - &host_pulsar age1p8x8ghaacec3mzh8j5phe5yukvphdccwc54lpqea0c68f59vdqhq6d2fu7
 creation_rules:
   - path_regex: hosts/common/secrets/.*
     key_groups:
@@ -17,6 +22,11 @@ creation_rules:
           - *host_nucleus
           - *user_dave
           - *user_ireen
+          - *host_pulsar
+          - *host_pulsar
+          - *host_pulsar
+          - *host_pulsar
+          - *host_pulsar
   - path_regex: users/secrets.yaml
     key_groups:
       - age:
@@ -27,6 +37,11 @@ creation_rules:
           - *host_nucleus
           - *user_dave
           - *user_ireen
+          - *host_pulsar
+          - *host_pulsar
+          - *host_pulsar
+          - *host_pulsar
+          - *host_pulsar
   - path_regex: hosts/atlas/secrets/.*
     key_groups:
       - age:
@@ -52,4 +67,54 @@ creation_rules:
     key_groups:
       - age:
           - *host_nucleus
+          - *user_dave
+  - path_regex: hosts/pulsar/secrets/.*
+    key_groups:
+      - age:
+          - *host_pulsar
+          - *host_nomad
+          - *user_dave
+          - *host_nomad
+          - *user_dave
+          - *host_nomad
+          - *user_dave
+          - *host_nomad
+          - *user_dave
+          - *host_nomad
+          - *user_dave
+  - path_regex: hosts/pulsar/secrets/.*
+    key_groups:
+      - age:
+          - *host_pulsar
+          - *host_nomad
+          - *user_dave
+          - *host_nomad
+          - *user_dave
+          - *host_nomad
+          - *user_dave
+          - *host_nomad
+          - *user_dave
+  - path_regex: hosts/pulsar/secrets/.*
+    key_groups:
+      - age:
+          - *host_pulsar
+          - *host_nomad
+          - *user_dave
+          - *host_nomad
+          - *user_dave
+          - *host_nomad
+          - *user_dave
+  - path_regex: hosts/pulsar/secrets/.*
+    key_groups:
+      - age:
+          - *host_pulsar
+          - *host_nomad
+          - *user_dave
+          - *host_nomad
+          - *user_dave
+  - path_regex: hosts/pulsar/secrets/.*
+    key_groups:
+      - age:
+          - *host_pulsar
+          - *host_nomad
           - *user_dave
