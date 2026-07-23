@@ -133,6 +133,14 @@
         };
 
       nixosConfigurations = {
+                pulsar = self.mkSystem { # Server Added 2026-07-23 
+
+                    hostPath = ./hosts/pulsar;
+
+                    packages = "unstable";
+
+                };
+
         atlas = self.mkSystem {
           hostPath = ./hosts/atlas;
           packages = "unstable";
@@ -161,6 +169,7 @@
           packages = "stable";
           extraModules = [ ./modules ];
         };
+
       };
 
       profiles = lib.mkOption {
