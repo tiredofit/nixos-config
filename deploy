@@ -13,6 +13,7 @@ REMOTE_USER=${REMOTE_USER:-"$(whoami)"}
 SECRET_USER="$(whoami)"
 SECRET_HOST="$(hostname)"
 SSH_PORT=${SSH_PORT:-"22"}
+NIXOS_ROLES_DIR=${NIXOS_ROLES_DIR:-"/home/dave/src/nix-modules/nixos/roles"}
 
 if command -v nixos-rebuild-ng > /dev/null 2>&1 ; then
     NIXOS_REBUILD_CMD="nixos-rebuild-ng"
@@ -865,7 +866,13 @@ Before the installation the following needs to occur:
   - Generate sample host secret
 
 EOF
+            _cli_remote_user="${REMOTE_USER}"
+            _cli_ssh_port="${SSH_PORT}"
+            _cli_ssh_key="${SSH_PRIVATE_KEY}"
             deploy_state_load
+            REMOTE_USER="${_cli_remote_user:-$REMOTE_USER}"
+            SSH_PORT="${_cli_ssh_port:-$SSH_PORT}"
+            SSH_PRIVATE_KEY="${_cli_ssh_key:-$SSH_PRIVATE_KEY}"
             task_parse_disk_config
             if [ -z "${DISK_SWAP_SIZE_GB}" ] ; then task_update_swap_size; fi
             if [ -z "${PASSWORD_ENCRYPTION}" ] ; then task_generate_encryption_password ; fi
@@ -1827,12 +1834,13 @@ task_generate_host_secrets() {
 
     if [ "${1}" = "new" ] && [ ! -f "${_dir_flake}"/hosts/"${deploy_host}"/secrets/secrets.yaml ]; then
         print_info "Auto-generating initial host secrets for ${deploy_host}"
-        echo "${deploy_host}: Example secret for ${deploy_host}" | sops --input-type yaml --output-type yaml -e /dev/stdin > "${_dir_flake}"/hosts/"${deploy_host}"/secrets/secrets.yaml
-        if [ $? -eq 0 ]; then
+        _secret_file="${_dir_flake}/hosts/${deploy_host}/secrets/secrets.yaml"
+        echo "${deploy_host}: Example secret for ${deploy_host}" > "${_secret_file}"
+        if sops --encrypt --in-place "${_secret_file}" 2>/dev/null; then
             print_info "Host secrets generated successfully"
         else
             print_warn "Auto-generation failed, falling back to manual edit"
-            sops "${_dir_flake}"/hosts/"${deploy_host}"/secrets/secrets.yaml
+            sops "${_secret_file}"
         fi
     else
         sops "${_dir_flake}"/hosts/"${deploy_host}"/secrets/secrets.yaml
@@ -1847,7 +1855,7 @@ task_generate_sops_configuration() {
     yq -i eval ".keys += [ \"&host_${deploy_host} ${_age_key_pub}\" ]" "${_dir_flake}"/.sops.yaml
     print_debug "Add the hosts AGE Key at the top"
 
-    yq -i eval ".creation_rules += [{\"path_regex\": \"hosts/${deploy_host}/secrets/.*\", \"key_groups\": [{\"age\": [\"*host_${deploy_host}\", \"*host_${SECRET_HOST}\", \"*user_${SECRET_USER}\"]}]}]" "${_dir_flake}"/.sops.yaml
+    yq -i eval ".creation_rules += [{\"path_regex\": \"hosts/${deploy_host}/secrets/.*\", \"key_groups\": [{\"age\": [\"*host_${deploy_host}\"]}]}]" "${_dir_flake}"/.sops.yaml
 
     if [ -n "${SECRET_HOST}" ]; then
         secret_hosts=$(echo "${SECRET_HOST}" | tr "," "\n" | uniq)
@@ -1930,12 +1938,10 @@ EOF
                     if var_true "${_template_ip_wired}" ; then
                         case "${_template_ip_type}" in
                             dynamic )
-                                sed -i "/hostname = \".*\";/a\      wired = {\n       enable = true;\n       type = \"dynamic\";\n       mac = \"${_template_network_mac}\";\n      };\n" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
-                                sed -i "/wired..* = .*;/d" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
+                                sed -i "/hostname = \".*\";/a\      interfaces = {\n        eth0 = {\n          match = {\n            mac = \"${_template_network_mac}\";\n          };\n        };\n      };\n      networks = {\n        eth0 = {\n          match.name = \"eth0\";\n          type = \"dynamic\";\n        };\n      };\n" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
                             ;;
                             static )
-                                sed -i "/hostname = \".*\";/a\      wired = {\n       enable = true;\n       type = \"static\";\n       ip = \"${_template_network_ip}/${_template_network_subnet}\";\n       gateway = \"${_template_network_gateway}\";\n       mac = \"${_template_network_mac}\";\n      };\n" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
-                                sed -i "/wired..* = .*;/d" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
+                                sed -i "/hostname = \".*\";/a\      interfaces = {\n        eth0 = {\n          match = {\n            mac = \"${_template_network_mac}\";\n          };\n        };\n      };\n      networks = {\n        eth0 = {\n          match.name = \"eth0\";\n          type = \"static\";\n          ip = \"${_template_network_ip}/${_template_network_subnet}\";\n          gateway = \"${_template_network_gateway}\";\n        };\n      };\n" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix
                             ;;
                         esac
                     fi
@@ -2032,21 +2038,24 @@ task_install_host() {
 task_parse_disk_config() {
     system_role=$(grep "role = .*;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix | cut -d '"' -f2)
 
-    if grep -qF "btrfs.enable = mkDefault true;" "${_dir_flake}"/modules/roles/"${system_role}"/default.nix; then
-        disk_btrfs=true
-    fi
-    if grep -qF "encryption.enable = mkDefault true;" "${_dir_flake}"/modules/roles/"${system_role}"/default.nix; then
-        disk_encryption=true
-    fi
-    if grep -qF "impermanence.enable = mkDefault true;" "${_dir_flake}"/modules/roles/"${system_role}"/default.nix || grep -qPzo -m 1 "(?s)impermanence = {\n.*enable = mkDefault true;"  "${_dir_flake}"/modules/roles/"${system_role}"/default.nix; then
-        disk_impermanence=true
-        feature_impermanence="persist"
-    fi
-    if grep -qF "raid.enable = mkDefault true;" "${_dir_flake}"/modules/roles/"${system_role}"/default.nix; then
-        disk_raid=true
-    fi
-    if grep -qF "swap_file.enable = mkDefault true;" "${_dir_flake}"/modules/roles/"${system_role}"/default.nix; then
-        disk_swapfile=true
+    _role_file="${NIXOS_ROLES_DIR}/${system_role}/default.nix"
+    if [ -f "${_role_file}" ]; then
+        if grep -qF "btrfs.enable = mkDefault true;" "${_role_file}"; then
+            disk_btrfs=true
+        fi
+        if grep -qF "encryption.enable = mkDefault true;" "${_role_file}"; then
+            disk_encryption=true
+        fi
+        if grep -qF "impermanence.enable = mkDefault true;" "${_role_file}" || grep -qPzo -m 1 "(?s)impermanence = {\n.*enable = mkDefault true;"  "${_role_file}"; then
+            disk_impermanence=true
+            feature_impermanence="persist"
+        fi
+        if grep -qF "raid.enable = mkDefault true;" "${_role_file}"; then
+            disk_raid=true
+        fi
+        if grep -qF "swap_file.enable = mkDefault true;" "${_role_file}"; then
+            disk_swapfile=true
+        fi
     fi
 
     if grep -qF "btrfs.enable = true;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
@@ -2059,12 +2068,20 @@ task_parse_disk_config() {
     elif grep -qF "encryption.enable = false;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
         disk_encryption=false
     fi
-    if grep -qF "impermanence.enable = true;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix || grep -qPzo -m 1 "(?s)impermanence = {\n.*enable = true;" "${_dir_flake}"/modules/roles/"${system_role}"/default.nix ; then
+    if grep -qF "impermanence.enable = true;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
         disk_impermanence=true
         feature_impermanence="persist"
-    elif grep -qF "impermanence.enable = false;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix || grep -qPzo -m 1 "(?s)impermanence = {\n.*enable = false;" "${_dir_flake}"/modules/roles/"${system_role}"/default.nix ; then
+    elif grep -qF "impermanence.enable = false;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
         disk_impermanence=false
         unset feature_impermanence
+    elif [ -f "${_role_file}" ]; then
+        if grep -qPzo -m 1 "(?s)impermanence = {\n.*enable = true;" "${_role_file}"; then
+            disk_impermanence=true
+            feature_impermanence="persist"
+        elif grep -qPzo -m 1 "(?s)impermanence = {\n.*enable = false;" "${_role_file}"; then
+            disk_impermanence=false
+            unset feature_impermanence
+        fi
     fi
     if grep -qF "raid.enable = true;" "${_dir_flake}"/hosts/"${deploy_host}"/default.nix; then
         disk_raid=true
@@ -2367,9 +2384,9 @@ task_cli_create_host() {
 
     # Add network config if IP was provided
     if [ -n "${ip}" ] && [ -n "${gateway}" ]; then
+        mac_escaped=$(printf '%s\n' "${mac}" | sed 's/[&/\]/\\&/g')
         sed -i "/hostname = \".*\";/a\\
-      wired = {\n       enable = true;\n       type = \"static\";\n       ip = \"${ip}\";\n       gateway = \"${gateway}\";\n       mac = \"${mac}\";\n      };\n" "${_dir_flake}/hosts/${hostname}/default.nix"
-        sed -i "/wired..* = .*;/d" "${_dir_flake}/hosts/${hostname}/default.nix"
+      interfaces = {\n        eth0 = {\n          match = {\n            mac = \"${mac_escaped}\";\n          };\n        };\n      };\n      networks = {\n        eth0 = {\n          match.name = \"eth0\";\n          type = \"static\";\n          ip = \"${ip}\";\n          gateway = \"${gateway}\";\n        };\n      };\n" "${_dir_flake}/hosts/${hostname}/default.nix"
     fi
 
     # Add to flake.nix
@@ -2493,7 +2510,13 @@ case "${1,,}" in
                 print_error "Host '${deploy_host}' not found. Create it first: $(basename "$0") create <hostname> --role server"
                 exit 1
             fi
+            _cli_remote_user="${REMOTE_USER}"
+            _cli_ssh_port="${SSH_PORT}"
+            _cli_ssh_key="${SSH_PRIVATE_KEY}"
             deploy_state_load
+            REMOTE_USER="${_cli_remote_user:-$REMOTE_USER}"
+            SSH_PORT="${_cli_ssh_port:-$SSH_PORT}"
+            SSH_PRIVATE_KEY="${_cli_ssh_key:-$SSH_PRIVATE_KEY}"
             task_parse_disk_config
             if [ -z "${DISK_SWAP_SIZE_GB}" ] ; then task_update_swap_size; fi
             if [ -z "${PASSWORD_ENCRYPTION}" ] ; then task_generate_encryption_password ; fi
