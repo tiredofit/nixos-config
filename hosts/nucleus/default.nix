@@ -67,6 +67,7 @@
       };
     };
     feature = {
+      fonts.enable = true;
       graphics = {
         enable = true;
         backend = "wayland";
