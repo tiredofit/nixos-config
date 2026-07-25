@@ -240,7 +240,7 @@
           };
         };
         vlan60 = {
-          type = "dynamic";
+          type = "unmanaged";
           match = {
             name = "br-vlan60";
           };
@@ -258,7 +258,7 @@
         #  };
         #};
         vlan1337 = {
-          type = "dynamic";
+          type = "unmanaged";
           match = {
             name = "br-vlan1337";
           };
