@@ -73,7 +73,7 @@
         backend = "wayland";
         displayManager.manager = "greetd";
         windowManager.manager = [ "hyprland" ];
-        acceleration = lib.mkForce true;
+        acceleration = true;
       };
       virtualization = {
         docker = {
@@ -281,6 +281,8 @@
       tttttt.enable = true;
     };
   };
+
+  fonts.fontconfig.enable = lib.mkForce true;
 
   networking = {
     firewall = {

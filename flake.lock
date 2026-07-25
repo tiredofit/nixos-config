@@ -142,8 +142,8 @@
     },
     "nix-modules": {
       "locked": {
-        "lastModified": 1782754665,
-        "narHash": "sha256-iVvL9heNlInZR72WMhuSsC/Ux8pJp1ybpxkgLgHMGhc=",
+        "lastModified": 1784840960,
+        "narHash": "sha256-XcUkwYJ3c79WKvp5dkm3iLLN4p+8BjkYMl4LXlx7jQ8=",
         "path": "/home/dave/src/nix-modules",
         "type": "path"
       },

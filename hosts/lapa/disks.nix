@@ -1,5 +1,5 @@
 let
-  rawdisk1 = "/dev/nvme0n1";
+  rawdisk1 = "/dev/vda";
 in
 {
   disko.devices = {
@@ -23,7 +23,7 @@ in
             };
             swap = {
               label = "swap";
-              size = "32G"; # SWAP - Do not Delete this comment
+              size = "8G"; # SWAP - Do not Delete this comment
               content = {
                 type = "swap";
                 resumeDevice = true;
@@ -73,10 +73,6 @@ in
                   "/var_lib_docker" = {
                     mountpoint = "/var/lib/docker";
                     mountOptions = [ "compress=zstd" "noatime" ];
-                  };
-                  "/var_lib_libvirt" = {
-                    mountpoint = "/var/lib/libvirt";
-                    mountOptions = [ "compress=zstd" "noatime" "nodatacow" ];
                   };
                   "/var_local" = {
                     mountOptions = [ "compress=zstd" "noatime" ];

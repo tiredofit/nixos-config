@@ -9,7 +9,7 @@
   # nixpkgs device-tree module defaults to
   # config.boot.kernelPackages.kernel.buildDTBs which doesn't exist
   # on linuxPackages_latest
-  hardware.deviceTree.enable = false;
+  #hardware.deviceTree.enable = false;
 
   host = {
     container = {
@@ -72,13 +72,13 @@
       };
     };
     feature = {
-      fonts.enable = true;
+      fonts.enable = lib.mkForce true;
       graphics = {
         enable = true;
         backend = "wayland";
         displayManager.manager = "greetd";
         windowManager.manager = [ "hyprland" ];
-        acceleration = lib.mkForce true;
+        acceleration = true;
       };
       virtualization = {
         docker = {
@@ -200,8 +200,7 @@
       };
       networks = {
         eth0 = {
-          type = "dynamic";
-          #type = "unmanaged";
+          type = "unmanaged";
           match = {
             name = "br-eth0";
           };
@@ -225,13 +224,13 @@
           };
         };
         vlan23 = {
-          type = "dynamic";
+          type = "unmanaged";
           match = {
             name = "br-vlan23";
           };
         };
         vlan60 = {
-          type = "dynamic";
+          type = "unmanaged";
           match = {
             name = "br-vlan60";
           };
@@ -249,7 +248,7 @@
         #  };
         #};
         vlan1337 = {
-          type = "dynamic";
+          type = "unmanaged";
           match = {
             name = "br-vlan1337";
           };
@@ -272,6 +271,8 @@
       tttttt.enable = true;
     };
   };
+
+  fonts.fontconfig.enable = lib.mkForce true;
 
   networking = {
     firewall = {

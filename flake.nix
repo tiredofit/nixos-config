@@ -133,6 +133,14 @@
         };
 
       nixosConfigurations = {
+                lapa = self.mkSystem { # Server Added 2026-07-24 
+
+                    hostPath = ./hosts/lapa;
+
+                    packages = "unstable";
+
+                };
+
                 pulsar = self.mkSystem { # Server Added 2026-07-23 
 
                     hostPath = ./hosts/pulsar;
