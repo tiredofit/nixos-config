@@ -11,6 +11,7 @@ keys:
   - &host_pulsar age1wphztg003pn0td9jglv4ywpk58k9g3ugvuus3wkq4y5fazgln47s9t8pxl
   - &host_pulsar age1puwtrw6npm87s9evyevws5rt5l9dvwugjz50r2kjnhsukvzpzpeqmssx50
   - &host_pulsar age1p8x8ghaacec3mzh8j5phe5yukvphdccwc54lpqea0c68f59vdqhq6d2fu7
+  - &host_lapa age1n69cwqy9zhk9elvxfuqzdzyh5ymhu5znhdzdnptde7r8keu383ksjczgvc
 creation_rules:
   - path_regex: hosts/common/secrets/.*
     key_groups:
@@ -27,6 +28,7 @@ creation_rules:
           - *host_pulsar
           - *host_pulsar
           - *host_pulsar
+          - *host_lapa
   - path_regex: users/secrets.yaml
     key_groups:
       - age:
@@ -42,6 +44,7 @@ creation_rules:
           - *host_pulsar
           - *host_pulsar
           - *host_pulsar
+          - *host_lapa
   - path_regex: hosts/atlas/secrets/.*
     key_groups:
       - age:
@@ -116,5 +119,11 @@ creation_rules:
     key_groups:
       - age:
           - *host_pulsar
+          - *host_nomad
+          - *user_dave
+  - path_regex: hosts/lapa/secrets/.*
+    key_groups:
+      - age:
+          - *host_lapa
           - *host_nomad
           - *user_dave
