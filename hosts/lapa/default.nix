@@ -80,7 +80,7 @@
       encryption.enable = false;
     };
     hardware = {
-      cpu = "vm-amd";
+      cpu = "vm-intel";
     };
     network = {
       hostname = "lapa";
