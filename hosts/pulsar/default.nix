@@ -268,6 +268,9 @@
       };
     };
     role = "server";
+    service = {
+      lastlog.enable = true;
+    };
     user = {
       root.enable = true;
       dave.enable = true;
@@ -285,6 +288,8 @@
       #trustedInterfaces = [ "br-eth0" "br-eth1" "br-eth2" "br-eth3"];
     };
   };
+
+  security.rtkit.enable = true;
 
   programs.hyprland.xwayland.enable = false;
 
