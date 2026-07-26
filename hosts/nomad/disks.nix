@@ -33,6 +33,11 @@
       fsType = "btrfs";
       options = [ "subvol=home/snapshots" "compress=zstd" "noatime" ];
     };
+    "/home/.volatile" = {
+      device = "/dev/disk/by-uuid/98114b5f-d539-4c2f-b7d8-3856df96c11e";
+      fsType = "btrfs";
+      options = [ "subvol=home/volatile" "compress=zstd" "noatime" ];
+    };
     "/nix" = {
       device = "/dev/disk/by-uuid/98114b5f-d539-4c2f-b7d8-3856df96c11e";
       fsType = "btrfs";
@@ -53,6 +58,10 @@
       fsType = "btrfs";
       options = [ "subvol=var_lib_docker" "compress=zstd" "noatime" ];
     };
+    "/var_lib_libvirt" = {
+      device = "/dev/disk/by-uuid/98114b5f-d539-4c2f-b7d8-3856df96c11e";
+      mountOptions = [ "compress=none" "noatime" "nodatacow" ];
+    };
     "/var/local" = {
       device = "/dev/disk/by-uuid/98114b5f-d539-4c2f-b7d8-3856df96c11e";
       fsType = "btrfs";
@@ -62,6 +71,16 @@
       device = "/dev/disk/by-uuid/98114b5f-d539-4c2f-b7d8-3856df96c11e";
       fsType = "btrfs";
       options = [ "subvol=var_local/snapshots" "compress=zstd" "noatime" ];
+    };
+    "/var/local/.volatile" = {
+      device = "/dev/disk/by-uuid/98114b5f-d539-4c2f-b7d8-3856df96c11e";
+      fsType = "btrfs";
+      options = [ "subvol=var_local/volatile" "compress=zstd" "noatime" ];
+    };
+    "/var/local/db" = {
+      device = "/dev/disk/by-uuid/98114b5f-d539-4c2f-b7d8-3856df96c11e";
+      fsType = "btrfs";
+      options = [ "subvol=var_local_db" "compress=zstd" "noatime" "nodatacow" ];
     };
     "/var/log" = {
       device = "/dev/disk/by-uuid/98114b5f-d539-4c2f-b7d8-3856df96c11e";
