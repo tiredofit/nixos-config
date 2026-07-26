@@ -94,6 +94,10 @@ in {
                       mountpoint = "/home/.snapshots";
                       mountOptions = [ "compress=zstd" "noatime" ];
                     };
+                    "/home/volatile" = {
+                      mountpoint = "/home/.volatile";
+                      mountOptions = [ "compress=zstd" "noatime" ];
+                    };
                     "/nix" = {
                       mountpoint = "/nix";
                       mountOptions = [ "compress=zstd" "noatime" ];
@@ -112,6 +116,14 @@ in {
                     "/var_local/snapshots" = {
                       mountpoint = "/var/local/.snapshots";
                       mountOptions = [ "compress=zstd" "noatime" ];
+                    };
+                    "/var_local/volatile" = {
+                      mountpoint = "/var/local/.volatile";
+                      mountOptions = [ "compress=zstd" "noatime" ];
+                    };
+                    "/var_local_db" = {
+                      mountpoint = "/var/local/db";
+                      mountOptions = [ "compress=zstd" "noatime" "nodatacow" ];
                     };
                     "/var_log" = {
                       mountpoint = "/var/log";
