@@ -13,11 +13,7 @@
     kernel.sysctl = {
       "vm.dirty_ratio" = mkDefault 6;                   # sync disk when buffer reach 6% of memory
     };
-    loader.systemd-boot = {
-      configurationLimit = mkDefault null;
-      editor = mkDefault null;
-      consoleMode = mkDefault null;
-    };
+
   };
 
   environment = {
