@@ -14,11 +14,6 @@ with lib;
       bashInteractive
       zsh
     ];
-    system = {
-      userActivationScripts = {
-        zshrc = "touch .zshrc";
-      };
-    };
     users = {
       defaultUserShell = pkgs.zsh;
     };
