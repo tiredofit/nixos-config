@@ -103,7 +103,7 @@
       };
     };
     hardware = {
-      cpu = "amd";
+      cpu = "intel";
       raid.enable = false;
     };
     network = {
