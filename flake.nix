@@ -133,22 +133,6 @@
         };
 
       nixosConfigurations = {
-                lapa = self.mkSystem { # Server Added 2026-07-24 
-
-                    hostPath = ./hosts/lapa;
-
-                    packages = "unstable";
-
-                };
-
-                pulsar = self.mkSystem { # Server Added 2026-07-23 
-
-                    hostPath = ./hosts/pulsar;
-
-                    packages = "unstable";
-
-                };
-
         atlas = self.mkSystem {
           hostPath = ./hosts/atlas;
           packages = "unstable";
@@ -158,6 +142,11 @@
 
         enigma = self.mkSystem {
           hostPath = ./hosts/enigma;
+          packages = "unstable";
+        };
+
+        lapa = self.mkSystem { 
+          hostPath = ./hosts/lapa;
           packages = "unstable";
         };
 
@@ -174,10 +163,14 @@
 
         nucleus = self.mkSystem {
           hostPath = ./hosts/nucleus;
-          packages = "stable";
+          packages = "unstable";
           extraModules = [ ./modules ];
         };
 
+        pulsar = self.mkSystem {
+          hostPath = ./hosts/pulsar;
+          packages = "unstable";
+        };
       };
 
       profiles = lib.mkOption {
