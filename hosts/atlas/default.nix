@@ -161,6 +161,9 @@
     };
     filesystem = {
       swap.enable = false; #disko
+      volatile = {
+        enable = true;
+      };
     };
     hardware = {
       cpu = "ampere";

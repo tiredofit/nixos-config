@@ -75,7 +75,7 @@
         enable = true;
         backend = "wayland";
         displayManager.manager = "greetd";
-        windowManager.manager = [ "cosmic" "hyprland" "niri" ];
+        windowManager.manager = [ "hyprland" ];
       };
       nix-ld.enable = true;
       virtualization = {
@@ -98,6 +98,17 @@
         partition = "/dev/disk/by-partlabel/swap";
       };
       tmp.tmpfs.enable = true;
+#      btrfs.snapshots.volumes = {
+#        "/home" = {};
+#        "/var/local" = {};
+#        "/persist" = {};
+#      };
+      volatile = {
+        enable = true;
+        dirs = [
+          "/home/dave/.npm"
+        ];
+      };
     };
     hardware = {
       cpu = "amd";
@@ -179,6 +190,9 @@
       zeroplex = {
         enable = true;
       };
+      duperemove = {
+        enable = true;
+      };
     };
     user = {
       dave.enable = true;
@@ -190,8 +204,8 @@
   # nixpkgs device-tree module defaults to
   # config.boot.kernelPackages.kernel.buildDTBs which doesn't exist
   # on linuxPackages_latest
-  hardware.deviceTree.enable = false;
-  system.boot.loader.kernelFile = "bzImage";
+  #hardware.deviceTree.enable = false;
+  #system.boot.loader.kernelFile = "bzImage";
 
   ## KDE Connect
   services.avahi = {
@@ -210,53 +224,4 @@
   };
 
   environment.systemPackages = with pkgs; [ kdePackages.kdeconnect-kde ];
-
-  ## ESPHome
-  services.esphome = {
-    enable = true;
-    address = "0.0.0.0";
-    port = 6052;
-    openFirewall = true;
-
-    allowedDevices = [
-      "/dev/ttyUSB0"
-      "/dev/ttyUSB1"
-      "/dev/ttyACM0"
-      "/dev/ttyACM1"
-    ];
-  };
-
-  systemd.services.esphome = {
-    environment = {
-      PLATFORMIO_CORE_DIR = lib.mkForce "/var/lib/esphome/.platformio";
-    };
-    serviceConfig = {
-      DynamicUser = lib.mkForce false;
-      User = "esphome";
-      Group = "esphome";
-      WorkingDirectory = lib.mkForce "/var/lib/esphome";
-      ReadWritePaths = [ "/var/lib/esphome" ];
-    };
-  };
-
-  users.users.esphome = {
-    isSystemUser = true;
-    group = "esphome";
-    extraGroups = [ "dialout" "wheel" ];
-  };
-
-#services.keyd = {
-#  enable = true;
-#  keyboards = {
-#    default = {
-#      ids = [ "*" ];
-#      settings = {
-#        main = {
-#          capslock = "esc";
-#          esc = "capslock";
-#        };
-#      };
-#    };
-#  };
-#};
 }

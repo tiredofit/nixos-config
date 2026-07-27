@@ -27,6 +27,9 @@
       swap = {
         partition = "disk/by-uuid/2ad5730c-1905-4a4a-9d9b-7d53d28f1761";
       };
+      volatile = {
+        enable = true;
+      };
     };
     hardware = {
       backlight = {

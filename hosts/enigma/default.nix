@@ -129,6 +129,9 @@
     };
     filesystem = {
       encryption.enable = false;
+      volatile = {
+        enable = true;
+      };
     };
     hardware = {
       cpu = "vm-amd";

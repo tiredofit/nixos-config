@@ -101,6 +101,9 @@
       swap = {
         partition = "disk/by-partlabel/swap";
       };
+      volatile = {
+        enable = true;
+      };
     };
     hardware = {
       cpu = "intel";

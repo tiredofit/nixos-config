@@ -90,6 +90,9 @@
     filesystem = {
       encryption.enable = false;
       impermanence.enable = true;
+      volatile = {
+        enable = true;
+      };
     };
     hardware = {
       cpu = "amd";
