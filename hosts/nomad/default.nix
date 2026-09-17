@@ -191,7 +191,7 @@
         enable = true;
       };
       duperemove = {
-        enable = true;
+        enable = false;
       };
     };
     user = {
