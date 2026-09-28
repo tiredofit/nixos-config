@@ -6,13 +6,23 @@
     ../common
   ];
 
-  # nixpkgs device-tree module defaults to
-  # config.boot.kernelPackages.kernel.buildDTBs which doesn't exist
-  # on linuxPackages_latest
-  #hardware.deviceTree.enable = false;
-
   host = {
     container = {
+      authentik-outpost = {
+        enable = true;
+        instances = {
+          pulsar = {
+            enable = true;
+            proxy = {
+              enable = true;
+              ports = {
+                http.enable = true;
+                metrics.enable = true;
+              };
+            };
+          };
+        };
+      };
       restic = {
         enable = false;
       };
