@@ -8,6 +8,24 @@
 
   host = {
     container = {
+      authentik-outpost = {
+        enable = true;
+        instances = {
+          nucleus = {
+            enable = true;
+            proxy = {
+              enable = true;
+              ports = {
+                http.enable = true;
+                metrics.enable = true;
+              };
+            };
+            ldap = {
+              enable = false;
+            };
+          };
+        };
+      };
       restic = {
         enable = true;
       };
