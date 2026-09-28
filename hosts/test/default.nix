@@ -10,18 +10,12 @@
     container = {
       clamav = {
         enable = false;
-        logship = false;
-        monitor = false;
       };
       coredns = {
         enable = false;
-        logship = false;
-        monitor = false;
       };
       openldap = {
         enable = false;
-        logship = false;
-        monitor = false;
         ports = {
           ldap = {
             enable = false;
@@ -37,38 +31,38 @@
       };
       socket-proxy = {
         enable = false;
-        logship = false;
-        monitor = false;
       };
       traefik = {
         enable = false;
-        logship = false;
-        monitor = false;
-        ports = {
-          http = {
+        instances = {
+          traefik = {
+            role = "public";
             enable = false;
-            method = "interface";
-            excludeInterfaces = [ "lo" ];
-            excludeInterfacePattern = "docker|veth|br-";
-          };
-          https = {
-            enable = true;
-            method = "interface";
-            excludeInterfaces = [ "lo" ];
-            excludeInterfacePattern = "docker|veth|br-";
-          };
-          http3 = {
-            enable = true;
-            method = "interface";
-            excludeInterfaces = [ "lo" ];
-            excludeInterfacePattern = "docker|veth|br-";
+            ports = {
+              http = {
+                enable = false;
+                method = "interface";
+                excludeInterfaces = [ "lo" ];
+                excludeInterfacePattern = "docker|veth|br-";
+              };
+              https = {
+                enable = true;
+                method = "interface";
+                excludeInterfaces = [ "lo" ];
+                excludeInterfacePattern = "docker|veth|br-";
+              };
+              http3 = {
+                enable = true;
+                method = "interface";
+                excludeInterfaces = [ "lo" ];
+                excludeInterfacePattern = "docker|veth|br-";
+              };
+            };
           };
         };
       };
       unbound = {
         enable = false;
-        monitor = false;
-        logship = false;
         secrets = {
           enable = true;
         };
