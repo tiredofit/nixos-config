@@ -8,6 +8,21 @@
 
   host = {
     container = {
+      authentik-outpost = {
+        enable = true;
+        instances = {
+          atlas = {
+            enable = true;
+            proxy = {
+              enable = true;
+              ports = {
+                http.enable = true;
+                metrics.enable = true;
+              };
+            };
+          };
+        };
+      };
       coredns = {
         enable = true;
         ports = {
