@@ -16,10 +16,31 @@
 
   host = {
     container = {
+      authentik-outpost = {
+        enable = true;
+        instances = {
+          enigma = {
+            enable = true;
+            proxy = {
+              enable = true;
+              ports = {
+                http.enable = true;
+                metrics.enable = true;
+              };
+            };
+            ldap = {
+              enable = false;
+              ports = {
+                ldap.enable = true;
+                ldaps.enable = true;
+                metrics.enable = true;
+              };
+            };
+          };
+        };
+      };
       coredns = {
         enable = false;
-        logship = false;
-        monitor = false;
         ports = {
           tcp = {
             enable = true;
@@ -35,8 +56,6 @@
       };
       postfix-relay = {
         enable = false;
-        logship = false;
-        monitor = false;
         ports = {
           smtp = {
             enable = true;
@@ -56,70 +75,69 @@
       };
       restic = {
         enable = false;
-        logship = false;
-        monitor = false;
       };
       socket-proxy = {
         enable = true;
-        logship = false;
-        monitor = false;
       };
       traefik = {
         enable = true;
-        logship = false;
-        monitor = false;
-        ports = {
-          http = {
-            enable = false;
-            host = 80;
-            container = 80;
-            method = "interface";
-            excludeInterfaces = [ "lo" ];
-            excludeInterfacePattern = "docker|veth|br-";
-          };
-          https = {
+        instances = {
+          traefik = {
+            role = "public";
             enable = true;
-            host = 443;
-            container = 443;
-            method = "interface";
-            excludeInterfaces = [ "lo" ];
-            excludeInterfacePattern = "docker|veth|br-";
+            ports = {
+              http = {
+                enable = false;
+                host = 80;
+                container = 80;
+                method = "interface";
+                excludeInterfaces = [ "lo" ];
+                excludeInterfacePattern = "docker|veth|br-";
+              };
+              https = {
+                enable = true;
+                host = 443;
+                container = 443;
+                method = "interface";
+                excludeInterfaces = [ "lo" ];
+                excludeInterfacePattern = "docker|veth|br-";
+              };
+              http3 = {
+                enable = true;
+                host = 443;
+                container = 443;
+                method = "interface";
+                excludeInterfaces = [ "lo" ];
+                excludeInterfacePattern = "docker|veth|br-";
+              };
+            };
           };
-          http3 = {
+          traefik-internal = {
+            role = "internal";
             enable = true;
-            host = 443;
-            container = 443;
-            method = "interface";
-            excludeInterfaces = [ "lo" ];
-            excludeInterfacePattern = "docker|veth|br-";
-          };
-        };
-      };
-      traefik-internal = {
-        enable = true;
-        logship = false;
-        monitor = false;
-        ports = {
-          http = {
-            enable = false;
-            host = 80;
-            container = 80;
-            method = "zerotier";
-            zerotierNetwork = "file:///var/run/secrets/zerotier/networks";
-          };
-          https = {
-            enable = true;
-            host = 443;
-            container = 443;
-            method = "zerotier";
-            zerotierNetwork = "file:///var/run/secrets/zerotier/networks";
-          };
-          http3 = {
-            enable = true;
-            host = 443;
-            container = 443;
-            method = "zerotier";
-            zerotierNetwork = "file:///var/run/secrets/zerotier/networks";
+            ports = {
+              http = {
+                enable = false;
+                host = 80;
+                container = 80;
+                method = "zerotier";
+                zerotierNetwork = "file:///var/run/secrets/zerotier/networks";
+              };
+              https = {
+                enable = true;
+                host = 443;
+                container = 443;
+                method = "zerotier";
+                zerotierNetwork = "file:///var/run/secrets/zerotier/networks";
+              };
+              http3 = {
+                enable = true;
+                host = 443;
+                container = 443;
+                method = "zerotier";
+                zerotierNetwork = "file:///var/run/secrets/zerotier/networks";
+              };
+            };
           };
         };
       };
