@@ -10,65 +10,66 @@
     container = {
       socket-proxy = {
         enable = true;
-        logship = false;
-        monitor = false;
       };
       traefik = {
         enable = true;
-        logship = false;
-        monitor = false;
-        ports = {
-          http = {
-            enable = false;
-            host = 80;
-            container = 80;
-            method = "interface";
-            excludeInterfaces = [ "lo" ];
-            excludeInterfacePattern = "docker|veth|br-";
-          };
-          https = {
+        instances = {
+          traefik = {
+            role = "public";
             enable = true;
-            host = 443;
-            container = 443;
-            method = "interface";
-            excludeInterfaces = [ "lo" ];
-            excludeInterfacePattern = "docker|veth|br-";
+            ports = {
+              http = {
+                enable = false;
+                host = 80;
+                container = 80;
+                method = "interface";
+                excludeInterfaces = [ "lo" ];
+                excludeInterfacePattern = "docker|veth|br-";
+              };
+              https = {
+                enable = true;
+                host = 443;
+                container = 443;
+                method = "interface";
+                excludeInterfaces = [ "lo" ];
+                excludeInterfacePattern = "docker|veth|br-";
+              };
+              http3 = {
+                enable = true;
+                host = 443;
+                container = 443;
+                method = "interface";
+                excludeInterfaces = [ "lo" ];
+                excludeInterfacePattern = "docker|veth|br-";
+              };
+            };
           };
-          http3 = {
+          traefik-internal = {
+            role = "internal";
             enable = true;
-            host = 443;
-            container = 443;
-            method = "interface";
-            excludeInterfaces = [ "lo" ];
-            excludeInterfacePattern = "docker|veth|br-";
-          };
-        };
-      };
-      traefik-internal = {
-        enable = true;
-        logship = false;
-        monitor = false;
-        ports = {
-          http = {
-            enable = false;
-            host = 80;
-            container = 80;
-            method = "zerotier";
-            zerotierNetwork = "file:///var/run/secrets/zerotier/networks";
-          };
-          https = {
-            enable = true;
-            host = 443;
-            container = 443;
-            method = "zerotier";
-            zerotierNetwork = "file:///var/run/secrets/zerotier/networks";
-          };
-          http3 = {
-            enable = true;
-            host = 443;
-            container = 443;
-            method = "zerotier";
-            zerotierNetwork = "file:///var/run/secrets/zerotier/networks";
+            ports = {
+              http = {
+                enable = false;
+                host = 80;
+                container = 80;
+                method = "zerotier";
+                zerotierNetwork = "file:///var/run/secrets/zerotier/networks";
+              };
+              https = {
+                enable = true;
+                host = 443;
+                container = 443;
+                method = "zerotier";
+                zerotierNetwork = "file:///var/run/secrets/zerotier/networks";
+              };
+              http3 = {
+                enable = true;
+                host = 443;
+                container = 443;
+                method = "zerotier";
+                zerotierNetwork = "file:///var/run/secrets/zerotier/networks";
+              };
+            };
           };
         };
       };
