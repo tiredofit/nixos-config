@@ -10,8 +10,6 @@
     container = {
       coredns = {
         enable = true;
-        logship = false;
-        monitor = false;
         ports = {
           tcp = {
             enable = true;
@@ -29,8 +27,6 @@
       };
       openldap = {
         enable = true;
-        logship = false;
-        monitor = false;
         containerName = builtins.replaceStrings ["." ] ["-"] ( "ldap." + config.host.network.domainname + "-app" );
         hostname = "ldap.${config.host.network.domainname}";
         certs = {
@@ -55,8 +51,6 @@
       };
       postfix-relay = {
         enable = true;
-        logship = false;
-        monitor = false;
         ports = {
           smtp = {
             enable = true;
@@ -72,65 +66,62 @@
       };
       restic = {
         enable = true;
-        logship = false;
-        monitor = false;
       };
       socket-proxy = {
         enable = true;
-        logship = false;
-        monitor = false;
       };
       traefik = {
         enable = true;
-        logship = false;
-        monitor = false;
-        ports = {
-          http = {
-            enable = false;
-            method = "interface";
-            excludeInterfaces = [ "lo" ];
-            excludeInterfacePattern = "docker|veth|br-";
-          };
-          https = {
+        instances = {
+          traefik = {
+            role = "public";
             enable = true;
-            method = "interface";
-            excludeInterfaces = [ "lo" ];
-            excludeInterfacePattern = "docker|veth|br-";
+            ports = {
+              http = {
+                enable = false;
+                method = "interface";
+                excludeInterfaces = [ "lo" ];
+                excludeInterfacePattern = "docker|veth|br-";
+              };
+              https = {
+                enable = true;
+                method = "interface";
+                excludeInterfaces = [ "lo" ];
+                excludeInterfacePattern = "docker|veth|br-";
+              };
+              http3 = {
+                enable = true;
+                method = "interface";
+                excludeInterfaces = [ "lo" ];
+                excludeInterfacePattern = "docker|veth|br-";
+              };
+            };
           };
-          http3 = {
+          traefik-internal = {
+            role = "internal";
             enable = true;
-            method = "interface";
-            excludeInterfaces = [ "lo" ];
-            excludeInterfacePattern = "docker|veth|br-";
-          };
-        };
-      };
-      traefik-internal = {
-        enable = true;
-        logship = false;
-        monitor = false;
-        ports = {
-          http = {
-            enable = false;
-            method = "zerotier";
-            zerotierNetwork = "file:///var/run/secrets/zerotier/networks";
-          };
-          https = {
-            enable = true;
-            method = "zerotier";
-            zerotierNetwork = "file:///var/run/secrets/zerotier/networks";
-          };
-          http3 = {
-            enable = true;
-            method = "zerotier";
-            zerotierNetwork = "file:///var/run/secrets/zerotier/networks";
+            ports = {
+              http = {
+                enable = false;
+                method = "zerotier";
+                zerotierNetwork = "file:///var/run/secrets/zerotier/networks";
+              };
+              https = {
+                enable = true;
+                method = "zerotier";
+                zerotierNetwork = "file:///var/run/secrets/zerotier/networks";
+              };
+              http3 = {
+                enable = true;
+                method = "zerotier";
+                zerotierNetwork = "file:///var/run/secrets/zerotier/networks";
+              };
+            };
           };
         };
       };
       unbound = {
         enable = true;
-        monitor = false;
-        logship = false;
         ports = {
           dns = {
             enable = true;
@@ -146,8 +137,6 @@
       };
       zabbix-proxy = {
         enable = false;
-        logship = false;
-        monitor = false;
         ports = {
           proxy = {
             enable = true;
