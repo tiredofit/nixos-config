@@ -43,6 +43,10 @@
     impermanence = {
       url = "github:nix-community/impermanence";
     };
+    #musort = {
+    #  url = "github:nfrastack/musort";
+    #  inputs.nixpkgs.follows = "nixpkgs";
+    #};
     sops-nix = {
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
