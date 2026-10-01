@@ -192,6 +192,9 @@
       duperemove = {
         enable = false;
       };
+      bees = {
+        enable = true;
+      };
     };
     user = {
       dave.enable = true;
