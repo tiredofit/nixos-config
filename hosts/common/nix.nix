@@ -1,4 +1,4 @@
-{ config, inputs, lib, outputs, pkgs, ... }:
+{ config, inputs, lib, outputs, pkgs, nixpkgsBranch ? "unstable", ... }:
   with lib;
 {
   environment = {
@@ -41,7 +41,8 @@
 
     package = pkgs.nixVersions.stable;
     registry = lib.mapAttrs (_: value: { flake = value; }) inputs;
-    nixPath = [ "nixpkgs=${inputs.nixpkgs.outPath}" ];
+    nixPath = mkIf (nixpkgsBranch == "stable") [ "nixpkgs=${inputs.nixpkgs-stable.outPath}" ];
+    settings.nix-path = mkIf (nixpkgsBranch != "stable") [ "nixpkgs=${inputs.nixpkgs.outPath}" ];
   };
 
   programs = {
