@@ -46,7 +46,7 @@
       iperf.enable = mkDefault true;
       lazydocker.enable = mkDefault false;
       less.enable = mkDefault true;
-      links.enable = mkDefault true;
+      links.enable = mkDefault false;
       liquidprompt.enable = mkDefault false;
       lsof.enable = mkDefault true;
       lnav.enable = mkDefault true;
