@@ -6,6 +6,7 @@
     ../common
   ];
 
+
   fileSystems = {
     "/mnt/media" = {
       device = "/dev/disk/by-uuid/9c3cfc7b-f660-44eb-9c60-d32342cdf174";
@@ -18,6 +19,7 @@
     container = {
       authentik-outpost = {
         enable = true;
+        image.update = true;
         instances = {
           enigma = {
             enable = true;
@@ -78,9 +80,11 @@
       };
       socket-proxy = {
         enable = true;
+        image.update = true;
       };
       traefik = {
         enable = true;
+        image.update = true;
         instances = {
           traefik = {
             role = "public";

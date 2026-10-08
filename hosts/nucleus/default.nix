@@ -6,10 +6,12 @@
     ../common
   ];
 
+
   host = {
     container = {
       authentik-outpost = {
         enable = true;
+        image.update = true;
         instances = {
           nucleus = {
             enable = true;
@@ -27,13 +29,16 @@
         };
       };
       restic = {
-        enable = true;
+        enable = false;
+        image.update = true;
       };
       socket-proxy = {
         enable = true;
+        image.update = true;
       };
       traefik = {
         enable = true;
+        image.update = true;
         instances = {
           traefik = {
             role = "public";

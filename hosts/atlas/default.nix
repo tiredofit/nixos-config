@@ -6,10 +6,12 @@
     ../common
   ];
 
+
   host = {
     container = {
       authentik-outpost = {
         enable = true;
+        image.update = true;
         instances = {
           atlas = {
             enable = true;
@@ -25,6 +27,7 @@
       };
       coredns = {
         enable = true;
+        image.update = true;
         ports = {
           tcp = {
             enable = true;
@@ -42,6 +45,7 @@
       };
       openldap = {
         enable = true;
+        image.update = true;
         containerName = builtins.replaceStrings ["." ] ["-"] ( "ldap." + config.host.network.domainname + "-app" );
         hostname = "ldap.${config.host.network.domainname}";
         certs = {
@@ -66,6 +70,7 @@
       };
       postfix-relay = {
         enable = true;
+        image.update = true;
         ports = {
           smtp = {
             enable = true;
@@ -80,13 +85,16 @@
         };
       };
       restic = {
-        enable = true;
+        enable = false;
+        image.update = true;
       };
       socket-proxy = {
         enable = true;
+        image.update = true;
       };
       traefik = {
         enable = true;
+        image.update = true;
         instances = {
           traefik = {
             role = "public";
