@@ -45,8 +45,8 @@
         ]
       },
       "locked": {
-        "lastModified": 1791476220,
-        "narHash": "sha256-0WgqO9rX/D7hf23aeBckbeVR8VKSeCgWH30zPkNfLb8=",
+        "lastModified": 1791477964,
+        "narHash": "sha256-lUpKjnUtHNvnMD8jPOhJwLRzrSfFlhwcxVQgU4fJC90=",
         "path": "/home/dave/src/nfra/herald",
         "type": "path"
       },
@@ -139,8 +139,8 @@
     },
     "nix-modules": {
       "locked": {
-        "lastModified": 1791476259,
-        "narHash": "sha256-tqOT7mq2Kgh56qhYbBm/Ik99lFF3TGSXAjhX7HfO4fQ=",
+        "lastModified": 1791478568,
+        "narHash": "sha256-4SIaapWox7ErPleA9O3LKP3nggDhzKNy0o8IN05Ogms=",
         "path": "/home/dave/src/nix-modules",
         "type": "path"
       },
