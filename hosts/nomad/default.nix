@@ -187,6 +187,7 @@
         general = {
           log_level = "verbose";
           skip_domain_validation = true;
+          allow_missing_outputs = true;
         };
       };
       zeroplex = {
