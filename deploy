@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-SCRIPT_VERSION=1.11.0
+SCRIPT_VERSION=1.12.0
 
 INSTALL_BUILD_LOCAL=${INSTALL_BUILD_LOCAL:-"TRUE"}
 INSTALL_DEBUG=${INSTALL_DEBUG:-"FALSE"}
@@ -10,6 +10,8 @@ NIXOSANYWHERE_VERSION=${NIXOSANYWHERE_VERSION:-""}
 DEFAULT_PACKAGES=${DEFAULT_PACKAGES:-"unstable"}
 LOG_LEVEL=NOTICE
 REMOTE_USER=${REMOTE_USER:-"$(whoami)"}
+HM_USER=${HM_USER:-"$(whoami)"}
+HOME_MANAGER_FLAKEDIR=${HOME_MANAGER_FLAKEDIR:-""}
 SECRET_USER="$(whoami)"
 SECRET_HOST="$(hostname)"
 SSH_PORT=${SSH_PORT:-"22"}
@@ -54,6 +56,7 @@ case "${1}" in
 **   '$(basename "$0")' list                         - List all configured hosts
 **   '$(basename "$0")' create <host> [opts]         - Create new host config (see below)
 **   '$(basename "$0")' update <host> [ip]           - Update existing host (skips all menus)
+**   '$(basename "$0")' update-home <host> [ip]      - Update standalone home-manager (user@host)
 **   '$(basename "$0")' install <host> <ip>          - Fresh install (resumable on failure)
 **   '$(basename "$0")' flake update                 - Update flake.lock
 **   '$(basename "$0")' flake upgrade                - Upgrade running NixOS system
@@ -63,6 +66,7 @@ case "${1}" in
 **   --remote-build       - Build on the remote host instead of locally
 **   --local-build        - Build locally and send to remote (default)
 **   --user <username>    - SSH username (default: current user)
+**   --home-user <name>   - home-manager user (default: current user, eg user)
 **   --ssh-key <path>     - Path to SSH private key
 **   --ssh-port <port>    - SSH port (default: 22)
 **   --switch             - Apply config immediately (default)
@@ -822,7 +826,7 @@ menu_host() {
     fi
 
     if [ "${REMOTE_IP}" != "" ]; then
-        menu_host_option_deploy="\\n${cwh}DEPLOY:${cdgy}\\n\\n${cdgy}(${cwh}N${cdgy}) New Installation\\n(${cwh}U${cdgy}) Update Existing Installation\\n"
+        menu_host_option_deploy="\\n${cwh}DEPLOY:${cdgy}\\n\\n${cdgy}(${cwh}N${cdgy}) New Installation\\n(${cwh}U${cdgy}) Update Existing Installation\\n(${cwh}H${cdgy}) Update home-manager\\n"
     fi
 
     printf "\033c"
@@ -901,6 +905,10 @@ EOF
         ;;
         "u" | "update" )
             task_update_host
+            menu_host
+        ;;
+        "h" | "home" )
+            task_update_home_host
             menu_host
         ;;
         "d" | "disk" )
@@ -2332,6 +2340,40 @@ task_update_host() {
     wait_for_keypress
 }
 
+task_update_home_host() {
+    local _hm_user="${HM_USER:-$(whoami)}"
+    local _hm_key=""
+    local _hm_flake="${HOME_MANAGER_FLAKEDIR}"
+
+    if [ -z "${_hm_flake}" ]; then
+        if [ -f "${_dir_flake}/../home/flake.nix" ]; then
+            _hm_flake="${_dir_flake}/../home"
+        elif [ -f ~/src/home/flake.nix ]; then
+            _hm_flake=~/src/home
+        else
+            print_error "home-manager flake not found (tried ${_dir_flake}/../home/flake.nix and ~/src/home/flake.nix). Set HOME_MANAGER_FLAKEDIR= or --home-flake"
+            return 1
+        fi
+    fi
+
+    if [ -n "${SSH_PRIVATE_KEY}" ]; then
+        _hm_key="-i ${SSH_PRIVATE_KEY}"
+    fi
+
+    print_info "Checking for home-manager config '${_hm_user}@${deploy_host}' in ${_hm_flake}"
+    if ! nix eval --json "${_hm_flake}"#homeConfigurations --apply builtins.attrNames 2>/dev/null | grep -q "\"${_hm_user}@${deploy_host}\""; then
+        print_error "homeConfigurations.\"${_hm_user}@${deploy_host}\" not found in ${_hm_flake}"
+        print_notice "Available: nix eval --json ${_hm_flake}#homeConfigurations --apply builtins.attrNames"
+        return 1
+    fi
+
+    print_info "Updating home-manager on ${deploy_host} (${_hm_user}@${REMOTE_IP})"
+    # shellcheck disable=SC2029
+    ssh -p "${SSH_PORT}" ${_hm_key} -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no \
+        "${_hm_user}@${REMOTE_IP}" \
+        "cd ~/src/home && git pull --ff-only && home-manager switch --flake .#${_hm_user}@${deploy_host}"
+}
+
 task_update_swap_size() {
     if [ -f "${_dir_flake}"/hosts/"${deploy_host}"/disks.nix ] ; then
         read -e -i "$DISK_SWAP_SIZE_GB" -p "$(echo -e ${cdgy}${cwh}** ${cdgy}Disk Swap Size in GB\: \ ${coff}) " DISK_SWAP_SIZE_GB
@@ -2435,6 +2477,14 @@ parse_global_options() {
                 REMOTE_USER="${2}"
                 shift 2
             ;;
+            --home-user )
+                HM_USER="${2}"
+                shift 2
+            ;;
+            --home-flake )
+                HOME_MANAGER_FLAKEDIR="${2}"
+                shift 2
+            ;;
             --reboot )
                 INSTALL_REBOOT=TRUE
                 shift
@@ -2494,6 +2544,29 @@ case "${1,,}" in
             exit $?
         else
             print_error "Usage: $(basename "$0") [options] update <hostname> [ip]"
+            exit 1
+        fi
+    ;;
+    update-home | update_home | home-update )
+        # Direct CLI: ./deploy [options] update-home <hostname> [ip]
+        if [ -n "${2}" ]; then
+            deploy_host="${2}"
+            check_dependencies git
+            check_dependencies nix
+            if [ -n "${3}" ]; then
+                REMOTE_IP="${3}"
+            else
+                fqdn=$(resolve_host_fqdn "${deploy_host}")
+                print_info "Resolving ${deploy_host} as ${fqdn}"
+                check_host_availability "${fqdn}"
+            fi
+            if [ -z "${REMOTE_IP}" ]; then
+                task_set_ip_address
+            fi
+            task_update_home_host
+            exit $?
+        else
+            print_error "Usage: $(basename "$0") [options] update-home <hostname> [ip]"
             exit 1
         fi
     ;;
