@@ -67,10 +67,17 @@
       zsh.enable = mkDefault true;
     };
     configDir = self.outPath;
+    container = {
+      socket-proxy = {
+        hostAccess = {
+          enable = mkDefault true;
+        };
+      };
+    };
     feature = {
       console.terminfo = {
         ghostty.enable = mkDefault true;
-        kitty.enable = mkDefault false;
+        kitty.enable = mkDefault true;
       };
       home-manager.enable = mkDefault true;
       secrets.enable = mkDefault true;
@@ -86,7 +93,7 @@
         inputs = {
           docker_pub = mkDefault {
             type = "docker";
-            api_url = "unix:///var/run/docker.sock";
+            api_url = "http://127.0.0.1:2375";
             expose_containers = false;
             process_existing = true;
             record_remove_on_stop = true;
@@ -109,7 +116,7 @@
           };
           docker_int = mkDefault {
             type = "docker";
-            api_url = "unix:///var/run/docker.sock";
+            api_url = "http://127.0.0.1:2375";
             expose_containers = false;
             process_existing = true;
             record_remove_on_stop = true;
