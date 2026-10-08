@@ -69,7 +69,7 @@
         };
       };
       postfix-relay = {
-        enable = true;
+        enable = false;
         image.update = true;
         ports = {
           smtp = {
