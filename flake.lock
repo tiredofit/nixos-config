@@ -45,17 +45,14 @@
         ]
       },
       "locked": {
-        "lastModified": 1790824180,
-        "narHash": "sha256-T1FgZM0vxjQyaw/mSM4S6HSwgZVQmVbLnJUmuAqDdOc=",
-        "owner": "nfrastack",
-        "repo": "herald",
-        "rev": "8f2313e875ff4456df3367cb592879cd8ec317d6",
-        "type": "github"
+        "lastModified": 1791476220,
+        "narHash": "sha256-0WgqO9rX/D7hf23aeBckbeVR8VKSeCgWH30zPkNfLb8=",
+        "path": "/home/dave/src/nfra/herald",
+        "type": "path"
       },
       "original": {
-        "owner": "nfrastack",
-        "repo": "herald",
-        "type": "github"
+        "path": "/home/dave/src/nfra/herald",
+        "type": "path"
       }
     },
     "home-manager": {
@@ -86,11 +83,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1790742243,
-        "narHash": "sha256-kaNo6xHiL31AbNNEreG0OTKf4j6Cxlo5bPawjX7lnbQ=",
+        "lastModified": 1790996401,
+        "narHash": "sha256-f+kOxEmOUnQazVAmGg0i8hzwgd1kX/geY+k/Dpheye8=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "e5fcd298a00f08b6e8390baf04aa8edb62203070",
+        "rev": "db7d5e2332710f5abb088f6b5de927d7f9511b35",
         "type": "github"
       },
       "original": {
@@ -107,11 +104,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1790819692,
-        "narHash": "sha256-rvubAPbh3QCliic3sAK+CXTrPCGgJstY52OTs/5H1J4=",
+        "lastModified": 1790989254,
+        "narHash": "sha256-ZN+riaeFuE+DZ5zfqJiXlM12jLwZzeIXiNkU1YeHMXI=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "c8ecc29e5175452bee4a2aa1ba2383856d795338",
+        "rev": "acd21c5a3420a9d5fd0ed06299b10828267ef9ba",
         "type": "github"
       },
       "original": {
@@ -142,8 +139,8 @@
     },
     "nix-modules": {
       "locked": {
-        "lastModified": 1790871570,
-        "narHash": "sha256-KtmkynbEURZTGDCxg8f6VrQr1sLTpxXVbp1Bj33yz0o=",
+        "lastModified": 1791476259,
+        "narHash": "sha256-tqOT7mq2Kgh56qhYbBm/Ik99lFF3TGSXAjhX7HfO4fQ=",
         "path": "/home/dave/src/nix-modules",
         "type": "path"
       },
@@ -185,11 +182,11 @@
     },
     "nixpkgs-stable": {
       "locked": {
-        "lastModified": 1790750587,
-        "narHash": "sha256-VfjaoJ1Uyb7JZTrBgE5Jf2nhjtQPmD9KOd19HJwmZwM=",
+        "lastModified": 1790920529,
+        "narHash": "sha256-nQyFkMR78WP6PiXKkDW2SjqzLf/spQqjRuxRGSbcV8k=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "78e9c786dc08cd4f3420c2395cd977206a9b1da2",
+        "rev": "774debe7a0d1b496e35677ad955a1011c6ff74f3",
         "type": "github"
       },
       "original": {
@@ -292,11 +289,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1790824575,
-        "narHash": "sha256-X8aBIA7AsSBYI5zAq0I7kVCQKBe/bNLNKoYFPz2aU5E=",
+        "lastModified": 1791044845,
+        "narHash": "sha256-ktPkM8Y79pivc6GFvtW01CVR5Vb2dVqiC+yDHWWfGig=",
         "owner": "nfrastack",
         "repo": "zeroplex",
-        "rev": "f58ad2f4030f588defdf1b1bbfc04e3a0747eff2",
+        "rev": "e751a686eabbbe5567a94fec7fc27540a2587ae8",
         "type": "github"
       },
       "original": {
