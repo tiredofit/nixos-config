@@ -22,7 +22,7 @@
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     nix-modules = {
       #url = "github:tiredofit/nix-modules";
-      url = "path:/home/dave/src/nix-modules";
+      url = "path:/home/dave/src/nix/nix-modules";
     };
     disko = {
       url = "github:nix-community/disko";
@@ -150,7 +150,7 @@
           packages = "unstable";
         };
 
-        lapa = self.mkSystem { 
+        lapa = self.mkSystem {
           hostPath = ./hosts/lapa;
           packages = "unstable";
         };
